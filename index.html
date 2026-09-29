@@ -331,6 +331,18 @@ body.focus .act{top:10vh}
 .msColor.sel{border-color:#16204a}
 @media (max-width:820px){.tGrid{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(4,1fr)}.wheelWrap{grid-template-columns:1fr}.wheelBox{width:80vw}.sfx,.presets{grid-template-columns:repeat(2,1fr)}.lights{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.die.roll,.coin.flip,.team .pt.pop{animation:none}.brC{transition:none}}
+
+/* v4: kapat butonu ve mini yardımcı pencere */
+.tb.cls{background:#ff3b5c;color:#fff;border-color:transparent;font-weight:900}
+.launcher{display:none}
+body.minimode{overflow:hidden}
+body.minimode .app,body.minimode .blobs,body.minimode .fx{display:none!important}
+body.minimode .launcher{display:flex;flex-direction:column;gap:12px;justify-content:center;align-items:stretch;height:100%;padding:16px;background:var(--c,#18265a);color:var(--i,#fff);transition:background .6s;text-align:center}
+.lcTop{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--fd);font-weight:800}
+.lcTop b{font-size:40px;line-height:1}.lcTop span{font-size:36px;font-variant-numeric:tabular-nums}
+.launcher .btn{font-size:17px;padding:12px}
+.launcher .btn.huge{font-size:20px;padding:16px}
+.launcher p{margin:0;font-weight:800;font-size:13px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -355,6 +367,7 @@ body.focus .act{top:10vh}
       <button class="tb" id="btnSound" title="Zil sesi">🔔</button>
       <button class="tb" id="btnSet" title="Ayarlar">⚙️</button>
       <button class="tb" id="btnFull" title="Tam ekran (F)">⛶</button>
+      <button class="tb cls" id="btnClose" title="Büyük ekranı kapat">✕</button>
     </nav>
   </header>
 
@@ -610,6 +623,21 @@ body.focus .act{top:10vh}
       <button class="btn red" id="sReset">Görseldeki programa dön</button>
     </div>
     <div class="acts"><button class="btn" data-close>Vazgeç</button><button class="btn pri" id="sSave">Kaydet</button></div>
+  </div>
+</div>
+
+<div class="launcher" id="launcher">
+  <div class="lcTop"><b id="lcCls">—</b><span id="lcT">--:--</span></div>
+  <button class="btn pri huge" id="lcGo">📌 Tahtanın üstüne sabitle</button>
+  <p id="lcTxt">Mini pencereyi tahtanın üstüne sabitlemek için dokun.</p>
+  <button class="btn" id="lcBig">🖥️ Büyük ekranı aç</button>
+</div>
+
+<div class="modal" id="mClose" role="dialog" aria-modal="true" aria-labelledby="clTitle">
+  <div class="box" style="width:min(620px,94vw)">
+    <h3 id="clTitle">Büyük ekranı kapat</h3>
+    <p id="clTxt" style="font-weight:800;font-size:2.2vh;line-height:1.5"></p>
+    <div class="acts"><button class="btn hide" id="clFull">Tam ekrandan çık</button><button class="btn pri" data-close>Tamam</button></div>
   </div>
 </div>
 
@@ -1038,19 +1066,19 @@ $('scMake').addEventListener('click',()=>{const n=Math.max(2,Math.min(6,+$('scN'
 $('scReset').addEventListener('click',()=>{ensureScore();S.score.teams.forEach(t=>t.p=0);save();renderScore();});
 
 /* Etkinlik sayacı */
-let act=null,bigMode=null;
-function startAct(sec,label,big){sec=Math.max(5,Math.round(sec));act={total:sec,end:Date.now()+sec*1000,running:true,label:label||'Etkinlik',done:false};
+let act=null,bigMode=null;act=(function(a){if(!a)return null;if(a.running&&a.end<Date.now()-15000)return null;return Object.assign({},a,{done:false});})(S.act);
+function startAct(sec,label,big){sec=Math.max(5,Math.round(sec));act={total:sec,end:Date.now()+sec*1000,running:true,label:label||'Etkinlik',done:false};saveAct();
   closeModals();if(big)showBig('act');tick(true);toast(`${act.label}: ${fmtT(sec)} başladı`);}
 function actLeft(){if(!act)return 0;return act.running?Math.max(0,(act.end-Date.now())/1000):act.left;}
 $('acPre').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)startAct(+b.dataset.m*60,$('acName').value.trim(),$('acBig').checked);});
 $('acGo').addEventListener('click',()=>{const s=Math.max(0,+$('acMin').value||0)*60+Math.max(0,Math.min(59,+$('acSec').value||0));if(!s){toast('Bir süre yaz');return;}startAct(s,$('acName').value.trim(),$('acBig').checked);});
-function actPause(){if(!act||act.done)return;if(act.running){act.left=actLeft();act.running=false;}else{act.end=Date.now()+act.left*1000;act.running=true;}tick(true);}
+function actPause(){if(!act||act.done)return;if(act.running){act.left=actLeft();act.running=false;}else{act.end=Date.now()+act.left*1000;act.running=true;}saveAct();tick(true);}
 $('actP').addEventListener('click',actPause);
-$('actX').addEventListener('click',()=>{act=null;if(bigMode==='act')hideBig();tick(true);});
+$('actX').addEventListener('click',()=>{act=null;saveAct();if(bigMode==='act')hideBig();tick(true);});
 $('actBig').addEventListener('click',()=>showBig('act'));
 function renderAct(){
   const el=$('act');el.classList.toggle('hide',!act);if(!act)return;
-  if(act.running&&!act.done&&actLeft()<=0){act.done=true;act.doneAt=Date.now();beep([988,784,988,784,1175],.4);sfx('bell');}
+  if(act.running&&!act.done&&actLeft()<=0){act.done=true;act.doneAt=Date.now();if(soundHere()){beep([988,784,988,784,1175],.4);sfx('bell');}}
   if(act.done&&Date.now()-act.doneAt>12000){act=null;el.classList.add('hide');if(bigMode==='act')hideBig();return;}
   el.classList.toggle('done',act.done);
   $('actL').textContent=act.done?'⏰ Süre doldu!':`⏱️ ${act.label}`;
@@ -1196,32 +1224,71 @@ function nzStop(){if(nz){nz.st.getTracks().forEach(t=>t.stop());nz=null;}$('nzGo
 document.querySelector('.quick').addEventListener('click',e=>{const b=e.target.closest('.qb');if(!b)return;const q=b.dataset.q;
   if(q==='act5')startAct(300,'Etkinlik');else openTools(q);});
 
-/* Mini pencere: her zaman üstte */
-let pipWin=null,vVideo=null,vCanvas=null,vActive=false;
-const SIZES=[[300,185],[380,235],[540,330]];
-const MINI_CSS=`*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;user-select:none;-webkit-user-select:none}
+/* Mini pencere: her zaman üstte, büyük ekrandan bağımsız */
+const MINI_MODE=location.hash==='#mini';
+const BASE=location.href.split('#')[0];
+const bc=('BroadcastChannel' in window)?new BroadcastChannel('dersSaati'):null;
+let lastAlive=0,alivePip=false;
+function miniAlive(){return Date.now()-lastAlive<4500&&alivePip;}
+function soundHere(){return MINI_MODE||!miniAlive();}
+if(bc)bc.onmessage=e=>{const m=e.data||{};if(m.t==='alive'){lastAlive=Date.now();alivePip=!!m.pip;}if(m.t==='bye'){lastAlive=0;alivePip=false;}};
+if(MINI_MODE&&bc){setInterval(()=>bc.postMessage({t:'alive',pip:!!pipWin}),1500);window.addEventListener('pagehide',()=>bc.postMessage({t:'bye'}));}
+function saveAct(){S.act=act;save();}
+
+let pipWin=null,vVideo=null,vCanvas=null,vActive=false,ovTimer=null;
+const SIZES=[[300,185],[390,240],[560,340]];
+const MINI_CSS=`*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 body{font-family:'Nunito',system-ui,'Segoe UI',sans-serif;background:#0f1a3c}
-.m{height:100%;padding:4vh 5vw;display:flex;flex-direction:column;justify-content:space-between;gap:2vh;background:var(--c,#6c7cff);color:var(--i,#fff);transition:background .6s}
-.row{display:flex;align-items:center;gap:2vw;font-weight:900;font-size:clamp(11px,8vh,26px)}
-.pill{background:rgba(0,0,0,.16);padding:.35em .8em;border-radius:99px;white-space:nowrap}
-.lt{display:none;align-items:center;gap:.4em;background:#fff;color:#16204a;padding:.35em .7em;border-radius:99px;white-space:nowrap;font-size:.85em}
-.lt.on{display:inline-flex}.lt i{width:.9em;height:.9em;border-radius:50%;background:var(--k)}
-.clk{margin-left:auto;opacity:.85;font-variant-numeric:tabular-nums}
-.sz{display:flex;gap:1vw}.sz button{border:none;border-radius:.5em;background:rgba(0,0,0,.14);color:inherit;font:900 .7em Nunito,sans-serif;padding:.3em .55em;cursor:pointer}
-.mid{display:flex;align-items:center;justify-content:space-between;gap:4vw;min-height:0}
-.cls{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:30vh;line-height:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.t{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:32vh;line-height:.9;font-variant-numeric:tabular-nums;white-space:nowrap}
-.bar{height:6vh;min-height:6px;border-radius:99px;background:rgba(0,0,0,.18);overflow:hidden}
+.m{position:relative;height:100%;padding:3.5vh 4.5vw;display:flex;flex-direction:column;justify-content:space-between;gap:1.6vh;background:var(--c,#6c7cff);color:var(--i,#fff);transition:background .6s}
+.row{display:flex;align-items:center;gap:1.6vw;font-weight:900;font-size:clamp(10px,6vh,19px)}
+.pill{background:rgba(0,0,0,.16);padding:.3em .8em;border-radius:99px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+.lt{display:none;min-width:0;overflow:hidden;flex:0 1 auto;align-items:center;gap:.4em;background:#fff;color:#16204a;padding:.3em .7em;border-radius:99px;white-space:nowrap;font-size:.85em}
+.lt.on{display:inline-flex}.lt i{width:.9em;height:.9em;border-radius:50%;background:var(--k);flex:none}.lt span{overflow:hidden;text-overflow:ellipsis}
+.clk{margin-left:auto;opacity:.85;font-variant-numeric:tabular-nums;flex:none}
+.sz{display:flex;gap:1vw;flex:none}.sz button{border:none;border-radius:.5em;background:rgba(0,0,0,.14);color:inherit;font:900 .72em Nunito,sans-serif;padding:.35em .6em;cursor:pointer}
+.sz .mn{background:rgba(255,255,255,.85);color:#16204a}
+.mid{display:flex;align-items:center;justify-content:space-between;gap:4vw;min-height:0;flex:1}
+.cls{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:min(30vh,17vw);line-height:.9;white-space:nowrap;flex:none}
+.t{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:min(32vh,19vw);line-height:.9;font-variant-numeric:tabular-nums;white-space:nowrap;margin-left:auto}
+.bar{height:5vh;min-height:6px;border-radius:99px;background:rgba(0,0,0,.18);overflow:hidden;flex:none}
 .bar i{display:block;height:100%;width:0;background:currentColor;opacity:.8;transition:width .9s linear}
-.sub{font-weight:800;font-size:clamp(11px,8vh,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m.warn{box-shadow:inset 0 0 0 2.4vh #ffb020}
+.sub{font-weight:800;font-size:clamp(11px,7.5vh,24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.dots{display:flex;gap:1vw;flex:none}
+.dots b{flex:1;min-width:0;text-align:center;border-radius:.6em;padding:.25em 0;font:800 clamp(10px,5vh,17px) 'Baloo 2',sans-serif;background:var(--k);color:var(--ki);border:2px solid transparent;white-space:nowrap;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(0,0,0,.12)}
+.dots b.past{opacity:.35}.dots b.now{border-color:currentColor;box-shadow:0 0 0 2px #fff}
+.dots b.e{background:rgba(0,0,0,.12);color:inherit;opacity:.5}
+.ctl{display:none;gap:1.2vw;flex:none}
+.ctl button{flex:1;border:none;border-radius:.6em;background:#fff;color:#16204a;font:900 clamp(11px,6.5vh,22px) Nunito,sans-serif;padding:.35em 0;cursor:pointer;box-shadow:0 .2em 0 rgba(0,0,0,.2)}
+.ctl button:active{transform:translateY(.15em);box-shadow:none}
+.m.menu .ctl{display:flex}.m.menu .sub,.m.menu .dots{display:none}
+.m.warn{box-shadow:inset 0 0 0 2.2vh #ffb020}
 .m.hot{animation:h 1s infinite}@keyframes h{50%{box-shadow:inset 0 0 0 4vh #ff3b5c}}
-.m.act .sub{background:#fff;color:#16204a;border-radius:1em;padding:.2em .6em}`;
-const MINI_HTML=`<div class="m" id="m"><div class="row"><span class="pill" id="p"></span><span class="lt" id="lt"><i></i><span></span></span><span class="clk" id="k"></span>
-<span class="sz"><button data-s="0" title="Küçük">S</button><button data-s="1" title="Orta">M</button><button data-s="2" title="Büyük">L</button></span></div>
-<div class="mid"><div class="cls" id="c"></div><div class="t" id="t"></div></div><div class="bar"><i id="f"></i></div><div class="sub" id="s"></div></div>`;
-async function openMini(){
-  if(pipWin||vActive){toast('Mini pencere zaten açık. Kapatmak için üzerindeki ✕ işaretine bas.');return;}
+.m.act .sub{background:#fff;color:#16204a;border-radius:1em;padding:.15em .6em}
+.ov{position:absolute;inset:0;display:none;place-content:center;text-align:center;background:#fff;color:#16204a;padding:4vh 4vw;cursor:pointer}
+.ov.show{display:grid}.ov small{font:900 clamp(11px,7vh,22px) Nunito,sans-serif;color:#5a638f}
+.ov b{font:800 clamp(24px,26vh,110px) 'Baloo 2',sans-serif;line-height:1;color:var(--oc,#7a2cff);animation:p .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes p{from{transform:scale(.5);opacity:0}}
+@media (max-height:279px){.dots{display:none}}
+@media (max-width:340px){.lt span,.clk{display:none}}`;
+const MINI_HTML=`<div class="m" id="m">
+<div class="row"><span class="pill" id="p"></span><span class="lt" id="lt"><i></i><span></span></span><span class="clk" id="k"></span>
+<span class="sz"><button data-s="0" title="Küçük">S</button><button data-s="1" title="Orta">M</button><button data-s="2" title="Büyük">L</button><button data-c="menu" class="mn" title="Kısayollar">☰</button></span></div>
+<div class="mid"><div class="cls" id="c"></div><div class="t" id="t"></div></div>
+<div class="bar"><i id="f"></i></div><div class="sub" id="s"></div><div class="dots" id="dots"></div>
+<div class="ctl" id="ctl"><button data-c="a1" title="1 dakikalık etkinlik">⏱1</button><button data-c="a3" title="3 dakika">⏱3</button><button data-c="a5" title="5 dakika">⏱5</button><button data-c="pause" title="Duraklat / devam">⏯</button>
+<button data-c="light" title="Trafik ışığı">🚦</button><button data-c="pick" title="Rastgele öğrenci">🎯</button><button data-c="clap" title="Alkış">👏</button><button data-c="big" title="Büyük ekran">🖥</button></div>
+<div class="ov" id="ov"></div></div>`;
+
+function openMini(){
+  if(MINI_MODE){openPip();return;}
+  if(pipWin||vActive||miniAlive()){toast('Mini pencere zaten açık. Kapatmak için üzerindeki ✕ işaretine bas.');return;}
+  const w=window.open(BASE+'#mini','dersSaatiMini',`popup=yes,width=440,height=330,left=${Math.max(0,screen.availWidth-470)},top=60`);
+  if(!w){openPip();return;}
+  toast('Açılan küçük pencerede "Tahtanın üstüne sabitle" butonuna dokun');
+}
+async function openPip(){
+  if(pipWin||vActive){toast('Mini pencere zaten açık');return;}
+  ac();
   if('documentPictureInPicture' in window){
     try{
       const z=SIZES[S.miniSize!=null?S.miniSize:1];
@@ -1229,14 +1296,37 @@ async function openMini(){
       const doc=pipWin.document;
       doc.head.innerHTML=`<meta charset="utf-8"><title>Ders Saati</title><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet"><style>${MINI_CSS}</style>`;
       doc.body.innerHTML=MINI_HTML;
+      if(MINI_MODE)doc.querySelector('[data-c="big"]').style.display='';else doc.querySelector('[data-c="big"]').style.display='none';
       doc.addEventListener('contextmenu',e=>e.preventDefault());
-      doc.addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;S.miniSize=+b.dataset.s;save();const s=SIZES[S.miniSize];try{pipWin.resizeTo(s[0],s[1]);}catch(err){}});
-      pipWin.addEventListener('pagehide',()=>{pipWin=null;$('btnMini').classList.remove('on');});
-      $('btnMini').classList.add('on');tick(true);return;
-    }catch(e){pipWin=null;}
+      doc.addEventListener('click',onMiniClick);
+      pipWin.addEventListener('pagehide',()=>{pipWin=null;$('btnMini').classList.remove('on');
+        if(MINI_MODE){if(bc)bc.postMessage({t:'bye'});setTimeout(()=>window.close(),200);}});
+      if(MINI_MODE)launcherDocked(true);
+      tick(true);return;
+    }catch(e){pipWin=null;if(MINI_MODE){$('lcTxt').textContent='Sabitlemek için butona dokun.';return;}}
   }
   videoPip();
 }
+function onMiniClick(e){
+  const d=pipWin&&pipWin.document;if(!d)return;
+  if(e.target.closest('#ov')){d.getElementById('ov').classList.remove('show');return;}
+  const s=e.target.closest('[data-s]');
+  if(s){S.miniSize=+s.dataset.s;save();const z=SIZES[S.miniSize];try{pipWin.resizeTo(z[0],z[1]);}catch(err){}return;}
+  const c=e.target.closest('[data-c]');if(!c)return;const k=c.dataset.c;
+  if(k==='menu'){d.getElementById('m').classList.toggle('menu');return;}
+  if(k==='a1'||k==='a3'||k==='a5'){startAct(+k.slice(1)*60,'Etkinlik');return;}
+  if(k==='pause'){if(act)actPause();else miniOverlay('Etkinlik yok','⏱ ile başlat');return;}
+  if(k==='light'){const order=[null,'green','yellow','red'];S.light=order[(order.indexOf(S.light)+1)%4];save();renderExtras();tick(true);sfx('tick');return;}
+  if(k==='clap'){sfx('clap');return;}
+  if(k==='big'){window.open(BASE,'dersSaatiAna');return;}
+  if(k==='pick'){const cls=focusClass();const L=roster(cls);
+    if(!L.length){miniOverlay(cls||'Liste yok','Araçlar → Sınıf listesi');return;}
+    const used=picked[cls]||(picked[cls]=new Set());let pool=L.filter(n=>!used.has(n));if(!pool.length){used.clear();pool=L.slice();}
+    const w=pool[Math.floor(Math.random()*pool.length)];used.add(w);sfx('yes');miniOverlay(w,`🎯 ${cls}`,colorOf(cls));}
+}
+function miniOverlay(big,small,col){if(!pipWin)return;const o=pipWin.document.getElementById('ov');
+  o.innerHTML=`<small>${esc(small||'')}</small><b>${esc(big)}</b><small>Kapatmak için dokun</small>`;o.style.setProperty('--oc',col&&inkOf(col)==='#ffffff'?col:'#7a2cff');
+  o.classList.add('show');clearTimeout(ovTimer);ovTimer=setTimeout(()=>o.classList.remove('show'),8000);}
 async function videoPip(){
   if(!document.pictureInPictureEnabled||!HTMLCanvasElement.prototype.captureStream){toast('Mini pencere için Chrome ya da Edge tarayıcısını kullan.');return;}
   try{
@@ -1246,9 +1336,17 @@ async function videoPip(){
       document.body.appendChild(vVideo);vVideo.srcObject=vCanvas.captureStream(4);
       vVideo.addEventListener('leavepictureinpicture',()=>{vActive=false;$('btnMini').classList.remove('on');});}
     drawCanvas(lastModel);await vVideo.play();await vVideo.requestPictureInPicture();vActive=true;$('btnMini').classList.add('on');
+    if(MINI_MODE)launcherDocked(true);
   }catch(e){toast('Mini pencere açılamadı. Chrome ya da Edge ile tekrar dene.');}
 }
 function miniModel(m){const a=renderActText();return Object.assign({},m,{sub:a||m.miniSub,actOn:!!a});}
+let lastDots='';
+function dotsHTML(){
+  const r=lastR;if(!r||r.wd>4)return '';
+  return r.segs.filter(s=>s.t==='lesson').map(s=>{const c=cellOn(r.d,s.i);const past=r.sec>=s.b,cur=r.seg===s;
+    if(!c)return `<b class="e${past?' past':''}${cur?' now':''}">·</b>`;const col=colorOf(c.c);
+    return `<b class="${past?'past':''}${cur?' now':''}" style="--k:${col};--ki:${inkOf(col)}">${esc(c.c.length>4?c.c.slice(0,3):c.c)}</b>`;}).join('');
+}
 function updateMini(m){
   if(!m)return;const mm=miniModel(m);
   if(pipWin){const d=pipWin.document;const box=d.getElementById('m');if(!box)return;
@@ -1256,11 +1354,13 @@ function updateMini(m){
     box.classList.toggle('warn',mm.warn);box.classList.toggle('hot',mm.hot);box.classList.toggle('act',mm.actOn);
     d.getElementById('p').textContent=mm.pill;d.getElementById('k').textContent=hm(now().getHours()*3600+now().getMinutes()*60);
     const lt=d.getElementById('lt');lt.classList.toggle('on',!!S.light);if(S.light){lt.style.setProperty('--k',LIGHTS[S.light][0]);lt.lastChild.textContent=LIGHTS[S.light][1];}
-    const c=d.getElementById('c');c.textContent=mm.big;c.style.fontSize=mm.big.length<=3?'30vh':mm.big.length<=6?'20vh':'14vh';
-    d.getElementById('t').textContent=mm.timeText;d.getElementById('t').style.fontSize=mm.timeText.length>5?'24vh':'32vh';
+    const c=d.getElementById('c');c.textContent=mm.big;c.style.fontSize=mm.big.length<=3?'min(30vh,17vw)':mm.big.length<=6?'min(20vh,11vw)':'min(14vh,8vw)';
+    d.getElementById('t').textContent=mm.timeText;d.getElementById('t').style.fontSize=mm.timeText.length>5?'min(24vh,14vw)':'min(32vh,19vw)';
     d.getElementById('f').style.width=((1-mm.frac)*100)+'%';d.getElementById('s').textContent=mm.sub;
+    const dh=dotsHTML();if(dh!==lastDots){d.getElementById('dots').innerHTML=dh;lastDots=dh;}
   }
   if(vActive)drawCanvas(mm);
+  if(MINI_MODE)updateLauncher(mm);
 }
 function drawCanvas(m){
   if(!vCanvas||!m)return;const mm=m.sub!==undefined?m:miniModel(m);const x=vCanvas.getContext('2d');const W=640,H=384;
@@ -1275,7 +1375,40 @@ function drawCanvas(m){
   x.globalAlpha=.2;x.fillRect(30,280,W-60,18);x.globalAlpha=.85;x.textAlign='left';x.fillRect(30,280,(W-60)*(1-mm.frac),18);x.globalAlpha=1;
   x.font='800 28px Nunito, sans-serif';x.textBaseline='top';x.fillText(mm.sub||'',30,318,W-60);
 }
-window.addEventListener('beforeunload',e=>{if(pipWin||vActive){e.preventDefault();e.returnValue='Mini pencere açık. Sayfayı kapatırsan mini pencere de kapanır.';return e.returnValue;}});
+window.addEventListener('beforeunload',e=>{if(!MINI_MODE&&(pipWin||vActive)){e.preventDefault();e.returnValue='Mini pencere açık. Sayfayı kapatırsan mini pencere de kapanır.';return e.returnValue;}});
+
+/* İki pencere arasında eşitleme */
+window.addEventListener('storage',e=>{if(e.key!==KEY)return;S=load();act=freshAct(S.act);renderAll();if(view==='week')renderWeek();});
+function freshAct(a){if(!a)return null;if(a.running&&a.end<Date.now()-15000)return null;return Object.assign({},a,{done:false});}
+
+/* Küçük yardımcı pencere (mini pencerenin sahibi) */
+function launcherDocked(on){
+  $('lcGo').classList.toggle('hide',on);
+  $('lcTxt').textContent=on?'Mini pencere tahtada. Büyük ekranı rahatça kapatabilirsin. Bu küçük pencereyi kapatma; istersen — ile küçült.':'Mini pencereyi tahtanın üstüne sabitlemek için dokun.';
+  if(on){try{window.resizeTo(380,230);window.moveTo(0,Math.max(0,screen.availHeight-230));}catch(e){}}
+}
+function updateLauncher(mm){$('lcCls').textContent=mm.big;$('lcT').textContent=mm.timeText;$('launcher').style.setProperty('--c',mm.color);$('launcher').style.setProperty('--i',mm.ink);}
+if(MINI_MODE){
+  document.body.classList.add('minimode');document.title='Ders Saati • Mini';
+  $('lcGo').addEventListener('click',openPip);
+  $('lcBig').addEventListener('click',()=>window.open(BASE,'dersSaatiAna'));
+  setTimeout(()=>{if(!pipWin)openPip();},300);
+}
+
+/* Büyük ekranı kapat */
+function closeBig(){
+  if(!MINI_MODE&&(pipWin||vActive)&&!miniAlive()){
+    if(!confirm('Mini pencere bu sayfaya bağlı; kapatırsan o da kapanır. Önce 📌 Mini pencere ile bağımsız mini aç. Yine de kapatılsın mı?'))return;}
+  window.close();
+  setTimeout(()=>{
+    $('clTxt').innerHTML=miniAlive()
+      ?'Mini pencere güvende ve açık kalacak. 👍<br>Chrome, elle açılan sekmeyi sayfanın kendisinin kapatmasına izin vermiyor. Şimdi tarayıcının <b>en sağ üst köşesindeki ✕</b> işaretine bas.'
+      :'Chrome, elle açılan sekmeyi sayfanın kendisinin kapatmasına izin vermiyor. Tarayıcının <b>en sağ üst köşesindeki ✕</b> işaretine bas.<br><br>İpucu: Önce <b>📌 Mini pencere</b>yi açarsan, büyük ekranı kapatsan da mini pencere tahtada kalır.';
+    $('clFull').classList.toggle('hide',!document.fullscreenElement);openModal('mClose');
+  },350);
+}
+$('btnClose').addEventListener('click',closeBig);
+$('clFull').addEventListener('click',()=>{if(document.fullscreenElement)document.exitFullscreen();closeModals();});
 
 /* Ayarlar */
 let draftP=null;
@@ -1354,14 +1487,15 @@ function tick(force){
   $('dte').textContent=`${d.getDate()} ${MONTHS[d.getMonth()]} ${DAYS_ALL[d.getDay()]}`;
   $('simBadge').classList.toggle('show',offset!==0);
   const info=renderLive(r);lastModel=info;renderAct();renderBig();renderExtras();updateMini(info);
+  if(!MINI_MODE){const on=!!pipWin||vActive||miniAlive();$('btnMini').classList.toggle('on',on);$('btnMini').querySelector('.tx').textContent=on?'Mini açık':'Mini pencere';}
   const segKey=r.seg?`${dateKey(d)}|${r.seg.a}`:`${dateKey(d)}|${r.t}`;
   if(force||segKey!==lastSegKey||Math.floor(r.sec/15)!==lastQ){renderTimeline(r);lastQ=Math.floor(r.sec/15);}
   if(lastSegKey&&segKey!==lastSegKey&&r.wd<=4){
-    beep([880,660,523]);
+    if(soundHere())beep([880,660,523]);
     if(lastInfo&&lastInfo.isLesson){const c=colorOf(lastInfo.big);confetti([c,'#ffffff','#ffef1a','#ff1ee8','#19e6f0']);}
     if(view==='week')renderWeek();
   }
-  if(S.warn&&info.counting&&info.rem<=300&&info.rem>290&&!fired[segKey]){fired[segKey]=1;beep([660,880],.25);}
+  if(S.warn&&info.counting&&info.rem<=300&&info.rem>290&&!fired[segKey]){fired[segKey]=1;if(soundHere())beep([660,880],.25);}
   lastSegKey=segKey;lastInfo=info;
 }
 renderAll();
