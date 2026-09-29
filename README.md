@@ -1,0 +1,1 @@
+# ders-ekran-gosterimi
