@@ -410,6 +410,8 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
 .weekBtns .tb{font-size:1.8vh}
 .weekBtns .tb.ai{background:linear-gradient(90deg,#7a5cff,#e0149f);border-color:transparent}
 @media (max-width:820px){.aiBody,.aiCards{grid-template-columns:1fr}}
+.vopts{display:grid;grid-template-columns:1fr;gap:0;padding-left:1vw;border-left:4px solid #e3e6f5;margin:.6vh 0}
+.vopts .toggle{margin:.6vh 0;font-size:1.9vh}
 </style>
 </head>
 <body>
@@ -431,6 +433,7 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
       <button class="tb" id="btnWeek" title="Haftalık program (P)">📅 <span class="tx">Program</span></button>
       <button class="tb" id="btnTools" title="Öğretmen araçları (T)">🧰 <span class="tx">Araçlar</span></button>
       <button class="tb" id="btnFocus" title="Sadece sayaç (O)">🎯 <span class="tx">Odak</span></button>
+      <button class="tb" id="btnVoice" title="Sesli duyurular">🗣️</button>
       <button class="tb" id="btnSound" title="Zil sesi">🔔</button>
       <button class="tb" id="btnSet" title="Ayarlar">⚙️</button>
       <button class="tb" id="btnFull" title="Tam ekran (F)">⛶</button>
@@ -523,6 +526,17 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
       <div class="tabs" id="tabs"></div>
       <div class="panes">
 
+
+    <div class="pane" data-p="say">
+      <p class="s">Yaz ya da hazır cümleye dokun; tahta sınıfa sesli söylesin.</p>
+      <div class="picks" id="syPre">
+        <button class="pk" style="background:#ffe38a">Herkes yerine otursun lütfen 🪑</button><button class="pk" style="background:#bdf0ff">Sessizce çalışalım 🤫</button>
+        <button class="pk" style="background:#c9f7a8">Aferin, harika iş çıkardınız 🌟</button><button class="pk" style="background:#ffc9e6">Tabletleri kapatalım 📲</button>
+        <button class="pk" style="background:#d9ccff">Robot setlerini toplayalım 🤖</button><button class="pk" style="background:#ffd2b0">Sıraya geçelim 🚶</button>
+        <button class="pk" style="background:#b8ffe0">Su içmek isteyen gidebilir 💧</button><button class="pk" style="background:#ffe0e0">Teneffüs bitti, yerlerimize 🔔</button>
+      </div>
+      <div class="row" style="margin-top:2vh"><input type="text" id="syX" maxlength="160" placeholder="Söylenecek cümle…" style="flex:1;min-width:260px"><button class="btn pri huge" id="syGo">📢 Söyle</button><button class="btn huge" id="syBell">🔔 Zil çal</button></div>
+    </div>
 
     <div class="pane" data-p="ai">
       <div class="aiCards">
@@ -725,6 +739,21 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
     <label class="toggle"><input type="checkbox" id="sWarn"> Son 5 dakikada uyarı sesi çal</label>
     <label class="toggle"><input type="checkbox" id="sConf"> Ders bitince konfeti patlat</label>
     <div class="sep"></div>
+    <div class="fld"><span>🗣️ Sesli duyurular ve okul zili</span>
+      <label class="toggle"><input type="checkbox" id="sVoice"> Sesli duyurular açık (Türkçe)</label>
+      <div class="vopts">
+        <label class="toggle"><input type="checkbox" id="sV5"> Son 5 dakika: “Dersin bitmesine son beş dakika.”</label>
+        <label class="toggle"><input type="checkbox" id="sV1"> Son 1 dakika: “Son bir dakika. Toparlanalım.”</label>
+        <label class="toggle"><input type="checkbox" id="sV10"> Son 10 saniyede geri sayım (10, 9, 8…)</label>
+        <label class="toggle"><input type="checkbox" id="sVEnd"> Ders bitince okul zili + “Ders bitti. İyi teneffüsler!”</label>
+        <label class="toggle"><input type="checkbox" id="sVStart"> Ders başlarken zil + “Şimdi 4 A ile Robotik Kodlama dersi başlıyor.”</label>
+        <label class="toggle"><input type="checkbox" id="sVDuty"> Teneffüste nöbet anonsu</label>
+      </div>
+      <div class="row" style="margin-top:1vh"><b>Zil</b><select id="sBell"><option value="klasik">🔔 Klasik okul zili</option><option value="melodi">🎵 Melodili zil</option><option value="gong">🥣 Yumuşak gong</option></select><button class="btn" id="sBellTest">▶ Dinle</button></div>
+      <div class="row" style="margin-top:1vh"><b>Ses</b><select id="sVoiceSel" style="max-width:300px"></select><b>Hız</b><input type="range" id="sRate" min="0.7" max="1.3" step="0.05"><button class="btn" id="sVoiceTest">▶ Dinle</button></div>
+      <p class="s" style="margin-top:1vh">Tarayıcılar konuşmaya izin vermek için sayfaya bir kez dokunulmasını ister. Sabah tahtayı açınca bir kez dokunman yeterli.</p>
+    </div>
+    <div class="sep"></div>
     <div class="fld"><span>📲 Uygulama olarak yükle</span><div class="row"><button class="btn pri" id="sInstall">📲 Bu cihaza yükle</button></div><p class="s" id="sInstInfo" style="margin-top:1vh">Masaüstüne ve telefona renkli saat simgesiyle yüklenir, tek dokunuşla açılır.</p></div>
     <div class="fld"><span>🤖 Yapay zekâ anahtarı (Gemini, ücretsiz)</span>
       <textarea id="sKeys" style="min-height:9vh" placeholder="Her satıra bir anahtar"></textarea>
@@ -793,10 +822,11 @@ const DEFAULT={
     ['','','','2A','3A','Ana Sınıfı','5A','5A'],
     ['','4A','4A','3A','3A','','7A','7A'],
     ['','','','','','2A','6A','6A'],
-    ['','Ana Sınıfı','8A','8A','','','2A','1A']
+    ['','Ana Sınıfı','8A','8A','','2A','','1A']
   ]),
   ov:{}, notes:{}, rosters:{}, att:{}, light:null, msg:null, score:null, wheelCustom:'', qr:'', miniSize:1,
   me:'Barış', dutyOv:{}, dutyBell:true, rem:[], todo:[],
+  voice:true, v5:true, v1:true, v10:false, vEnd:true, vStart:true, vDuty:true, bellType:'klasik', voiceRate:0.95, voiceName:'',
   duty:{places:['Ön Bahçe','3. Kat','4. Kat','Arka Bahçe'],table:[
     ['Necmettin h.','Tuncay h.','Nurbanu h.','Gülay h.'],
     ['Ayça h.','Kamuran h.','Selanur h.','Erva h.'],
@@ -1064,7 +1094,7 @@ $('eUnOv').addEventListener('click',()=>{const o=S.ov[dateKey(editing.date)];if(
 
 /* Öğretmen araçları */
 const TOOLS=[
-  ['ai','📸','Fotoğraftan program','#111827'],['duty','🛡️','Nöbet','#0e7c66'],
+  ['ai','📸','Fotoğraftan program','#111827'],['say','📢','Sesli duyuru','#d1006b'],['duty','🛡️','Nöbet','#0e7c66'],
   ['wheel','🎡','Şans çarkı','#ff5d8f'],['pick','🎯','Kim cevaplasın?','#7a5cff'],
   ['groups','👥','Grup kur','#1e8ef5'],['score','🏆','Puan tablosu','#f7981d'],
   ['act','⏱️','Etkinlik sayacı','#12b39a'],['stop','⏲️','Kronometre','#19a3d6'],
@@ -1224,7 +1254,7 @@ $('actX').addEventListener('click',()=>{act=null;saveAct();if(bigMode==='act')hi
 $('actBig').addEventListener('click',()=>showBig('act'));
 function renderAct(){
   const el=$('act');el.classList.toggle('hide',!act);if(!act)return;
-  if(act.running&&!act.done&&actLeft()<=0){act.done=true;act.doneAt=Date.now();if(soundHere()){beep([988,784,988,784,1175],.4);sfx('bell');}}
+  if(act.running&&!act.done&&actLeft()<=0){act.done=true;act.doneAt=Date.now();if(soundHere()){beep([988,784,988,784,1175],.4);sfx('bell');if(S.voice)sayLater('Süre doldu!',1400);}}
   if(act.done&&Date.now()-act.doneAt>12000){act=null;el.classList.add('hide');if(bigMode==='act')hideBig();return;}
   el.classList.toggle('done',act.done);
   $('actL').textContent=act.done?'⏰ Süre doldu!':`⏱️ ${act.label}`;
@@ -1422,7 +1452,7 @@ const MINI_HTML=`<div class="m" id="m">
 <div class="mid"><div class="cls" id="c"></div><div class="t" id="t"></div></div>
 <div class="bar"><i id="f"></i></div><div class="sub" id="s"></div><div class="dots" id="dots"></div>
 <div class="ctl" id="ctl"><button data-c="a1" title="1 dakikalık etkinlik">⏱1</button><button data-c="a3" title="3 dakika">⏱3</button><button data-c="a5" title="5 dakika">⏱5</button><button data-c="pause" title="Duraklat / devam">⏯</button>
-<button data-c="light" title="Trafik ışığı">🚦</button><button data-c="pick" title="Rastgele öğrenci">🎯</button><button data-c="clap" title="Alkış">👏</button><button data-c="big" title="Büyük ekran">🖥</button></div>
+<button data-c="light" title="Trafik ışığı">🚦</button><button data-c="pick" title="Rastgele öğrenci">🎯</button><button data-c="clap" title="Alkış">👏</button><button data-c="voice" title="Sesli duyuru aç/kapat">🗣</button><button data-c="big" title="Büyük ekran">🖥</button></div>
 <div class="ov" id="ov"></div></div>`;
 
 function openMini(){
@@ -1465,6 +1495,7 @@ function onMiniClick(e){
   if(k==='pause'){if(act)actPause();else miniOverlay('Etkinlik yok','⏱ ile başlat');return;}
   if(k==='light'){const order=[null,'green','yellow','red'];S.light=order[(order.indexOf(S.light)+1)%4];save();renderExtras();tick(true);sfx('tick');return;}
   if(k==='clap'){sfx('clap');return;}
+  if(k==='voice'){S.voice=!S.voice;save();voiceUI&&voiceUI();miniOverlay(S.voice?'Açık':'Kapalı','🗣 Sesli duyurular');return;}
   if(k==='big'){window.open(BASE,'dersSaatiAna');return;}
   if(k==='pick'){const cls=focusClass();const L=roster(cls);
     if(!L.length){miniOverlay(cls||'Liste yok','Araçlar → Sınıf listesi');return;}
@@ -1628,7 +1659,7 @@ $('rmList').addEventListener('click',e=>{const b=e.target.closest('[data-del]');
 function fireRem(x){
   showBig('rem',`<div class="bigL">⏰ Hatırlatma • ${esc(x.t)}</div><div class="remBig">${esc(x.x)}</div>`);
   $('bigOv').style.background='radial-gradient(circle at 50% 40%,#c2410c,#0f1a3c 85%)';
-  if(soundHere()){sfx('bell');setTimeout(()=>sfx('bell'),1600);}
+  if(soundHere()){sfx('bell');setTimeout(()=>sfx('bell'),1600);if(S.voice)sayLater('Hatırlatma. '+x.x,2600);}
   miniOverlay(x.x,`⏰ ${x.t}`,'#c2410c');
 }
 
@@ -1840,11 +1871,82 @@ function nextSlotText(r,idx){const n=r.next,P=S.periods;
   return `Sonraki ders boş${n?` • Sonra ${n.c.c} ${whenText(n)}`:''}`;}
 function v5Tick(r,segKey,prevKey){
   if(prevKey&&segKey!==prevKey&&(r.t==='break'||r.t==='lunch')&&r.wd<=4){const p=dutyOn(r.d);
-    if(p){toast(`🛡️ Nöbet zamanı: ${p}`);if(S.dutyBell&&soundHere())setTimeout(()=>sfx('bell'),1500);}}
+    if(p){toast(`🛡️ Nöbet zamanı: ${p}`);if(S.dutyBell&&!(S.voice&&S.vDuty)&&soundHere())setTimeout(()=>sfx('bell'),1500);}}
   const hmNow=hm(r.d.getHours()*3600+r.d.getMinutes()*60),dk=dateKey(r.d);
   (S.rem||[]).forEach(x=>{if(x.t!==hmNow||!remApplies(x,r.d))return;const k=dk+'|'+x.id;if(remFired[k])return;remFired[k]=1;fireRem(x);});
   renderDuty();
 }
+
+/* ===== v6: Sesli duyurular ve okul zili ===== */
+const spk=c=>String(c||'').replace(/^(\d+)\s*([A-Za-zÇĞİÖŞÜçğıöşü])$/,'$1 $2');
+let trVoices=[],trVoice=null;
+function pickVoice(){if(!('speechSynthesis' in window))return;const v=speechSynthesis.getVoices();trVoices=v.filter(x=>/^tr/i.test(x.lang));
+  trVoice=trVoices.find(x=>x.name===S.voiceName)||trVoices.find(x=>/natural|online|neural/i.test(x.name))||trVoices[0]||null;}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function say(t,force){
+  if(!('speechSynthesis' in window)||!t)return;if(!force&&(!S.voice||!soundHere()))return;
+  try{const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';if(trVoice)u.voice=trVoice;u.rate=+S.voiceRate||0.95;u.pitch=1.05;u.volume=1;speechSynthesis.speak(u);}catch(e){}
+}
+const sayLater=(t,ms)=>setTimeout(()=>say(t),ms||0);
+const BELL_MS={klasik:3400,melodi:5600,gong:2200};
+function schoolBell(kind){
+  kind=kind||S.bellType||'klasik';
+  try{const a=ac(),t=a.currentTime;
+    if(kind==='klasik'){const dur=3;
+      const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.32,t+.03);g.gain.setValueAtTime(.32,t+dur-.25);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      const am=a.createGain();am.gain.value=.55;const lfo=a.createOscillator();lfo.type='square';lfo.frequency.value=21;const lg=a.createGain();lg.gain.value=.45;
+      lfo.connect(lg);lg.connect(am.gain);
+      [[1180,1],[2390,.5],[3560,.25],[590,.3]].forEach(([f,v])=>{const o=a.createOscillator();o.type='triangle';o.frequency.value=f;const og=a.createGain();og.gain.value=v;o.connect(og);og.connect(am);o.start(t);o.stop(t+dur+.05);});
+      am.connect(g);g.connect(a.destination);lfo.start(t);lfo.stop(t+dur+.05);}
+    else if(kind==='melodi'){[[659,0],[523,.55],[587,1.1],[392,1.65],[392,2.75],[587,3.3],[659,3.85],[523,4.4]].forEach(([f,st])=>{tone(f,st,1.5,'sine',.28);tone(f*2,st,.7,'sine',.05);});}
+    else{tone(196,0,3.2,'sine',.38);tone(294,0,2.4,'sine',.14);tone(392,.02,1.6,'triangle',.07);tone(587,.02,.9,'sine',.04);}
+  }catch(e){}
+}
+function announce(r,info,prev){
+  if(!soundHere()||r.wd>4)return;
+  const was=!!(prev&&prev.isLesson),is=!!info.isLesson;let delay=0;
+  if(was&&!is){
+    if(S.vEnd){if(S.sound){schoolBell();delay=BELL_MS[S.bellType]||3400;}
+      if(S.voice)sayLater(r.t==='lunch'?'Ders bitti. Afiyet olsun!':r.t==='after'?'Günün son dersi bitti. Hepinize teşekkürler, hoşça kalın!':'Ders bitti. İyi teneffüsler!',delay);}
+    else if(S.sound)beep([880,660,523]);
+  }else if(is&&r.cell){
+    if(S.vStart){if(S.sound){schoolBell();delay=BELL_MS[S.bellType]||3400;}
+      if(S.voice)sayLater(`${prev&&(prev.pill||'').includes('Teneffüs')?'Teneffüs bitti. ':''}Şimdi ${spk(r.cell.c)} ile ${r.cell.s} dersi başlıyor.`,delay);}
+    else if(S.sound)beep([523,659,784]);
+  }
+  const duty=(r.t==='break'||r.t==='lunch')?dutyOn(r.d):null;
+  if(duty&&S.voice&&S.vDuty)sayLater(`Nöbet zamanı. Nöbet yerin: ${duty}.`,delay+3200);
+}
+function voiceTick(r,info,segKey){
+  if(!info.isLesson||!soundHere())return;
+  if(info.rem<=300&&info.rem>290&&!fired[segKey+'|5']){fired[segKey+'|5']=1;
+    if(S.voice&&S.v5){if(S.sound)beep([660,880],.2);sayLater('Dersin bitmesine son beş dakika.',S.sound?700:0);}else if(S.warn)beep([660,880],.25);}
+  if(info.rem<=60&&info.rem>52&&!fired[segKey+'|1']){fired[segKey+'|1']=1;if(S.voice&&S.v1)say('Son bir dakika. Toparlanalım.');}
+  if(S.voice&&S.v10&&info.rem<=10.4&&info.rem>.4){const n=Math.ceil(info.rem);const k=segKey+'|c'+n;if(!fired[k]){fired[k]=1;say(String(n));}}
+}
+function voiceUI(){$('btnVoice').textContent=S.voice?'🗣️':'🤐';$('btnVoice').title=S.voice?'Sesli duyurular açık':'Sesli duyurular kapalı';}
+$('btnVoice').onclick=()=>{S.voice=!S.voice;save();voiceUI();toast(S.voice?'Sesli duyurular açık 🗣️':'Sesli duyurular kapalı');if(S.voice)say('Sesli duyurular açık.',true);};
+voiceUI();
+function fillVoiceSettings(){
+  pickVoice();
+  ['sVoice','sV5','sV1','sV10','sVEnd','sVStart','sVDuty'].forEach(id=>{$(id).checked=!!S[{sVoice:'voice',sV5:'v5',sV1:'v1',sV10:'v10',sVEnd:'vEnd',sVStart:'vStart',sVDuty:'vDuty'}[id]];});
+  $('sBell').value=S.bellType||'klasik';$('sRate').value=S.voiceRate||0.95;
+  $('sVoiceSel').innerHTML=trVoices.length?trVoices.map(v=>`<option${trVoice&&v.name===trVoice.name?' selected':''}>${esc(v.name)}</option>`).join(''):'<option value="">Varsayılan Türkçe ses</option>';
+}
+function readVoiceSettings(){
+  const m={sVoice:'voice',sV5:'v5',sV1:'v1',sV10:'v10',sVEnd:'vEnd',sVStart:'vStart',sVDuty:'vDuty'};Object.keys(m).forEach(id=>S[m[id]]=$(id).checked);
+  S.bellType=$('sBell').value;S.voiceRate=+$('sRate').value;S.voiceName=$('sVoiceSel').value;pickVoice();voiceUI();
+}
+$('sBellTest').addEventListener('click',()=>schoolBell($('sBell').value));
+$('sVoiceTest').addEventListener('click',()=>{const old={n:S.voiceName,r:S.voiceRate};S.voiceName=$('sVoiceSel').value;S.voiceRate=+$('sRate').value;pickVoice();
+  speechSynthesis.cancel();say('Dersin bitmesine son beş dakika.',true);S.voiceName=old.n;S.voiceRate=old.r;pickVoice();});
+
+/* Sesli duyuru aracı */
+$('syPre').addEventListener('click',e=>{const b=e.target.closest('.pk');if(!b)return;$('syX').value=b.textContent.replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu,'').trim();sayNow();});
+function sayNow(){const t=$('syX').value.trim();if(!t){toast('Önce ne söyleneceğini yaz');return;}speechSynthesis.cancel();if(S.sound)tone(880,0,.25,'sine',.15);setTimeout(()=>say(t,true),300);}
+$('syGo').addEventListener('click',sayNow);
+$('syX').addEventListener('keydown',e=>{if(e.key==='Enter')sayNow();});
+$('syBell').addEventListener('click',()=>schoolBell());
 
 /* Ayarlar */
 let draftP=null;
@@ -1855,7 +1957,7 @@ $('sPeriods').addEventListener('input',e=>{const t=e.target;if(t.dataset.i!=null
 $('sAddP').addEventListener('click',()=>{const last=draftP[draftP.length-1];const st=last?toS(last[1])+600:32400;draftP.push([hm(st),hm(st+2400)]);drawPeriods();});
 $('sDelP').addEventListener('click',()=>{if(draftP.length>1){draftP.pop();drawPeriods();}});
 function openSettings(){
-  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
+  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;fillVoiceSettings();$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
   const d=now();const pad=x=>String(x).padStart(2,'0');
   $('sSim').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   openModal('mSet');
@@ -1864,7 +1966,7 @@ $('sSave').addEventListener('click',()=>{
   for(let i=0;i<draftP.length;i++){const [a,b]=draftP[i];
     if(!a||!b||toS(b)<=toS(a)){toast(`${i+1}. dersin bitişi başlangıçtan sonra olmalı`);return;}
     if(i>0&&toS(a)<toS(draftP[i-1][1])){toast(`${i+1}. ders, önceki dersle çakışıyor`);return;}}
-  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
+  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;readVoiceSettings();S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
   S.periods=clone(draftP);S.grid=S.grid.map(row=>S.periods.map((_,i)=>row[i]||null));
   save();closeModals();renderAll();toast('Ayarlar kaydedildi');
 });
@@ -1927,11 +2029,11 @@ function tick(force){
   const segKey=r.seg?`${dateKey(d)}|${r.seg.a}`:`${dateKey(d)}|${r.t}`;
   if(force||segKey!==lastSegKey||Math.floor(r.sec/15)!==lastQ){renderTimeline(r);lastQ=Math.floor(r.sec/15);}
   if(lastSegKey&&segKey!==lastSegKey&&r.wd<=4){
-    if(soundHere())beep([880,660,523]);
+    announce(r,info,lastInfo);
     if(lastInfo&&lastInfo.isLesson){const c=colorOf(lastInfo.big);confetti([c,'#ffffff','#ffef1a','#ff1ee8','#19e6f0']);}
     if(view==='week')renderWeek();
   }
-  if(S.warn&&info.counting&&info.rem<=300&&info.rem>290&&!fired[segKey]){fired[segKey]=1;if(soundHere())beep([660,880],.25);}
+  voiceTick(r,info,segKey);
   v5Tick(r,segKey,lastSegKey);
   lastSegKey=segKey;lastInfo=info;
 }
