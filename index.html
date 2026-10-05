@@ -412,10 +412,45 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
 @media (max-width:820px){.aiBody,.aiCards{grid-template-columns:1fr}}
 .vopts{display:grid;grid-template-columns:1fr;gap:0;padding-left:1vw;border-left:4px solid #e3e6f5;margin:.6vh 0}
 .vopts .toggle{margin:.6vh 0;font-size:1.9vh}
+/* v7 */
+#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.blobs{display:none}
+body.bgIsik .blobs{display:block}
+.ngB{display:inline-flex;align-items:center;gap:.5vw;padding:.7vh 1vw;border-radius:99px;background:rgba(255,255,255,.12);font-size:2.4vh}
+.ngBar{width:9vw;height:1.4vh;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;display:block}
+.ngBar i{display:block;height:100%;width:0;transition:width .15s,background .3s}
+.noiseWarn{position:fixed;inset:0;z-index:33;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .3s}
+.noiseWarn.show{opacity:1}
+.nwIn{background:#fff;color:#16204a;border-radius:4vh;padding:4vh 5vw;text-align:center;box-shadow:0 0 0 1.4vh #ff3b5c,0 4vh 10vh rgba(0,0,0,.5);transform:scale(.7);transition:transform .4s cubic-bezier(.2,1.6,.4,1)}
+.noiseWarn.show .nwIn{transform:scale(1);animation:nwShake .5s .4s 2}
+.nwE{font-size:18vh;line-height:1}
+.nwIn b{display:block;font-family:var(--fd);font-size:8vh;color:#ff3b5c;line-height:1.1}
+.nwIn span{display:block;font-weight:900;font-size:4vh;margin-top:1vh}
+@keyframes nwShake{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+.musicNow{position:fixed;top:10vh;left:50%;transform:translateX(-50%);z-index:12;border:none;border-radius:99px;background:#fff;color:#16204a;font-weight:900;font-size:2.2vh;
+  padding:1.1vh 1.6vw;display:flex;align-items:center;gap:.8vw;box-shadow:0 1vh 3vh rgba(0,0,0,.35)}
+.musicNow b{background:#ff3b5c;color:#fff;border-radius:99px;padding:.3vh .9vw}
+.eq{display:inline-flex;gap:3px;align-items:flex-end;height:2.2vh}
+.eq i{width:4px;background:#7a2cff;border-radius:2px;animation:eq .8s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}
+@keyframes eq{0%,100%{height:30%}50%{height:100%}}
+.qb.qon{background:#ff3b5c;border-color:transparent}
+.ngBox{background:#fff4f6;border:2px solid #ffc2cd;border-radius:2vh;padding:1.6vh 1.4vw;margin-bottom:1.6vh}
+.ngBox .row{margin:.8vh 0;font-weight:800}
+.mrow{display:flex;align-items:center;gap:.8vw;flex-wrap:wrap;margin:.8vh 0;padding:.8vh .8vw;background:#f4f6ff;border-radius:1.4vh}
+.mrow b{min-width:13vw;font-size:1.9vh}
+.mrow select{flex:1;min-width:200px}
+.mrow .btn{padding:1vh 1.1vw}
+.mup{font-weight:800;font-size:1.6vh;color:#5a638f}
+.mx{border:none;background:#ffe3e8;color:#b0122f;border-radius:.8vh;font-weight:900;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.eq i,.noiseWarn.show .nwIn{animation:none}}
 </style>
 </head>
 <body>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
 <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="noiseWarn" id="noiseWarn" aria-live="assertive"><div class="nwIn"><div class="nwE">🙉</div><b>Çok gürültü var!</b><span>Biraz sessiz olalım 🤫</span></div></div>
+<button class="musicNow hide" id="musicNow"></button>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <button class="fx" id="focusExit">✕ Odaktan çık</button>
 
@@ -451,7 +486,7 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
       <div class="ringIn"><div class="tBig" id="tBig">--:--</div><div class="tCap" id="tCap">kaldı</div></div>
     </div>
     <div class="info">
-      <div class="pillRow"><span class="pill" id="pill">Yükleniyor</span><span class="light hide" id="lightB"></span><span class="duty hide" id="dutyB"></span></div>
+      <div class="pillRow"><span class="pill" id="pill">Yükleniyor</span><span class="light hide" id="lightB"></span><span class="duty hide" id="dutyB"></span><span class="ngB hide" id="ngB" title="Sınıfın ses düzeyi"><span id="ngFace">😊</span><span class="ngBar"><i id="ngFill"></i></span></span></div>
       <div class="big" id="big">—</div>
       <div class="subj" id="subj"></div>
       <div class="meta" id="meta"></div>
@@ -471,6 +506,8 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
       <button class="qb" data-q="act5">⏱️ 5 dk</button>
       <button class="qb" data-q="light">🚦 Işık</button>
       <button class="qb" data-q="sfx">👏 Ses efekti</button>
+      <button class="qb" data-q="noise">🙉 Gürültü bekçisi</button>
+      <button class="qb" data-q="sync" title="Okulun zili çaldığı anda bas">🔔 Zil çaldı</button>
     </div>
   </main>
 
@@ -646,6 +683,15 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
     </div>
 
     <div class="pane" data-p="noise">
+      <div class="ngBox">
+        <label class="toggle"><input type="checkbox" id="ngOn"> <b>🙉 Gürültü bekçisi</b>&nbsp;— arka planda sürekli dinler; sınıf çok gürültülü olunca ekranda uyarı çıkar ve sesli uyarır.</label>
+        <div class="row"><span>Hassas</span><input type="range" id="ngLim" min="20" max="90"><span>Toleranslı</span></div>
+        <div class="row"><span>Gürültü bu kadar sürerse uyar:</span><input type="range" id="ngHold" min="1" max="8" step="1"><b id="ngHoldV"></b></div>
+        <label class="toggle"><input type="checkbox" id="ngLesson"> Sadece ders saatlerimde çalışsın</label>
+        <label class="toggle"><input type="checkbox" id="ngLight"> Uyarınca trafik ışığını kırmızı yap</label>
+        <button class="btn" id="ngTest">Uyarıyı dene</button>
+      </div>
+      <p class="s">Anlık ses ölçer (sadece bu pencere açıkken):</p>
       <div class="face" id="nzFace">🤫</div>
       <div class="nzMsg" id="nzMsg">Başlat'a dokun</div>
       <div class="meter"><i id="nzFill"></i><span class="th" id="nzTh"></span></div>
@@ -754,6 +800,18 @@ table.aiPrev td.meC{background:#12b39a;color:#fff}
       <p class="s" style="margin-top:1vh">Tarayıcılar konuşmaya izin vermek için sayfaya bir kez dokunulmasını ister. Sabah tahtayı açınca bir kez dokunman yeterli.</p>
     </div>
     <div class="sep"></div>
+    <div class="fld"><span>⏱️ Okul zili ile eşitle</span>
+      <div class="row"><input type="range" id="sShift" min="-10" max="30" step="1"><b id="sShiftV"></b><button class="btn pri" id="sSyncBell">🔔 Zil şimdi çaldı — otomatik ayarla</button></div>
+      <p class="s" style="margin-top:1vh">Okulun zili sistemden birkaç saniye sonra çalıyorsa sayaç ve duyurular da o kadar kayar. En kolayı: okulun zili çaldığı anda bu butona (ya da ana ekrandaki 🔔 Zil çaldı) bas.</p></div>
+    <div class="sep"></div>
+    <div class="fld"><span>🎵 Zil şarkıları (her sınıf seviyesine)</span>
+      <div class="row"><b>Ne zaman</b><select id="sMusicWhen"><option value="end">Ders bitince (teneffüs müziği)</option><option value="start">Ders başlarken (karşılama)</option><option value="both">İkisinde de</option><option value="off">Hiç çalma</option></select></div>
+      <div class="row" style="margin-top:1vh"><b>Ses</b><input type="range" id="sMusicVol" min="0.1" max="1" step="0.05"><b>Süre</b><input type="range" id="sMusicMax" min="10" max="90" step="5"><span id="sMusicMaxV" style="font-weight:800"></span></div>
+      <div id="sMusicRows"></div>
+      <p class="s">Şarkılar tahtanın kendi besteleri ve telifsiz klasikler. İstersen 📁 ile o seviye için kendi şarkını (mp3) yükleyebilirsin; bu cihazda saklanır.</p></div>
+    <div class="sep"></div>
+    <div class="fld"><span>🎨 Canlı arka plan</span><select id="sBg"></select></div>
+    <div class="sep"></div>
     <div class="fld"><span>📲 Uygulama olarak yükle</span><div class="row"><button class="btn pri" id="sInstall">📲 Bu cihaza yükle</button></div><p class="s" id="sInstInfo" style="margin-top:1vh">Masaüstüne ve telefona renkli saat simgesiyle yüklenir, tek dokunuşla açılır.</p></div>
     <div class="fld"><span>🤖 Yapay zekâ anahtarı (Gemini, ücretsiz)</span>
       <textarea id="sKeys" style="min-height:9vh" placeholder="Her satıra bir anahtar"></textarea>
@@ -826,6 +884,7 @@ const DEFAULT={
   ]),
   ov:{}, notes:{}, rosters:{}, att:{}, light:null, msg:null, score:null, wheelCustom:'', qr:'', miniSize:1,
   me:'Barış', dutyOv:{}, dutyBell:true, rem:[], todo:[],
+  shift:6, bg:'illuzyon', musicWhen:'end', musicVol:.6, musicMax:25, music:{}, noiseGuard:false, ngLimit:60, ngHold:3, ngLesson:true, ngLight:false, ngCool:45,
   voice:true, v5:true, v1:true, v10:false, vEnd:true, vStart:true, vDuty:true, bellType:'klasik', voiceRate:0.95, voiceName:'',
   duty:{places:['Ön Bahçe','3. Kat','4. Kat','Arka Bahçe'],table:[
     ['Necmettin h.','Tuncay h.','Nurbanu h.','Gülay h.'],
@@ -898,7 +957,7 @@ function nextOwn(d,sec){
   return null;
 }
 function compute(){
-  const d=now();const wd=wdOf(d);
+  const d=new Date(now().getTime()-(+S.shift||0)*1000);const wd=wdOf(d);
   const sec=d.getHours()*3600+d.getMinutes()*60+d.getSeconds()+d.getMilliseconds()/1000;
   const segs=segments();const r={d,wd,sec,segs};
   if(wd>4||!segs.length)r.t='weekend';
@@ -1398,7 +1457,7 @@ function nzStop(){if(nz){nz.st.getTracks().forEach(t=>t.stop());nz=null;}$('nzGo
 
 /* Hızlı araçlar */
 document.querySelector('.quick').addEventListener('click',e=>{const b=e.target.closest('.qb');if(!b)return;const q=b.dataset.q;
-  if(q==='act5')startAct(300,'Etkinlik');else openTools(q);});
+  if(q==='act5')startAct(300,'Etkinlik');else if(q==='noise')ngToggle();else if(q==='sync')syncBell();else openTools(q);});
 
 /* Mini pencere: her zaman üstte, büyük ekrandan bağımsız */
 const MINI_MODE=location.hash==='#mini';
@@ -1864,7 +1923,7 @@ async function pwaInstall(){
 $('sInstall').addEventListener('click',pwaInstall);
 
 /* ===== v5: ortak döngü ve bölme ===== */
-function refreshPaneV5(){if(tab==='duty')renderDutyPane();if(tab==='rem')renderRem();if(tab==='todo')renderTodo();if(tab==='vote')renderVote();if(tab==='ai')renderAiState();}
+function refreshPaneV5(){if(tab==='noise')ngPaneInit();if(tab==='duty')renderDutyPane();if(tab==='rem')renderRem();if(tab==='todo')renderTodo();if(tab==='vote')renderVote();if(tab==='ai')renderAiState();}
 function nextSlotText(r,idx){const n=r.next,P=S.periods;
   if(idx>=P.length)return n?`Bugünlük bitti • Sonra ${n.c.c} ${whenText(n)}`:'Günün son dersi';
   const c=cellOn(r.d,idx);if(c)return `Sonraki: ${c.c} • ${P[idx][0]}`;
@@ -1948,6 +2007,248 @@ $('syGo').addEventListener('click',sayNow);
 $('syX').addEventListener('keydown',e=>{if(e.key==='Enter')sayNow();});
 $('syBell').addEventListener('click',()=>schoolBell());
 
+/* ===== v7: Zil farkı (okul zili ile eşitleme) ===== */
+function syncBell(){
+  const d=now();const s=d.getHours()*3600+d.getMinutes()*60+d.getSeconds()+d.getMilliseconds()/1000;let best=null;
+  S.periods.forEach(([a,b])=>[toS(a),toS(b)].forEach(x=>{const df=s-x;if(best===null||Math.abs(df)<Math.abs(best))best=df;}));
+  if(best===null||Math.abs(best)>90){toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.');return;}
+  S.shift=Math.max(-30,Math.min(60,Math.round(best)));save();fired={};
+  toast(`✔ Okul zili ${S.shift>=0?S.shift+' sn sonra':(-S.shift)+' sn önce'} çalıyor. Duyurular buna göre ayarlandı.`);
+  if($('sShift')){$('sShift').value=S.shift;$('sShiftV').textContent=S.shift+' sn';}tick(true);
+}
+
+/* ===== v7: Sessizlik koruması (kendi seslerimizi gürültü sanmasın) ===== */
+let quietUntil=0;
+const quiet=ms=>{quietUntil=Math.max(quietUntil,Date.now()+ms);};
+const _say=say;say=function(t,force){quiet(1500+String(t||'').length*85);return _say(t,force);};
+const _bell=schoolBell;schoolBell=function(k){quiet((BELL_MS[k||S.bellType]||3400)+800);return _bell(k);};
+
+/* ===== v7: Zil şarkıları (her sınıf seviyesine) ===== */
+const LEVELS={pre:'Okul öncesi',ilk:'İlkokul (1-4)',orta:'Ortaokul (5-8)',genel:'Diğer sınıflar'};
+function levelOf(c){const t=trNorm(c);if(/ana|kres|okul oncesi|yuva|anaokul/.test(t))return 'pre';const m=t.match(/^(\d{1,2})/);
+  if(m){const n=+m[1];if(n<=4)return 'ilk';if(n<=8)return 'orta';}return 'genel';}
+const SONGS={
+  ksilofon:{n:'🎈 Neşeli Ksilofon',lv:'pre',bpm:132,ins:'xylo',dr:'k-h-s-h-',
+    lead:'C5:.5 E5:.5 G5:.5 E5:.5 C6:1 G5:1 A5:.5 G5:.5 F5:.5 E5:.5 D5:1 G4:1 C5:.5 E5:.5 G5:.5 C6:.5 B5:.5 A5:.5 G5:1 F5:.5 E5:.5 D5:.5 E5:.5 C5:2',
+    bass:'C3:2 G2:2 F2:2 G2:2 C3:2 E3:2 G2:2 C3:2'},
+  yildiz:{n:'⭐ Parlayan Yıldız (klasik ninni)',lv:'pre',bpm:112,ins:'bell',dr:'k---s---',
+    lead:'C5:1 C5:1 G5:1 G5:1 A5:1 A5:1 G5:2 F5:1 F5:1 E5:1 E5:1 D5:1 D5:1 C5:2 G5:1 G5:1 F5:1 F5:1 E5:1 E5:1 D5:2 G5:1 G5:1 F5:1 F5:1 E5:1 E5:1 D5:2',
+    bass:'C3:4 F2:2 C3:2 F2:2 C3:2 G2:2 C3:2 C3:2 G2:2 C3:2 G2:2 C3:2 G2:2 C3:2 G2:2'},
+  dans:{n:'💃 Teneffüs Dansı',lv:'ilk',bpm:140,ins:'pluck',dr:'k-hsk-hs',
+    lead:'G4:.5 C5:.5 E5:.5 G5:.5 E5:.5 C5:.5 D5:1 F4:.5 A4:.5 D5:.5 F5:.5 E5:.5 D5:.5 C5:1 E5:.5 E5:.5 F5:.5 G5:.5 A5:.5 G5:.5 E5:1 D5:.5 E5:.5 D5:.5 B4:.5 C5:2',
+    bass:'C3:1 G2:1 C3:1 G2:1 D3:1 A2:1 G2:1 B2:1 C3:1 G2:1 A2:1 E2:1 G2:1 G2:1 C3:2'},
+  nese:{n:'🎼 Neşe Marşı (Beethoven)',lv:'ilk',bpm:120,ins:'pluck',dr:'k-h-s-h-',
+    lead:'E5:1 E5:1 F5:1 G5:1 G5:1 F5:1 E5:1 D5:1 C5:1 C5:1 D5:1 E5:1 E5:1.5 D5:.5 D5:2 E5:1 E5:1 F5:1 G5:1 G5:1 F5:1 E5:1 D5:1 C5:1 C5:1 D5:1 E5:1 D5:1.5 C5:.5 C5:2',
+    bass:'C3:2 C3:2 G2:2 G2:2 C3:2 C3:2 G2:4 C3:2 C3:2 G2:2 G2:2 C3:2 G2:2 C3:4'},
+  robot:{n:'🤖 Robot Ritmi',lv:'orta',bpm:150,ins:'square',dr:'k-hsk-hs',
+    lead:'A4:.5 C5:.5 E5:.5 A5:.5 G5:.5 E5:.5 D5:.5 E5:.5 F4:.5 A4:.5 C5:.5 F5:.5 E5:.5 C5:.5 B4:.5 C5:.5 G4:.5 B4:.5 D5:.5 G5:.5 F5:.5 D5:.5 E5:.5 D5:.5 E5:1 E5:.5 D5:.5 C5:.5 B4:.5 A4:1',
+    bass:'A2:1 A2:1 A2:1 A2:1 F2:1 F2:1 F2:1 F2:1 G2:1 G2:1 G2:1 G2:1 E2:1 E2:1 A2:2'},
+  siber:{n:'🚀 Siber Macera',lv:'orta',bpm:128,ins:'square',dr:'k-h-s-hh',
+    lead:'E5:1 D5:.5 E5:.5 G5:1 E5:1 D5:.5 C5:.5 D5:1 A4:2 C5:1 B4:.5 C5:.5 E5:1 C5:1 B4:.5 A4:.5 B4:1 E4:2',
+    bass:'C3:2 C3:2 D3:2 D3:2 A2:2 A2:2 E2:2 E2:2'},
+  gunes:{n:'☀️ Güneşli Gün',lv:'genel',bpm:116,ins:'bell',dr:'k-h-s-h-',
+    lead:'G4:1 C5:1 E5:1 G5:1.5 E5:.5 F5:1 D5:1 B4:1 G4:1 A4:1 C5:1 E5:1 D5:1.5 C5:.5 C5:3 -:1',
+    bass:'C3:2 C3:2 F2:2 G2:2 A2:2 F2:2 G2:2 C3:2'}
+};
+function nf(n){const m=n.match(/^([A-G])(#|b)?(\d)$/);if(!m)return 0;const i={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0);return 440*Math.pow(2,(i+(+m[3]+1)*12-69)/12);}
+const parseSeq=s=>s.trim().split(/\s+/).map(t=>{const [n,d]=t.split(':');return [n,+d||1];});
+let mus=null;
+function stopMusic(){if(!mus)return;try{const g=mus.g,a=ac();g.gain.cancelScheduledValues(a.currentTime);g.gain.setValueAtTime(g.gain.value,a.currentTime);g.gain.linearRampToValueAtTime(0,a.currentTime+.6);setTimeout(()=>g.disconnect(),700);}catch(e){}
+  if(mus.audio){mus.audio.pause();URL.revokeObjectURL(mus.audio.src);}clearTimeout(mus.to);mus=null;musicUI();if(bc)bc.postMessage({t:'music',on:false});}
+function inst(a,dst,kind,f,t,d){
+  const g=a.createGain();g.connect(dst);const o=a.createOscillator();
+  if(kind==='xylo'){o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.5,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+Math.min(.7,d+.3));
+    const o2=a.createOscillator(),g2=a.createGain();o2.type='sine';o2.frequency.value=f*4;g2.gain.setValueAtTime(.12,t);g2.gain.exponentialRampToValueAtTime(.0001,t+.12);o2.connect(g2);g2.connect(dst);o2.start(t);o2.stop(t+.2);}
+  else if(kind==='bell'){o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.4,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d+.6);
+    const o2=a.createOscillator(),g2=a.createGain();o2.type='sine';o2.frequency.value=f*2.76;g2.gain.setValueAtTime(.08,t);g2.gain.exponentialRampToValueAtTime(.0001,t+.5);o2.connect(g2);g2.connect(dst);o2.start(t);o2.stop(t+.6);}
+  else if(kind==='square'){o.type='square';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.01);g.gain.setValueAtTime(.12,t+d*.8);g.gain.exponentialRampToValueAtTime(.0001,t+d);}
+  else if(kind==='bass'){o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d*.95);}
+  else{o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.4,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.25,d*.9));}
+  o.connect(g);o.start(t);o.stop(t+d+.8);
+}
+function drum(a,dst,k,t){
+  if(k==='k'){const o=a.createOscillator(),g=a.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.6,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(dst);o.start(t);o.stop(t+.2);return;}
+  const len=Math.floor(a.sampleRate*(k==='s'?.14:.04)),b=a.createBuffer(1,len,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<len;i++)ch[i]=(Math.random()*2-1)*(1-i/len);
+  const s=a.createBufferSource();s.buffer=b;const f=a.createBiquadFilter();f.type='highpass';f.frequency.value=k==='s'?1500:7000;const g=a.createGain();g.gain.value=k==='s'?.3:.12;
+  s.connect(f);f.connect(g);g.connect(dst);s.start(t);
+}
+function playSynth(id){
+  const sg=SONGS[id];if(!sg)return;stopMusic();const a=ac();const g=a.createGain();g.gain.value=(+S.musicVol||.6)*.55;g.connect(a.destination);
+  const spb=60/sg.bpm,L=parseSeq(sg.lead),B=parseSeq(sg.bass);const beats=L.reduce((x,y)=>x+y[1],0);const loops=Math.max(1,Math.round((+S.musicMax||25)/(beats*spb)));
+  let t=a.currentTime+.08;const t0=t;
+  for(let r=0;r<loops;r++){let tl=t;L.forEach(([n,d])=>{if(n!=='-')inst(a,g,sg.ins,nf(n),tl,d*spb);tl+=d*spb;});
+    let tb=t;B.forEach(([n,d])=>{inst(a,g,'bass',nf(n)/2,tb,d*spb);tb+=d*spb;});
+    for(let i=0;i<beats*2;i++){const k=sg.dr[i%sg.dr.length];if(k!=='-')drum(a,g,k,t+i*spb/2);}
+    t+=beats*spb;}
+  const total=t-t0;g.gain.setValueAtTime(g.gain.value,t-1);g.gain.linearRampToValueAtTime(0,t);
+  mus={g,name:sg.n,to:setTimeout(()=>{mus=null;musicUI();},total*1000+300)};quiet(total*1000+1500);musicUI();if(bc)bc.postMessage({t:'music',on:true,name:sg.n});
+}
+/* Yüklenen şarkılar (IndexedDB) */
+function idb(){return new Promise((res,rej)=>{const q=indexedDB.open('dersSaatiDB',1);q.onupgradeneeded=()=>q.result.createObjectStore('music');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}
+async function idbPut(k,v){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction('music','readwrite');tx.objectStore('music').put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
+async function idbGet(k){const db=await idb();return new Promise(res=>{const q=db.transaction('music').objectStore('music').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);});}
+async function idbDel(k){const db=await idb();return new Promise(res=>{const tx=db.transaction('music','readwrite');tx.objectStore('music').delete(k);tx.oncomplete=res;tx.onerror=res;});}
+async function playUpload(lv){
+  const rec=await idbGet(lv);if(!rec){toast('Bu seviye için yüklenmiş şarkı yok');return;}stopMusic();
+  const au=new Audio(URL.createObjectURL(rec.blob));au.volume=Math.min(1,+S.musicVol||.6);const max=(+S.musicMax||25)*1000;
+  try{await au.play();}catch(e){toast('Şarkı çalınamadı');return;}
+  mus={audio:au,name:'🎵 '+rec.name,to:setTimeout(()=>{if(mus&&mus.audio===au){const st=Date.now();const iv=setInterval(()=>{au.volume=Math.max(0,au.volume-.08);if(au.volume<=0||Date.now()-st>2000){clearInterval(iv);stopMusic();}},150);}},max)};
+  au.onended=()=>{if(mus&&mus.audio===au)stopMusic();};quiet(max+3000);musicUI();if(bc)bc.postMessage({t:'music',on:true,name:rec.name});
+}
+async function playForLevel(lv){
+  const ch=(S.music||{})[lv]||'mix';if(ch==='off')return;
+  if(ch==='upload'){if(await idbGet(lv))return playUpload(lv);}
+  if(SONGS[ch])return playSynth(ch);
+  const pool=Object.keys(SONGS).filter(k=>SONGS[k].lv===lv);const all=pool.length?pool:Object.keys(SONGS);playSynth(all[Math.floor(Math.random()*all.length)]);
+}
+let remoteMusic=null;
+function musicUI(){const el=$('musicNow');const nm=mus?mus.name:remoteMusic;el.classList.toggle('hide',!nm);if(nm)el.innerHTML=`<span class="eq"><i></i><i></i><i></i></span> ${esc(nm)} <b>⏹ Durdur</b>`;}
+$('musicNow').addEventListener('click',()=>{if(mus)stopMusic();else if(bc)bc.postMessage({t:'stopMusic'});remoteMusic=null;musicUI();});
+
+/* ===== v7: Yeni duyuru akışı (zil → söz → şarkı) ===== */
+announce=function(r,info,prev){
+  if(!soundHere()||r.wd>4)return;
+  const was=!!(prev&&prev.isLesson),is=!!info.isLesson;let delay=0;const mw=S.musicWhen||'end';
+  const duty=(r.t==='break'||r.t==='lunch')?dutyOn(r.d):null;
+  if(was&&!is){
+    if(S.vEnd){if(S.sound){schoolBell();delay=BELL_MS[S.bellType]||3400;}
+      if(S.voice){say&&sayLater(r.t==='lunch'?'Ders bitti. Afiyet olsun!':r.t==='after'?'Günün son dersi bitti. Hepinize teşekkürler, hoşça kalın!':'Ders bitti. İyi teneffüsler!',delay);delay+=2600;}}
+    else if(S.sound)beep([880,660,523]);
+    if(duty&&S.voice&&S.vDuty){sayLater(`Nöbet zamanı. Nöbet yerin: ${duty}.`,delay);delay+=3200;}
+    if((mw==='end'||mw==='both')&&r.t!=='after'){const lv=levelOf(prev.big);setTimeout(()=>playForLevel(lv),delay+300);}
+  }else if(is&&r.cell){
+    if(S.vStart){if(S.sound){schoolBell();delay=BELL_MS[S.bellType]||3400;}
+      if(S.voice){sayLater(`${prev&&(prev.pill||'').includes('Teneffüs')?'Teneffüs bitti. ':''}Şimdi ${spk(r.cell.c)} ile ${r.cell.s} dersi başlıyor.`,delay);delay+=3600;}}
+    else if(S.sound)beep([523,659,784]);
+    if(mw==='start'||mw==='both'){const lv=levelOf(r.cell.c);setTimeout(()=>playForLevel(lv),delay+200);}
+  }else if(duty&&S.voice&&S.vDuty)sayLater(`Nöbet zamanı. Nöbet yerin: ${duty}.`,0);
+};
+
+/* ===== v7: Gürültü bekçisi ===== */
+let ng=null,ngFail=false,ngLastWarn=0,ngRemoteLvl=null,ngRemoteAt=0;
+const NG_SAY=['Sınıfta ses biraz yükseldi. Lütfen sessiz olalım.','Kulaklarımız yoruldu. Fısıltıyla konuşalım.','Sessiz olursak daha iyi öğreniriz. Teşekkürler!','Hadi bakalım, en sessiz sınıf hangisi?','Biraz sessizlik lütfen. Arkadaşlarımız çalışıyor.'];
+async function ngStart(){
+  if(ng||ngFail)return;
+  try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const a=ac();const src=a.createMediaStreamSource(st);const an=a.createAnalyser();an.fftSize=1024;src.connect(an);
+    ng={st,an,buf:new Uint8Array(an.fftSize),lvl:0,loud:0,last:performance.now()};ng.iv=setInterval(ngStep,120);ngUI();
+  }catch(e){ngFail=true;S.noiseGuard=false;save();ngUI();toast('Gürültü bekçisi için mikrofon izni gerekli (adres çubuğundaki mikrofon simgesi).');}
+}
+function ngStop(){if(ng){clearInterval(ng.iv);ng.st.getTracks().forEach(t=>t.stop());ng=null;}ngUI();}
+function ngStep(){
+  if(!ng)return;ng.an.getByteTimeDomainData(ng.buf);let s=0;for(let i=0;i<ng.buf.length;i++){const x=(ng.buf[i]-128)/128;s+=x*x;}
+  const lvl=Math.min(100,Math.sqrt(s/ng.buf.length)*400);ng.lvl=ng.lvl*.8+lvl*.2;const t=performance.now(),dt=t-ng.last;ng.last=t;
+  const lim=+S.ngLimit||60;const muted=Date.now()<quietUntil||(window.speechSynthesis&&speechSynthesis.speaking)||!!mus;
+  ng.loud=muted?0:(ng.lvl>lim?ng.loud+dt:Math.max(0,ng.loud-dt*1.5));
+  ngMeter(ng.lvl);if(bc&&MINI_MODE)bc.postMessage({t:'nlvl',v:ng.lvl});
+  if(ng.loud>(+S.ngHold||3)*1000&&Date.now()-ngLastWarn>(+S.ngCool||45)*1000){ngLastWarn=Date.now();ng.loud=0;noiseWarn(true);}
+}
+function ngMeter(v){const b=$('ngB');if(!b)return;const lim=+S.ngLimit||60;b.classList.remove('hide');
+  $('ngFill').style.width=Math.min(100,v/lim*100)+'%';$('ngFill').style.background=v>lim?'#ff3b5c':v>lim*.7?'#ffb020':'#3dd68c';$('ngFace').textContent=v>lim?'🙉':v>lim*.7?'😐':'😊';}
+function noiseWarn(local){
+  const el=$('noiseWarn');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),5500);
+  miniOverlay('Sessiz olalım 🤫','🙉 Çok gürültü var','#ff3b5c');
+  if(local){if(bc)bc.postMessage({t:'nwarn'});
+    if(S.ngLight){S.light='red';save();renderExtras();}
+    noise(0,1.1,.25,2200);if(S.voice)sayLater(NG_SAY[Math.floor(Math.random()*NG_SAY.length)],1300);quiet(8000);}
+}
+function ngUI(){
+  const on=!!S.noiseGuard;const q=document.querySelector('[data-q="noise"]');if(q)q.textContent=on?'🙉 Gürültü bekçisi: açık':'🙉 Gürültü bekçisi';if(q)q.classList.toggle('qon',on);
+  if(!ng&&!(ngRemoteLvl!==null&&Date.now()-ngRemoteAt<3000))$('ngB').classList.add('hide');
+  if($('ngOn'))$('ngOn').checked=on;
+}
+function ngSync(){const r=lastR;const want=S.noiseGuard&&soundHere()&&(!S.ngLesson||(r&&r.t==='lesson'&&!!r.cell));if(want&&!ng)ngStart();else if(!want&&ng)ngStop();
+  if(!ng&&ngRemoteLvl!==null&&Date.now()-ngRemoteAt>3000){ngRemoteLvl=null;$('ngB').classList.add('hide');}}
+function ngToggle(v){S.noiseGuard=v===undefined?!S.noiseGuard:v;ngFail=false;save();ngUI();ngSync();toast(S.noiseGuard?'🙉 Gürültü bekçisi açık. Sınıf çok gürültülü olursa uyarır.':'Gürültü bekçisi kapalı');}
+function ngPaneInit(){$('ngOn').checked=!!S.noiseGuard;$('ngLim').value=S.ngLimit||60;$('ngHold').value=S.ngHold||3;$('ngHoldV').textContent=(S.ngHold||3)+' sn';
+  $('ngLesson').checked=S.ngLesson!==false;$('ngLight').checked=!!S.ngLight;}
+['ngLim','ngHold'].forEach(id=>$(id).addEventListener('input',()=>{S.ngLimit=+$('ngLim').value;S.ngHold=+$('ngHold').value;$('ngHoldV').textContent=S.ngHold+' sn';save();}));
+$('ngOn').addEventListener('change',()=>ngToggle($('ngOn').checked));
+$('ngLesson').addEventListener('change',()=>{S.ngLesson=$('ngLesson').checked;save();ngSync();});
+$('ngLight').addEventListener('change',()=>{S.ngLight=$('ngLight').checked;save();});
+$('ngTest').addEventListener('click',()=>noiseWarn(true));
+const _oldBc=bc&&bc.onmessage;
+if(bc)bc.onmessage=e=>{_oldBc&&_oldBc(e);const m=e.data||{};
+  if(m.t==='nlvl'&&!ng){ngRemoteLvl=m.v;ngRemoteAt=Date.now();ngMeter(m.v);}
+  if(m.t==='nwarn')noiseWarn(false);
+  if(m.t==='music'){remoteMusic=m.on?m.name:null;musicUI();}
+  if(m.t==='stopMusic'&&mus)stopMusic();};
+
+/* ===== v7: İllüzyonlu canlı arka planlar ===== */
+const BGS={illuzyon:'🌀 İllüzyon tüneli',uzay:'🌌 Uzay yolculuğu',aurora:'🌈 Kuzey ışıkları',kabarcik:'🫧 Kabarcıklar',hipno:'🎯 Hipnotik halkalar',isik:'💡 Yumuşak ışıklar',sade:'⬛ Sade'};
+let bgAc='#6c7cff';const _setAccent=setAccent;setAccent=function(c){bgAc=c;return _setAccent(c);};
+const bgCv=$('bgCanvas'),bx=bgCv.getContext('2d');let bgW=0,bgH=0,bgT0=performance.now(),bgLast=0,stars=[],bubbles=[];
+function bgSize(){const k=.6;bgW=bgCv.width=Math.round(innerWidth*k);bgH=bgCv.height=Math.round(innerHeight*k);}
+addEventListener('resize',bgSize);bgSize();
+function hexA(h,a){const [r,g,b]=rgb(h);return `rgba(${r},${g},${b},${a})`;}
+function hueShift(h,deg){const [r,g,b]=rgb(h).map(x=>x/255);const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let hh=0,s=0,l=(mx+mn)/2;
+  if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);hh=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;hh*=60;}
+  return `hsl(${(hh+deg+360)%360},${Math.round(s*100)}%,${Math.round(Math.max(.35,Math.min(.65,l))*100)}%)`;}
+function bgFrame(now2){
+  requestAnimationFrame(bgFrame);
+  const mode=S.bg||'illuzyon';document.body.classList.toggle('bgIsik',mode==='isik');
+  if(MINI_MODE||document.hidden||mode==='isik'||mode==='sade'){if(bgLast!==-1){bx.clearRect(0,0,bgW,bgH);bgLast=-1;}return;}
+  if(now2-bgLast<33)return;bgLast=now2;const t=(now2-bgT0)/1000;const W=bgW,H=bgH,cx=W/2,cy=H/2;const red=matchMedia('(prefers-reduced-motion: reduce)').matches;const T=red?0:t;
+  bx.globalCompositeOperation='source-over';bx.fillStyle='#0d1533';bx.fillRect(0,0,W,H);
+  if(mode==='illuzyon'){
+    const ox=cx+Math.sin(T*.3)*W*.08,oy=cy+Math.cos(T*.23)*H*.08;const R=Math.hypot(W,H)*.6,step=Math.max(18,W/28),ph=(T*28)%(step*2);
+    for(let r=R+ph;r>0;r-=step){const i=Math.round((r-ph)/step);bx.beginPath();bx.arc(ox+(cx-ox)*(r/R),oy+(cy-oy)*(r/R),r,0,7);bx.fillStyle=i%2?hexA(bgAc,.55*(r/R)+.05):'#0d1533';bx.fill();}
+    bx.save();bx.translate(ox,oy);bx.rotate(T*.25);bx.globalAlpha=.18;for(let k=0;k<12;k++){bx.rotate(Math.PI/6);bx.fillStyle=k%2?'#fff':hueShift(bgAc,60);bx.beginPath();bx.moveTo(0,0);bx.lineTo(R,-R*.09);bx.lineTo(R,R*.09);bx.fill();}bx.restore();
+  }else if(mode==='hipno'){
+    const n=14;for(let i=n;i>0;i--){const r=i*Math.min(W,H)/n*.75+Math.sin(T*2+i*.6)*6;bx.save();bx.translate(cx,cy);bx.rotate((i%2?1:-1)*T*.2*(i/n));bx.beginPath();
+      for(let a=0;a<=Math.PI*2+.01;a+=Math.PI/48){const w=r+Math.sin(a*6+T*2)*r*.06;bx.lineTo(Math.cos(a)*w,Math.sin(a)*w);}bx.closePath();bx.fillStyle=i%2?hexA(bgAc,.5):hueShift(bgAc,i*12);bx.globalAlpha=.55;bx.fill();bx.restore();}
+  }else if(mode==='uzay'){
+    if(stars.length!==260)stars=Array.from({length:260},()=>({x:(Math.random()-.5)*W,y:(Math.random()-.5)*H,z:Math.random()*W}));
+    const g=bx.createRadialGradient(cx,cy,0,cx,cy,Math.max(W,H)*.7);g.addColorStop(0,hexA(bgAc,.25));g.addColorStop(1,'rgba(0,0,0,0)');bx.fillStyle=g;bx.fillRect(0,0,W,H);
+    stars.forEach(s=>{const pz=s.z;s.z-=red?0:W*.008;if(s.z<1){s.z=W;s.x=(Math.random()-.5)*W;s.y=(Math.random()-.5)*H;return;}
+      const k=W*.5/s.z,kp=W*.5/pz;const x=cx+s.x*k,y=cy+s.y*k,xp=cx+s.x*kp,yp=cy+s.y*kp;bx.strokeStyle=s.x>0?'#fff':hueShift(bgAc,40);bx.globalAlpha=Math.min(1,k*.6);bx.lineWidth=Math.min(3,k*1.2);bx.beginPath();bx.moveTo(xp,yp);bx.lineTo(x,y);bx.stroke();});
+    bx.globalAlpha=1;
+  }else if(mode==='aurora'){
+    bx.globalCompositeOperation='lighter';
+    for(let k=0;k<4;k++){const col=hueShift(bgAc,k*45-45);bx.beginPath();for(let x=0;x<=W;x+=8){const y=H*(.3+k*.12)+Math.sin(x*.006+T*(.4+k*.15)+k)*H*.12+Math.sin(x*.013-T*.3)*H*.05;x?bx.lineTo(x,y):bx.moveTo(x,y);}
+      bx.lineTo(W,H);bx.lineTo(0,H);bx.closePath();const g=bx.createLinearGradient(0,H*.2,0,H);g.addColorStop(0,col.replace('hsl','hsla').replace(')',',.35)'));g.addColorStop(1,'rgba(0,0,0,0)');bx.fillStyle=g;bx.fill();}
+  }else if(mode==='kabarcik'){
+    if(bubbles.length!==38)bubbles=Array.from({length:38},()=>({x:Math.random()*W,y:Math.random()*H,r:6+Math.random()*34,v:.3+Math.random()*1.2,h:Math.random()*120-60}));
+    bubbles.forEach(b=>{b.y-=red?0:b.v;b.x+=Math.sin(T+b.r)*.3;if(b.y<-b.r){b.y=H+b.r;b.x=Math.random()*W;}
+      bx.beginPath();bx.arc(b.x,b.y,b.r,0,7);bx.fillStyle=hueShift(bgAc,b.h).replace('hsl','hsla').replace(')',',.18)');bx.fill();bx.lineWidth=2;bx.strokeStyle='rgba(255,255,255,.35)';bx.stroke();
+      bx.beginPath();bx.arc(b.x-b.r*.35,b.y-b.r*.35,b.r*.22,0,7);bx.fillStyle='rgba(255,255,255,.5)';bx.fill();});
+  }
+  bx.globalCompositeOperation='source-over';bx.globalAlpha=1;
+  const v=bx.createRadialGradient(cx,cy,Math.min(W,H)*.15,cx,cy,Math.max(W,H)*.75);v.addColorStop(0,'rgba(13,21,51,.35)');v.addColorStop(1,'rgba(13,21,51,.85)');bx.fillStyle=v;bx.fillRect(0,0,W,H);
+}
+requestAnimationFrame(bgFrame);
+
+/* ===== v7: Ayarlar bağlantıları ===== */
+function fillV7Settings(){
+  $('sShift').value=S.shift||0;$('sShiftV').textContent=(S.shift||0)+' sn';
+  $('sBg').innerHTML=Object.keys(BGS).map(k=>`<option value="${k}"${(S.bg||'illuzyon')===k?' selected':''}>${BGS[k]}</option>`).join('');
+  $('sMusicWhen').value=S.musicWhen||'end';$('sMusicVol').value=S.musicVol||.6;$('sMusicMax').value=S.musicMax||25;$('sMusicMaxV').textContent=(S.musicMax||25)+' sn';
+  drawMusicRows();
+}
+function drawMusicRows(){
+  const M=S.music||{};
+  $('sMusicRows').innerHTML=Object.keys(LEVELS).map(lv=>`<div class="mrow"><b>${LEVELS[lv]}</b>
+    <select data-lv="${lv}"><option value="mix"${(M[lv]||'mix')==='mix'?' selected':''}>🔀 Seviyeye uygun karışık</option>${Object.keys(SONGS).map(k=>`<option value="${k}"${M[lv]===k?' selected':''}>${SONGS[k].n}</option>`).join('')}
+    <option value="upload"${M[lv]==='upload'?' selected':''}>📁 Kendi yüklediğim şarkı</option><option value="off"${M[lv]==='off'?' selected':''}>🔇 Şarkı çalma</option></select>
+    <button class="btn" data-play="${lv}">▶</button><label class="btn" title="Şarkı yükle">📁<input type="file" accept="audio/*" data-up="${lv}" hidden></label><span class="mup" id="mup_${lv}"></span></div>`).join('');
+  Object.keys(LEVELS).forEach(async lv=>{const r=await idbGet(lv).catch(()=>null);const e=$('mup_'+lv);if(e)e.innerHTML=r?`📁 ${esc(r.name.slice(0,22))} <button class="mx" data-del="${lv}">✕</button>`:'';});
+}
+$('sMusicRows').addEventListener('change',async e=>{
+  const sel=e.target.closest('select[data-lv]');if(sel){S.music=S.music||{};S.music[sel.dataset.lv]=sel.value;save();return;}
+  const up=e.target.closest('input[data-up]');if(up&&up.files[0]){const f=up.files[0];if(f.size>15e6){toast('Dosya çok büyük (en fazla 15 MB)');return;}
+    try{await idbPut(up.dataset.up,{name:f.name,blob:f});S.music=S.music||{};S.music[up.dataset.up]='upload';save();drawMusicRows();toast('Şarkı yüklendi 🎵');}catch(err){toast('Şarkı kaydedilemedi');}}
+});
+$('sMusicRows').addEventListener('click',async e=>{const p=e.target.closest('[data-play]');const d=e.target.closest('[data-del]');
+  if(p){S.musicVol=+$('sMusicVol').value;S.musicMax=+$('sMusicMax').value;const lv=p.dataset.play;const v=$('sMusicRows').querySelector(`select[data-lv="${lv}"]`).value;
+    if(mus){stopMusic();return;}if(v==='upload')playUpload(lv);else if(SONGS[v])playSynth(v);else if(v==='mix')playForLevel(lv);}
+  if(d){await idbDel(d.dataset.del);drawMusicRows();}});
+$('sShift').addEventListener('input',()=>{$('sShiftV').textContent=$('sShift').value+' sn';});
+$('sSyncBell').addEventListener('click',()=>{syncBell();});
+$('sMusicMax').addEventListener('input',()=>{$('sMusicMaxV').textContent=$('sMusicMax').value+' sn';});
+$('sBg').addEventListener('change',()=>{S.bg=$('sBg').value;save();});
+function readV7Settings(){S.shift=+$('sShift').value;S.bg=$('sBg').value;S.musicWhen=$('sMusicWhen').value;S.musicVol=+$('sMusicVol').value;S.musicMax=+$('sMusicMax').value;}
+
+ngUI();
 /* Ayarlar */
 let draftP=null;
 function drawPeriods(){
@@ -1957,7 +2258,7 @@ $('sPeriods').addEventListener('input',e=>{const t=e.target;if(t.dataset.i!=null
 $('sAddP').addEventListener('click',()=>{const last=draftP[draftP.length-1];const st=last?toS(last[1])+600:32400;draftP.push([hm(st),hm(st+2400)]);drawPeriods();});
 $('sDelP').addEventListener('click',()=>{if(draftP.length>1){draftP.pop();drawPeriods();}});
 function openSettings(){
-  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;fillVoiceSettings();$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
+  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;fillVoiceSettings();fillV7Settings();$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
   const d=now();const pad=x=>String(x).padStart(2,'0');
   $('sSim').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   openModal('mSet');
@@ -1966,7 +2267,7 @@ $('sSave').addEventListener('click',()=>{
   for(let i=0;i<draftP.length;i++){const [a,b]=draftP[i];
     if(!a||!b||toS(b)<=toS(a)){toast(`${i+1}. dersin bitişi başlangıçtan sonra olmalı`);return;}
     if(i>0&&toS(a)<toS(draftP[i-1][1])){toast(`${i+1}. ders, önceki dersle çakışıyor`);return;}}
-  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;readVoiceSettings();S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
+  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;readVoiceSettings();readV7Settings();S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
   S.periods=clone(draftP);S.grid=S.grid.map(row=>S.periods.map((_,i)=>row[i]||null));
   save();closeModals();renderAll();toast('Ayarlar kaydedildi');
 });
@@ -2021,7 +2322,7 @@ function renderAll(){$('brandName').textContent=S.name;soundUI();tick(true);if(v
 let lastQ=-1;
 function tick(force){
   const r=compute();lastR=r;const d=r.d;
-  $('clk').textContent=d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  $('clk').textContent=now().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   $('dte').textContent=`${d.getDate()} ${MONTHS[d.getMonth()]} ${DAYS_ALL[d.getDay()]}`;
   $('simBadge').classList.toggle('show',offset!==0);
   const info=renderLive(r);lastModel=info;renderAct();renderBig();renderExtras();updateMini(info);
@@ -2035,6 +2336,7 @@ function tick(force){
   }
   voiceTick(r,info,segKey);
   v5Tick(r,segKey,lastSegKey);
+  ngSync();
   lastSegKey=segKey;lastInfo=info;
 }
 renderAll();
