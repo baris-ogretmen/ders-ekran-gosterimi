@@ -517,6 +517,22 @@ body.bgIsik .blobs{display:block}
 .kp-buyuk-ust{font-size:min(5vh,40px);font-weight:900;color:#fde68a;margin-bottom:3vh}
 .kp-buyuk-metin{font-size:min(8vh,6vw);font-weight:900;line-height:1.25}
 .kp-buyuk-alt{margin-top:4vh;opacity:.6;font-size:min(2.4vh,18px)}
+.konuKart .kk-ozet{font-size:min(2vh,15px);font-weight:700;opacity:.92;line-height:1.35}
+.kp-ozet{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#422006;border-radius:14px;padding:10px 12px;margin-top:10px}
+.kp-ozet-bas{font-weight:900;font-size:15px;margin-bottom:4px}
+.kp-ozet-sat{font-size:15.5px;font-weight:700;line-height:1.45;margin:4px 0}
+.kp-ozet-akil{margin-top:8px;background:rgba(255,255,255,.6);border-radius:10px;padding:7px 9px;font-size:15px;color:#3b0764}
+.kp-akis2{display:flex;flex-direction:column;gap:6px}
+.kp-as2{background:#1e293b;border-radius:12px;padding:8px 10px;border-left:4px solid #334155}
+.kp-as2.simdi{background:#422006;border-left-color:#f59e0b;box-shadow:0 0 0 2px #f59e0b inset}
+.kp-as2-bas{display:flex;align-items:center;gap:8px;font-size:13px}.kp-as2-bas span{font-size:18px}.kp-as2-bas i{margin-left:auto;font-style:normal;color:#fde68a;font-weight:800;font-size:12px}
+.kp-as2-ic{font-size:13.5px;color:#e2e8f0;line-height:1.45;margin-top:3px}
+.kp-det{margin-top:10px}.kp-det summary{cursor:pointer;font-weight:800;color:#93c5fd;font-size:13.5px}
+.kp-buyuk-satir{font-size:min(5.2vh,3.6vw);font-weight:800;line-height:1.35;margin:1.2vh 0}
+.kp-buyuk-akil{margin-top:3vh;font-size:min(6vh,4.2vw);font-weight:900;color:#fde68a;line-height:1.3}
+.kid-ovgu{display:inline-block;font-weight:900}
+.kid-sure{display:inline-block;margin-left:.4em;opacity:.95}
+.konuKart .kk-akil{font-size:min(2.2vh,16px);font-weight:900;color:#c4b5fd}
 </style>
 </head>
 <body>
@@ -2594,10 +2610,6 @@ function tick(force){
   v8Tick(r);
   lastSegKey=segKey;lastInfo=info;
 }
-renderAll();
-setInterval(tick,250);
-})();
-
 
 /* ============================================================
    📚 YILLIK PLAN KÖPRÜSÜ — bu sınıfa bugün ne anlatacağım?
@@ -2668,6 +2680,143 @@ function kpKapat(){ var p=document.getElementById('konuPanel'); if(p) p.classLis
   window.addEventListener('storage',function(e){ if(e.key==='dk_tahta_paylas'||e.key==='dk_ilr'){ KP.sonKart=''; var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')) kpCiz(); } }); })();
 var _renderLiveKP=renderLive; renderLive=function(r){ var info=_renderLiveKP(r); try{ kpGuncelle(r); }catch(e){} return info; };
 
+/* ============================================================
+   📝 KONU ÖZETİ + ⏱️ 40 DK AKIŞ İÇERİĞİ + 🌟 SEVİYEYE GÖRE ÖVGÜ / ZİL
+   ============================================================ */
+var KP_MSG={
+ bes:{ana:['🌟 Harika çalışıyorsunuz minikler! Son 5 dakika, oyunumuzu bitirelim.','🐣 Çok güzel oynadınız! Son 5 dakika, son hamlelerimizi yapalım.','🎈 Bravo minikler! Son 5 dakika kaldı, birlikte tamamlayalım.'],
+  '12':['🌟 Süpersiniz! Son 5 dakika: çalışmamızı tamamlayalım.','👏 Bugün çok iyi düşündünüz! Son 5 dakika kaldı.','🚀 Harika gidiyoruz! Son 5 dakikada işimizi bitirelim.'],
+  '34':['🌟 Çok güzel ilerledik! Son 5 dakika: işini bitir, arkadaşına göster.','🧠 Gerçek birer mucit gibisiniz! Son 5 dakika kaldı.','🚀 Harika bir ders! Son 5 dakikada çalışmalarımızı tamamlayalım.'],
+  '56':['💡 Harika bir ders oldu! Son 5 dakika: ürününü kaydet, kısaca değerlendir.','🌟 Bugün çok iyi düşündünüz! Son 5 dakika kaldı.','🧩 Takım olarak çok güçlüydünüz! Son 5 dakika: toparlamaya başlayalım.'],
+  '78':['🏆 Bugün çok verimli çalıştınız! Son 5 dakika: çalışmanı kaydet, notlarını tamamla.','💡 Analiziniz harikaydı! Son 5 dakika kaldı.','🚀 Gerçek mühendisler gibiydiniz! Son 5 dakika: çalışmanı kaydet.']},
+ bir:{ana:['🧸 Son 1 dakika! Materyalleri yerine koyalım, sizinle gurur duyuyorum!','🎉 Son 1 dakika! Toparlanalım, bugün çok tatlıydınız!'],
+  '12':['👏 Son 1 dakika! Masamızı toplayalım, bugün harikaydınız!','🌈 Son 1 dakika! Eşyalarımızı toplayalım, çok iyi çalıştınız!'],
+  '34':['🚀 Son 1 dakika! Toparlanalım, bugün gerçek birer mucit gibiydiniz!','⭐ Son 1 dakika! Masanı topla, bugün çok başarılıydın!'],
+  '56':['💡 Son 1 dakika! Kaydet, kapat, toparlan; bugün çok iyi düşündünüz!','🌟 Son 1 dakika! Toparlanalım, emeğinize sağlık!'],
+  '78':['🏆 Son 1 dakika! Çalışmanı kaydet; bugün takım olarak çok güçlüydünüz!','👏 Son 1 dakika! Toparlanalım, emeğinize sağlık!']},
+ bitti:{ana:['Ders bitti! Bugün çok güzel oyunlar oynadık, hepinize kocaman alkış!','Ders bitti! Minik mucitlerim, bugün harikaydınız!'],
+  '12':['Ders bitti! Bugün çok güzel çalıştınız, hepinizi tebrik ediyorum!','Ders bitti! Süper bir dersti, hepinize teşekkürler!'],
+  '34':['Ders bitti! Bugün gerçek birer mucit gibiydiniz, tebrikler!','Ders bitti! Harika fikirleriniz için teşekkürler!'],
+  '56':['Ders bitti! Bugün çok iyi düşündünüz, emeğinize sağlık!','Ders bitti! Takım çalışmanız harikaydı, tebrikler!'],
+  '78':['Ders bitti! Bugün çok verimli çalıştınız, emeğinize sağlık!','Ders bitti! Gerçek mühendisler gibiydiniz, tebrikler!']},
+ basla:{ana:'Merhaba minikler! Şimdi {S} ile {D} dersimiz başlıyor. Hazır mıyız?','12':'Merhaba çocuklar! Şimdi {S} ile {D} dersi başlıyor. Bugün çok eğleneceğiz!','34':'Şimdi {S} ile {D} dersi başlıyor. Bugün yeni bir şey keşfedeceğiz!','56':'Şimdi {S} ile {D} dersi başlıyor. Hazırsanız başlayalım!','78':'Şimdi {S} ile {D} dersi başlıyor. Odaklanalım ve başlayalım!'}
+};
+function kpSeviye(cls){ var gi=kpGi(cls); return gi<0?'34':kpBand(gi); }
+function kpSec(arr,i){ return arr[Math.abs(i)%arr.length]; }
+function kpSes(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,'').replace(/\s{2,}/g,' ').trim(); }
+function kpKonuSade(k){ return String(k||'').replace(/^Tanışalım:\s*/,'').replace(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/,''); }
+/* ---- 📝 Konu özeti (öğretmen düzenlemesi / yapay zekâ / otomatik) ---- */
+function kpOzetDepo(){ try{ return JSON.parse(localStorage.getItem('dk_tahta_ozet')||'{}')||{}; }catch(e){ return {}; } }
+function kpRehSatir(d,emo){ var l=String(d.rehber||'').split('\n').filter(function(x){ return x.trim().indexOf(emo)===0; })[0]; return l?l.replace(/^\S+\s[^:]{1,60}:\s*/,'').trim():''; }
+function kpOzet(cls,d){ var dep=kpOzetDepo()[cls+'|'+d.konu]; if(dep) return {satirlar:dep.ozet,akil:dep.akil||d.akil,ai:true};
+  var k=kpKonuSade(d.konu), s=[];
+  s.push('📌 Bugünün konusu: '+k);
+  if(d.z) s.push('🎯 Ne öğreneceğiz: '+d.z.replace(/[.\s]+$/,'')+'.');
+  var et=String(d.e||'').split(';')[0].trim(); if(et) s.push('🎲 Nasıl öğreneceğiz: '+et.replace(/[.\s]+$/,'')+'.');
+  if(d.ozet&&String(d.ozet).trim()) s.push('📖 Kısaca: '+String(d.ozet).replace(/\s*Derste:.*$/,'').trim());
+  return {satirlar:s,akil:d.akil||(k+'!'),ai:false}; }
+async function kpAIText(prompt){ var keys=shuffle(aktifKeys()); if(!keys.length) throw new Error('ANAHTAR_YOK'); var last='Yapay zekâya ulaşılamadı.';
+  for(var ki=0;ki<keys.length;ki++){ var k=keys[ki], models=await modelKesfet(k);
+    for(var mi=0;mi<models.length;mi++){ var r; try{ r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+models[mi]+':generateContent?key='+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7}})}); }catch(e){ throw new Error('İnternet bağlantısı yok gibi görünüyor.'); }
+      if(r.ok){ var j=await r.json(); var t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(function(p){return p.text||'';}).join(''); if(t) return t; continue; }
+      if(r.status===429){ last='Kota doldu, biraz sonra dene.'; break; } if(r.status===400||r.status===403){ last='Anahtar sorunu, Ayarlar’dan kontrol et.'; break; } } }
+  throw new Error(last); }
+var KP_YAS={ana:'4-6 yaş anaokulu',12:'1-2. sınıf (6-8 yaş)',34:'3-4. sınıf (8-10 yaş)',56:'5-6. sınıf (10-12 yaş)',78:'7-8. sınıf (12-14 yaş)'};
+async function kpOzetAI(cls,i){ var D=kpDersler(cls); if(!D) return; var d=D.list[i]; if(!d) return; if(!aktifKeys().length){ toast('Önce Ayarlar’dan Gemini anahtarını ekle'); return; }
+  toast('🤖 Konu özeti çocuk diliyle yazılıyor…'); var sev=kpSeviye(cls);
+  var p='Sen '+KP_YAS[sev]+' öğrencilerine ders anlatan sıcak, deneyimli bir öğretmensin. Ders: '+d.ad+'. Konu: '+kpKonuSade(d.konu)+'. Kazanım: '+(d.z||'')+'. Etkinlik: '+(d.e||'')+'.\nTahtada çocuklara gösterilecek, akılda kalıcı bir KONU ÖZETİ yaz:\n- Tam 3 kısa satır; her satır bir emojiyle başlasın; bu yaşın anlayacağı çok sade dil.\n- Ardından ayrı bir satırda "Akılda kalsın:" ile başlayan, kısa, ritmik/kafiyeli bir slogan.\n- Bilgi uydurma, tarih/isim ekleme. Yıldız, başlık, markdown kullanma. Sadece bu 4 satırı yaz.';
+  try{ var t=await kpAIText(p); var ls=String(t).replace(/\*\*/g,'').replace(/\*/g,'').split('\n').map(function(x){return x.trim();}).filter(Boolean);
+    var akil=''; ls=ls.filter(function(x){ var m=x.match(/^[^\wÇĞİÖŞÜçğıöşü]*Akılda kalsın:\s*(.*)$/i); if(m){ akil=m[1]; return false; } return true; }).slice(0,4);
+    if(!ls.length) throw new Error('boş');
+    var o=kpOzetDepo(); o[cls+'|'+d.konu]={ozet:ls,akil:akil||d.akil||'',ts:Date.now()}; localStorage.setItem('dk_tahta_ozet',JSON.stringify(o)); KP.sonKart=''; kpCiz(); toast('✅ Konu özeti hazır'); }
+  catch(e){ toast('Yapay zekâ yazamadı: '+(e.message||'')); } }
+function kpOzetSifirla(cls,i){ var D=kpDersler(cls); if(!D||!D.list[i]) return; var o=kpOzetDepo(); delete o[cls+'|'+D.list[i].konu]; localStorage.setItem('dk_tahta_ozet',JSON.stringify(o)); KP.sonKart=''; kpCiz(); }
+function kpBuyukOzet(cls,i){ var D=kpDersler(cls); if(!D||!D.list[i]) return; var oz=kpOzet(cls,D.list[i]); var o=document.createElement('div'); o.className='kp-buyuk';
+  o.innerHTML='<div class="kp-buyuk-ic" style="text-align:left;max-width:1100px"><div class="kp-buyuk-ust">📝 Konu özeti</div>'+oz.satirlar.map(function(s){ return '<div class="kp-buyuk-satir">'+kpEsc(s)+'</div>'; }).join('')+(oz.akil?'<div class="kp-buyuk-akil">🧠 '+kpEsc(oz.akil)+'</div>':'')+'<div class="kp-buyuk-alt" style="text-align:center">Kapatmak için dokun</div></div>'; o.onclick=function(){ o.remove(); }; document.body.appendChild(o); }
+/* ---- ⏱️ 40 dk akış: her aşamada ne yapacağım ---- */
+function kpAkisIcerik(cls,d){ var oz=kpOzet(cls,d), k=kpKonuSade(d.konu), sev=kpSeviye(cls);
+  return [kpRehSatir(d,'🎬')||('“'+k+'” deyince aklınıza ne geliyor? Kısa bir soru ya da hikâyeyle aç.'),
+    kpRehSatir(d,'🗣️')||oz.satirlar.slice(0,2).join(' '),
+    kpRehSatir(d,'🎲')||(String(d.e||'').split(';')[0]||'Konuya uygun uygulama etkinliği.'),
+    '🧠 '+(oz.akil||k)+(kpRehSatir(d,'❓')?' · ❓ '+kpRehSatir(d,'❓'):''),
+    kpRehSatir(d,'🏁')||(sev==='ana'||sev==='12'?'Hep birlikte “akılda kalsın”ı söyleyin, kısa bir oyunla bitirin, ✅ İşledim’e dokunun.':'Bugün ne öğrendik? 2 cümleyle özetleyin; kısa oyun/değerlendirme, ✅ İşledim.')]; }
+/* ---- panel (yeniden) ---- */
+kpCiz=function(){ var cls=KP.secili||KP.sinif; var p=document.getElementById('kpIc'); if(!p) return;
+  var bug=kpBugunSiniflar(); if(cls&&bug.indexOf(cls)<0) bug.unshift(cls);
+  var chips=bug.map(function(c){ return '<button class="kp-chip'+(c===cls?' akt':'')+'" onclick="KP.secili=\''+kpEsc(c)+'\';kpCiz()">'+kpEsc(c)+'</button>'; }).join('');
+  if(!cls){ p.innerHTML='<div class="kp-bos">Şu an ders yok. Yukarıdan bir sınıf seçebilirsin.</div>'+(chips?'<div class="kp-chips">'+chips+'</div>':''); return; }
+  var D=kpDersler(cls), as=(cls===KP.sinif)?kpAsama():null, h='<div class="kp-chips">'+chips+'</div>';
+  if(!D){ p.innerHTML=h+'<div class="kp-bos">Bu sınıf için konu bulunamadı.</div>'; return; }
+  var ce=kpEsc(cls).replace(/'/g,"\\'");
+  D.list.forEach(function(d,i){ var oz=kpOzet(cls,d), ic=kpAkisIcerik(cls,d), olc=(KP.b>KP.a&&cls===KP.sinif)?((KP.b-KP.a)/60)/40:1;
+    var akis=KP_ASAMA.map(function(a,j){ return '<div class="kp-as2'+(as&&as.i===j?' simdi':'')+'"><div class="kp-as2-bas"><span>'+a[0]+'</span><b>'+a[1]+'</b><i>'+Math.round(a[2]*olc)+' dk'+(as&&as.i===j&&as.kalan?' · '+as.kalan+' dk kaldı':'')+'</i></div><div class="kp-as2-ic">'+kpEsc(ic[j])+'</div></div>'; }).join('');
+    h+='<div class="kp-ders"><div class="kp-baslik">'+d.ik+' '+kpEsc(d.ad)+' · <span>'+d.sira+'. hafta / '+d.toplam+'</span></div>'+
+      '<div class="kp-konu">'+kpEsc(d.konu)+(d.islendi?' <span class="kp-ok">✅ işlendi</span>':'')+'</div>'+
+      '<div class="kp-ozet"><div class="kp-ozet-bas">📝 Konu özeti'+(oz.ai?' <small>(çocuk diliyle)</small>':'')+'</div>'+oz.satirlar.map(function(s){ return '<div class="kp-ozet-sat">'+kpEsc(s)+'</div>'; }).join('')+
+        (oz.akil?'<div class="kp-ozet-akil">🧠 <b>Akılda kalsın:</b> '+kpEsc(oz.akil)+'</div>':'')+
+        '<div class="kp-btns"><button class="kp-btn" style="background:#4f46e5" onclick="kpBuyukOzet(\''+ce+'\','+i+')">📺 Tahtada büyük göster</button><button class="kp-btn" style="background:#7c3aed" onclick="kpOzetAI(\''+ce+'\','+i+')">🤖 Çocuk diliyle yaz</button>'+(oz.ai?'<button class="kp-btn" onclick="kpOzetSifirla(\''+ce+'\','+i+')">↺ Otomatiğe dön</button>':'')+'</div></div>'+
+      '<div class="kp-alt">⏱️ 40 dakikada ne yapacağım?'+(as?' · <b style="color:#fde68a">şu an: '+KP_ASAMA[as.i][1]+'</b>':'')+'</div><div class="kp-akis2">'+akis+'</div>'+
+      '<details class="kp-det"><summary>🗣️ Anlatım rehberinin tamamı'+(d.ozel?' (senin düzenlemen)':'')+'</summary>'+kpRehHTML(d.rehber)+'</details>'+
+      '<div class="kp-btns">'+(d.islendi?'<button class="kp-btn" onclick="kpIsledim(\''+ce+'\','+d.gi+',\''+d.k+'\','+d.idx+',true)">↩️ İşaretimi geri al</button>':'<button class="kp-btn yesil" onclick="kpIsledim(\''+ce+'\','+d.gi+',\''+d.k+'\','+d.idx+',false)">✅ Bu konuyu işledim</button>')+
+        (D.url?'<button class="kp-btn" onclick="window.open(\''+kpEsc(D.url)+'#tahta='+d.gi+'|'+d.k+'|'+d.idx+'\',\'_blank\')">📘 Yıllık planda aç</button>':'')+'</div>'+
+      (d.islendi&&d.sonraki?'<div class="kp-not">➡️ Sıradaki konu: <b>'+kpEsc(d.sonraki.konu)+'</b> ('+d.sonraki.sira+'. hafta)</div>':'')+'</div>'; });
+  h+='<div class="kp-not">'+(D.kaynak==='plan'?'🔗 Yıllık Plan’dan geliyor · son güncelleme '+new Date(D.ts).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'ℹ️ Yerleşik Maarif planı (takvime göre '+kpHafta()+'. hafta). Yıllık Plan’ı bu tahtada bir kez açarsan senin planın, ilerlemen ve rehberin gelir.')+'</div>';
+  p.innerHTML=h; };
+/* ---- canlı kart: konu + özetin ilk satırı + aşama ---- */
+kpGuncelle=function(r){ var el=document.getElementById('konuKart'); if(!el) return; var s=kpSinifBul(r);
+  if(!s){ KP.sinif=null; el.classList.add('hide'); return; }
+  KP.sinif=s.c; KP.durum=s.durum; KP.a=s.a||0; KP.b=s.b||0; KP.sec=s.sec||0;
+  var D=kpDersler(s.c); if(!D||!D.list.length){ el.classList.add('hide'); return; }
+  var d=D.list[0], as=kpAsama(), oz=kpOzet(s.c,d), ikinci=oz.satirlar[1]||'';
+  var h='<span class="kk-ust">'+(s.durum==='ders'?'📚 Bugünün konusu':'📚 Sıradaki derste')+' · '+d.sira+'/'+d.toplam+'</span><span class="kk-konu">'+kpEsc(kpKonuSade(d.konu))+(d.islendi?' ✅':'')+'</span>'+
+    (ikinci?'<span class="kk-ozet">'+kpEsc(ikinci.length>110?ikinci.slice(0,108)+'…':ikinci)+'</span>':'')+
+    (as?'<span class="kk-asama">⏱️ Şimdi: '+KP_ASAMA[as.i][0]+' '+KP_ASAMA[as.i][1]+(as.kalan?' · '+as.kalan+' dk':'')+'</span>':'')+(as&&as.i>=3&&oz.akil?'<span class="kk-akil">🧠 Akılda kalsın: '+kpEsc(oz.akil)+'</span>':'')+'<span class="kk-ac">Dokun → konu özeti ve 40 dk akış</span>';
+  if(h!==KP.sonKart){ el.innerHTML=h; KP.sonKart=h; } el.classList.remove('hide');
+  var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')&&!KP.secili&&KP.panelSon!==(s.c+'|'+(as?as.i:'-'))){ KP.panelSon=s.c+'|'+(as?as.i:'-'); kpCiz(); } };
+/* ---- 🌟 son 5 / son 1 dakika: ekranda övgü dolu, seviyeye uygun ---- */
+var _renderLiveOv=renderLive;
+renderLive=function(r){ var info=_renderLiveOv(r); try{ if(r.t==='lesson'&&r.cell&&info&&info.rem<=300&&info.rem>0){ var sev=kpSeviye(r.cell.c), k=document.getElementById('kid'); if(k){
+  var rem=info.rem, sec=Math.ceil(rem); var m = rem<=60 ? kpSec(KP_MSG.bir[sev],Math.floor(r.sec/12)) : kpSec(KP_MSG.bes[sev],Math.floor(r.sec/25));
+  k.innerHTML='<span class="kid-ovgu">'+kpEsc(m)+'</span> <span class="kid-sure">⏱️ '+(rem<=60?'Son <b>'+sec+' saniye</b>':'<b>'+inWords(rem)+'</b> kaldı')+'</span>'; } } }catch(e){} return info; };
+/* ---- 🔔 zil ve sesli duyurular: seviyeye uygun ---- */
+announce=function(r,info,prev){
+  if(!soundHere()||r.wd>4) return;
+  var was=!!(prev&&prev.isLesson), is=!!info.isLesson, delay=0;
+  if(was&&!is){ var cls=(prev&&prev.big)||'', sev=kpSeviye(cls);
+    if(S.vEnd){ if(S.sound){ schoolBell(); delay=BELL_MS[S.bellType]||3400; }
+      var t=kpSec(KP_MSG.bitti[sev],Math.floor(Date.now()/60000));
+      t+= r.t==='lunch'?' Afiyet olsun!': r.t==='after'?' Günün son dersi bitti, hepinize teşekkürler. Hoşça kalın!':(sev==='ana'?' İyi teneffüsler minikler!':' İyi teneffüsler!');
+      if(S.voice) sayLater(kpSes(t),delay); try{ toast('🔔 '+t); }catch(e){} }
+    else if(S.sound) beep([880,660,523]); }
+  else if(is&&r.cell){ var c=r.cell.c, sv=kpSeviye(c);
+    if(S.vStart){ if(S.sound){ schoolBell(); delay=BELL_MS[S.bellType]||3400; }
+      var tb=(prev&&(prev.pill||'').indexOf('Teneffüs')>=0?'Teneffüs bitti. ':'')+KP_MSG.basla[sv].replace('{S}',spk(c)).replace('{D}',r.cell.s);
+      var D=kpDersler(c); if(D&&D.list[0]) tb+=' Bugünkü konumuz: '+kpKonuSade(D.list[0].konu)+'.';
+      if(S.voice) sayLater(kpSes(tb),delay); }
+    else if(S.sound) beep([523,659,784]); }
+  var duty=(r.t==='break'||r.t==='lunch')?dutyOn(r.d):null;
+  if(duty&&S.voice&&S.vDuty) sayLater('Nöbet zamanı. Nöbet yerin: '+duty+'.',delay+3200); };
+voiceTick=function(r,info,segKey){
+  if(!info.isLesson||!soundHere()) return; var sev=kpSeviye(r.cell&&r.cell.c);
+  if(info.rem<=300&&info.rem>290&&!fired[segKey+'|5']){ fired[segKey+'|5']=1;
+    if(S.voice&&S.v5){ if(S.sound) beep([660,880],.2); sayLater(kpSes(kpSec(KP_MSG.bes[sev],Math.floor(Date.now()/60000))),S.sound?700:0); } else if(S.warn) beep([660,880],.25); }
+  if(info.rem<=60&&info.rem>52&&!fired[segKey+'|1']){ fired[segKey+'|1']=1; if(S.voice&&S.v1) say(kpSes(kpSec(KP_MSG.bir[sev],Math.floor(Date.now()/60000)))); }
+  if(S.voice&&S.v10&&info.rem<=10.4&&info.rem>.4){ var n=Math.ceil(info.rem), kk=segKey+'|c'+n; if(!fired[kk]){ fired[kk]=1; say(String(n)); } } };
+
+/* Panel düğmeleri (onclick) genel kapsamdan çağırır → köprü fonksiyonlarını dışarı aç */
+window.KP=KP;
+window.kpCiz=function(){ return kpCiz.apply(null,arguments); };
+window.kpAc=function(){ return kpAc.apply(null,arguments); };
+window.kpKapat=function(){ return kpKapat.apply(null,arguments); };
+window.kpIsledim=function(){ return kpIsledim.apply(null,arguments); };
+window.kpBuyuk=function(){ return kpBuyuk.apply(null,arguments); };
+window.kpBuyukOzet=function(){ return kpBuyukOzet.apply(null,arguments); };
+window.kpOzetAI=function(){ return kpOzetAI.apply(null,arguments); };
+window.kpOzetSifirla=function(){ return kpOzetSifirla.apply(null,arguments); };
+
+renderAll();
+setInterval(tick,250);
+})();
 </script>
 </body>
 </html>
