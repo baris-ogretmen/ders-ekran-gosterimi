@@ -477,6 +477,46 @@ body.bgIsik .blobs{display:block}
 .stB:active{transform:scale(.96)}
 .stB.pop{animation:pop .5s cubic-bezier(.2,1.6,.4,1);background:#ffe38a}
 @media (prefers-reduced-motion:reduce){.celeRays,.celeE,.celeN{animation:none}}
+
+.konuKart{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:10px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(15,23,42,.45);backdrop-filter:blur(8px);color:#fff;cursor:pointer;text-align:left;max-width:min(640px,90%);font-family:inherit}
+.konuKart.hide{display:none}
+.konuKart .kk-ust{font-size:min(1.9vh,14px);font-weight:800;opacity:.85}
+.konuKart .kk-konu{font-size:min(3.1vh,24px);font-weight:900;line-height:1.2}
+.konuKart .kk-asama{font-size:min(2.1vh,16px);font-weight:800;color:#fde68a}
+.konuKart .kk-ac{font-size:min(1.6vh,12px);opacity:.7}
+#konuPanel{position:fixed;top:0;right:0;bottom:0;width:min(470px,96vw);z-index:9000;background:#0f172a;color:#e2e8f0;box-shadow:-12px 0 40px rgba(0,0,0,.5);display:flex;flex-direction:column;font-family:inherit}
+#konuPanel.hide{display:none}
+#konuPanel .kp-bas{display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#7c3aed,#0ea5e9);color:#fff}
+#konuPanel .kp-bas h3{margin:0;font-size:18px;flex:1}
+#konuPanel .kp-x{background:rgba(255,255,255,.2);border:none;color:#fff;font-size:20px;width:40px;height:40px;border-radius:12px;cursor:pointer}
+#kpIc{overflow-y:auto;padding:12px 14px 30px;flex:1}
+.kp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.kp-chip{border:1px solid #334155;background:#1e293b;color:#cbd5e1;border-radius:999px;padding:7px 12px;font-weight:800;cursor:pointer;font-family:inherit}
+.kp-chip.akt{background:#7c3aed;border-color:#a78bfa;color:#fff}
+.kp-ders{background:#111c33;border:1px solid #1e293b;border-radius:16px;padding:12px;margin-bottom:12px}
+.kp-baslik{font-size:13px;font-weight:800;color:#93c5fd}.kp-baslik span{color:#cbd5e1;font-weight:700}
+.kp-konu{font-size:21px;font-weight:900;color:#fff;margin:4px 0 6px;line-height:1.25}
+.kp-ok{font-size:13px;color:#86efac}
+.kp-hedef{font-size:14px;color:#e2e8f0;background:#1e293b;border-radius:10px;padding:8px 10px}
+.kp-alt{font-size:13px;font-weight:800;color:#94a3b8;margin:12px 0 6px}
+.kp-akis{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.kp-as{background:#1e293b;border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;gap:1px;font-size:11px;color:#cbd5e1}
+.kp-as span{font-size:18px}.kp-as b{font-size:11px;line-height:1.15}.kp-as i{font-style:normal;opacity:.7}
+.kp-as.simdi{background:#f59e0b;color:#1f2937;box-shadow:0 0 0 2px #fde68a}
+.kp-akil{background:linear-gradient(135deg,#ede9fe,#e0e7ff);color:#312e81;border-radius:14px;padding:10px 12px;margin-top:12px}
+.kp-akil p{margin:6px 0 8px;font-size:17px;font-weight:800;line-height:1.35}
+.kp-sat{border-radius:10px;padding:7px 10px;margin:5px 0;font-size:14px;line-height:1.5;color:#1e293b}
+.kp-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kp-btn{border:none;border-radius:12px;padding:11px 14px;font-weight:800;font-size:14px;cursor:pointer;background:#334155;color:#fff;font-family:inherit}
+.kp-btn.yesil{background:#16a34a}
+.kp-akil .kp-btn{background:#4f46e5}
+.kp-not{font-size:12.5px;color:#94a3b8;margin-top:10px;line-height:1.5}
+.kp-bos{padding:20px;text-align:center;color:#94a3b8}
+.kp-buyuk{position:fixed;inset:0;z-index:9600;background:radial-gradient(circle at 50% 40%,#4c1d95,#0f172a);display:flex;align-items:center;justify-content:center;padding:5vw;cursor:pointer}
+.kp-buyuk-ic{text-align:center;color:#fff}
+.kp-buyuk-ust{font-size:min(5vh,40px);font-weight:900;color:#fde68a;margin-bottom:3vh}
+.kp-buyuk-metin{font-size:min(8vh,6vw);font-weight:900;line-height:1.25}
+.kp-buyuk-alt{margin-top:4vh;opacity:.6;font-size:min(2.4vh,18px)}
 </style>
 </head>
 <body>
@@ -501,6 +541,7 @@ body.bgIsik .blobs{display:block}
       <button class="tb on" id="btnLive" title="Canlı ekran (C)">🟢 <span class="tx">Canlı</span></button>
       <button class="tb" id="btnWeek" title="Haftalık program (P)">📅 <span class="tx">Program</span></button>
       <button class="tb" id="btnTools" title="Öğretmen araçları (T)">🧰 <span class="tx">Araçlar</span></button>
+      <button class="tb" id="btnKonu" title="Bu sınıfa bugün ne anlatacağım? (K)">📚 <span class="tx">Konu</span></button>
       <button class="tb" id="btnFocus" title="Sadece sayaç (O)">🎯 <span class="tx">Odak</span></button>
       <button class="tb" id="btnVoice" title="Sesli duyurular">🗣️</button>
       <button class="tb" id="btnSound" title="Zil sesi">🔔</button>
@@ -526,6 +567,7 @@ body.bgIsik .blobs{display:block}
       <div class="meta" id="meta"></div>
       <button class="note hide" id="note" title="Notu düzenle"></button>
       <div class="kid" id="kid"></div>
+      <button class="konuKart hide" id="konuKart" title="Bugünün konusu ve anlatım rehberi"></button>
       <div id="trackBox">
         <div class="track"><div class="fill" id="fill"></div><div class="rk" id="rk">🚀</div></div>
         <div class="trackLbl"><span id="tA"></span><span id="tB"></span></div>
@@ -911,6 +953,7 @@ body.bgIsik .blobs{display:block}
 
 <div class="toast" id="toast"></div>
 
+<div id="konuPanel" class="hide"><div class="kp-bas"><span style="font-size:24px">📚</span><h3>Bu sınıfa ne anlatacağım?</h3><button class="kp-x" onclick="kpKapat()" title="Kapat">✕</button></div><div id="kpIc"></div></div>
 <script>
 (function(){
 'use strict';
@@ -2554,6 +2597,77 @@ function tick(force){
 renderAll();
 setInterval(tick,250);
 })();
+
+
+/* ============================================================
+   📚 YILLIK PLAN KÖPRÜSÜ — bu sınıfa bugün ne anlatacağım?
+   Kaynak: Yıllık Plan (aynı adres → aynı tarayıcı hafızası: dk_tahta_paylas)
+   Plan hiç açılmadıysa: yerleşik Maarif planı (Robotik-Kodlama) + takvim haftası
+   ============================================================ */
+var KP_YEDEK={"ana": [["Tanışalım: Robotlar Nerede?", "Çevresindeki makineleri ve robotları fark eder.", "Robot resmi avı;\"Robot ol\" dans oyunu;Kutudan robot boyama"], ["Önce–Sonra Sıralama", "Günlük olayları doğru sıraya koyar.", "Diş fırçalama kartları;Sandviç sıralama oyunu;Kendi sıra şeridini yap"], ["Yönler: İleri–Geri–Sağ–Sol", "Temel yön kavramlarını kullanır.", "Yön şarkısı;Yere çizili yolda yürüme;Arkadaşını yönlendir"], ["Oklarla Komut Verelim", "Ok kartlarıyla basit bir yolu tarif eder.", "Ok kartı oyunu;Halı labirenti;Hazine avı yolu"], ["Renk ve Şekil Örüntüleri", "Basit örüntüyü sürdürür ve oluşturur.", "Boncuk dizme;Renk treni oyunu;Kendi örüntünü yap"], ["Tekrar Eden Hareketler", "Tekrar eden hareketleri fark eder.", "Alkış–zıpla dansı;Şarkıdaki tekrarlar;Tekrar kolyesi"], ["Eğer… O Zaman", "Basit neden-sonuç kurallarını uygular.", "Kırmızı ışıkta dur oyunu;Havaya göre kıyafet;Kural kartları"], ["Hata Bul, Düzelt!", "Yanlış adımı bulup düzeltir.", "Karışık yol kartları;Robot şaşırdı oyunu;Düzelt ve dene"], ["Sanal Robotla Tanışma", "Tahtadaki sanal robota yön komutu verir.", "Robot Lab: Hedefe Git;Sırayla komut ver;Takım görevi"], ["Robotumu Tasarlıyorum", "Hayalindeki robotu tasarlayıp anlatır.", "Atık malzemeden robot;Robotuna isim ver;Robotunu tanıt"], ["Birlikte Kodlayalım", "Arkadaşlarıyla bir görevi birlikte tamamlar.", "Takım labirenti;Sırayla kodlama;Grup yolu çizimi"], ["Küçük Mucitler Sergisi", "Yaptıklarını paylaşır, arkadaşını dinler.", "Sergi hazırlığı;Robot geçidi;Aile ile paylaşım"]], "12": [["Tanışalım: Kodlama Nedir?", "Kodlamanın günlük hayattaki yerini fark eder.", "Evdeki makineler sohbeti;Robot öğretmen oyunu;Atölye kural panosu"], ["Algoritma: Adım Adım", "Bir işi adımlara böler.", "Sandviç algoritması;Adım kartları;Kendi algoritmanı çiz"], ["Yön ve Konum", "Izgarada yön ve konum belirtir.", "Kareli kâğıt yolları;Satır–sütun oyunu;Hazine haritası"], ["Ekransız Kodlama Kartları", "Ok komutlarıyla bir yolu programlar.", "Kart dizisi;Arkadaşını kodla;Labirent görevleri"], ["Örüntü ve Tekrar", "Tekrarı fark edip kısaltır.", "Desen boyama;Tekrarı say;x3 gösterimi"], ["Döngülerle Kısaltma", "Tekrar eden komutları döngüyle yazar.", "Dans döngüsü;Kare çizme;Robot Lab: Kare Çiz"], ["Hata Ayıklama", "Programdaki hatayı bulup düzeltir.", "Bozuk yol kartları;Böcek avı;Düzelt–dene"], ["ScratchJr ile Tanışma", "Bloklarla karakteri hareket ettirir.", "ScratchJr turu;Karakteri yürüt;Ses ekle"], ["Olaylar: Dokun ve Başla", "Bir olayla komut başlatır.", "Dokununca konuşan karakter;Başla bayrağı;Mini sahne"], ["Hikâye Kodlayalım", "Kısa bir hikâyeyi bloklarla canlandırır.", "Hikâye kurgula;Sahne ve karakter;Canlandır"], ["Sanal Robot Görevleri", "Hedefe ulaşan komut dizisi kurar.", "Robot Lab görevleri;Engel aş;Takım yarışı"], ["Mini Proje ve Sergi", "Ürününü tanıtır, arkadaşına geri bildirim verir.", "Proje seçimi;Yapım;Sergi"]], "34": [["Tanışalım: Bilgisayarla Düşünme", "Problem çözme adımlarını açıklar.", "Günlük problemi parçala;Algoritma kartları;Atölye kuralları"], ["Algoritma ve Akış Şeması", "Basit akış şeması çizer.", "Sabah rutini şeması;Başla–Bitir sembolleri;Eşli şema"], ["Scratch'e Giriş", "Scratch arayüzünü tanır, kukla hareket ettirir.", "Arayüz turu;Kuklayı yürüt;Dekor değiştir"], ["Olaylar ve Sıralı Komutlar", "Olay bloklarıyla sahne kurar.", "Tıkla–konuş;Tuşla hareket;Diyalog sahnesi"], ["Döngüler", "Tekrarı döngü bloklarıyla kurar.", "Çokgen çizimi;Sürekli hareket;Animasyon"], ["Koşullar: Eğer–İse", "Koşula göre karar veren program yazar.", "Kenara değince dön;Renge dokununca;Mini labirent"], ["Değişkenler ve Puan", "Değişkenle skor tutar.", "Skor değişkeni;Toplama oyunu;Süre sayacı"], ["Oyun Tasarımı", "Basit bir oyunu planlayıp kodlar.", "Oyun fikri;Kodlama;Test et"], ["Hata Ayıklama Ustalığı", "Hataları sistemli biçimde bulur.", "Hata avı;Eşli kontrol;Hata listesi"], ["Robotik: Sensör–Motor–Kontrol", "Robotun temel parçalarını açıklar.", "Robot ol oyunu;Girdi–çıktı kartları;Sanal robot"], ["Sanal Robot Görevleri", "Döngü ve koşullu robot görevleri çözer.", "Robot Lab: Engelleri Aş;Zikzak Yol;Takım görevi"], ["Yıl Sonu Proje Sergisi", "Projesini sunar, gelişimini değerlendirir.", "Proje planı;Yapım;Sergi ve sertifika"]], "56": [["Tanışalım: Dijital Dünyada Üretmek", "Üretici teknoloji kullanıcısı olmanın önemini açıklar.", "Tüketici–üretici tartışması;Atölye sözleşmesi;Yıl hedefi"], ["Problem Çözme ve Ayrıştırma", "Karmaşık problemi alt problemlere ayırır.", "Problem parçalama;Akış şeması;Sözde kod"], ["Scratch ile İleri Animasyon", "Çoklu kukla ve mesajlaşma kullanır.", "Mesaj yayınla;Çoklu kukla;Animasyon filmi"], ["İç İçe Döngü ve Koşullar", "İç içe yapıları kurar.", "İç içe döngü desenleri;Koşullu döngü;Mini oyun"], ["Değişkenler ve Listeler", "Değişken ve liste ile veri yönetir.", "Skor ve can;Listeyle soru bankası;Quiz oyunu"], ["Fonksiyonlar (Kendi Bloğum)", "Tekrar eden işi fonksiyonla paketler.", "Kendi blok;Parametre;Desen üretici"], ["Oyun Projesi", "Kurallı bir oyunu tasarlayıp geliştirir.", "Oyun tasarım belgesi;Geliştirme;Akran testi"], ["micro:bit ve MakeCode", "Girdi–çıktı ile fiziksel hesaplama yapar (simülatör).", "LED ile ifade;Buton olayı;Adım sayar"], ["Sensörlerle Karar", "Sensör verisine göre karar verir.", "Işık sensörü;Sıcaklık göstergesi;Uyarı sistemi"], ["Robotik Görevler", "Robot görevini planlayıp kodlar.", "Robot Lab zor görevler;Rota planlama;Takım yarışması"], ["Python'a Giriş", "Temel Python komutlarını yazar.", "print ve değişken;Döngü;Basit hesap makinesi"], ["Proje Sergisi", "Projesini tanıtır, geri bildirimle geliştirir.", "Proje;Sunum;Sergi"]], "78": [["Tanışalım: Teknoloji ve Gelecek", "Kodlamanın meslekler ve toplum üzerindeki etkisini tartışır.", "Geleceğin meslekleri;Atölye sözleşmesi;Yıl proje fikri"], ["Algoritma Tasarımı ve Verimlilik", "Farklı çözümleri verimliliğe göre karşılaştırır.", "Kartla sıralama algoritmaları;Adım sayma;Sözde kod"], ["Python Temelleri", "Değişken, veri tipi ve girdi–çıktı kullanır.", "input ve print;Tip dönüşümü;Mini hesaplayıcı"], ["Koşullar ve Mantıksal Operatörler", "and, or, not ile karar yapıları kurar.", "Not hesaplayıcı;Şifre kontrolü;Karar ağacı"], ["Döngüler (for ve while)", "Döngülerle tekrar eden işlemleri otomatikleştirir.", "Çarpım tablosu;Tahmin oyunu;Desen"], ["Listeler ve Veri İşleme", "Liste ile veri toplar ve filtreler.", "Sınıf verisi;Ortalama bulma;Sıralama"], ["Fonksiyonlar ve Modüler Kod", "Fonksiyonlarla kodu modüllere ayırır.", "Fonksiyon yaz;Parametre ve dönüş;Kod düzenleme"], ["Web'e Giriş (HTML/CSS)", "Basit bir web sayfası tasarlar.", "HTML iskeleti;CSS ile stil;Kişisel sayfa"], ["Fiziksel Hesaplama ve Sensörler", "Sensör verisini işleyen devre ve program tasarlar.", "micro:bit veya Arduino simülatörü;Sensör okuma;Alarm sistemi"], ["Robotik ve Otonom Sistemler", "Otonom davranışın mantığını açıklar ve simüle eder.", "Engelden kaçma mantığı;Robot Lab zor görevler;Rota planlama"], ["Takım Projesi (Tasarım Döngüsü)", "Problem–tasarım–test döngüsüyle ürün geliştirir.", "Problem tanımı;Prototip;Test ve iyileştirme"], ["Proje Sunumu ve Portfolyo", "Projesini sunar, dijital portfolyo hazırlar.", "Sunum;Portfolyo;Değerlendirme"]]};
+var KP_ASAMA=[['🎬','Giriş',5],['🗣️','Anlatım',10],['🎲','Etkinlik',15],['🧠','Akılda kalsın + kontrol',5],['🏁','Kapanış / oyun',5]];
+var KP={sinif:null,durum:null,a:0,b:0,sec:0,secili:null,sonKart:''};
+function kpEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function kpVeri(){ try{ var o=JSON.parse(localStorage.getItem('dk_tahta_paylas')||'null'); return (o&&o.siniflar)?o:null; }catch(e){ return null; } }
+function kpGi(ad){ ad=String(ad||'').toLocaleLowerCase('tr'); if(/ana|okul ?önc/.test(ad)) return 0; var m=ad.match(/([1-8])/); return m?+m[1]:-1; }
+function kpBand(gi){ return gi===0?'ana':gi<=2?'12':gi<=4?'34':gi<=6?'56':'78'; }
+function kpHafta(){ var b=null; try{ b=JSON.parse(localStorage.getItem('dk_donem_bas')||'null'); }catch(e){} var d0=new Date((b||'2026-09-14')+'T00:00:00'); if(isNaN(d0)) d0=new Date('2026-09-14T00:00:00'); return Math.max(1,Math.min(36,Math.floor((Date.now()-d0.getTime())/(7*864e5))+1)); }
+function kpYedek(cls){ var gi=kpGi(cls); if(gi<0) return null; var U=KP_YEDEK[kpBand(gi)]; if(!U) return null; var w=kpHafta(), u=Math.floor((w-1)/3), st=(w-1)%3, un=U[Math.min(u,U.length-1)];
+  var genc=(gi<=2), ADIM=genc?['Keşfediyoruz','Oynuyoruz','Üretiyoruz']:['Keşfet','Uygula','Üret & Paylaş'], et=String(un[2]||'').split(';');
+  var konu=un[0].replace(/^Tanışalım:\s*/,'');
+  var reh='🎬 Giriş (1-2 dk): Konuyu günlük hayattan bir soruyla aç: “'+konu+'” deyince aklınıza ne geliyor?\n🗣️ Şöyle anlat: '+(genc?'Kısa cümlelerle, göstererek ve oyunla anlat.':'Örnekle başla, sonra kavramı adım adım açıkla.')+' Hedef: '+un[1]+'\n🎲 Etkinlik: '+(et[st]||et[0]||'')+'\n🧠 Akılda kalsın: '+konu+' — '+un[1]+'\n❓ Kontrol soruları: Bugün ne öğrendik? · Nerede kullanırız? · En çok neyi sevdin?';
+  return [{k:'robokod',ad:'Robotik ve Kodlama',ik:'🤖',gi:gi,idx:w-1,sira:w,toplam:36,konu:un[0]+' · '+ADIM[st],z:un[1],e:et[st]||'',rehber:reh,akil:konu+': '+un[1],yedek:true}]; }
+function kpDersler(cls){ var v=kpVeri(); if(v&&v.siniflar[cls]&&v.siniflar[cls].length) return {kaynak:'plan',ts:v.ts,url:v.url,list:v.siniflar[cls]}; var y=kpYedek(cls); return y?{kaynak:'yedek',list:y}:null; }
+function kpSinifBul(r){ try{ if(r.t==='lesson'&&r.cell) return {c:r.cell.c,durum:'ders',a:r.a,b:r.b,sec:r.sec};
+  if(r.t==='break'||r.t==='lunch'){ var up=cellOn(r.d,r.seg.next); if(up) return {c:up.c,durum:'sirada'}; }
+  if(r.next&&r.next.c&&r.next.k===0) return {c:r.next.c.c,durum:'sirada'}; }catch(e){} return null; }
+function kpAsama(){ if(KP.durum!=='ders'||!(KP.b>KP.a)) return null; var top=(KP.b-KP.a)/60, gec=(KP.sec-KP.a)/60, olc=top/40, t=0;
+  for(var i=0;i<KP_ASAMA.length;i++){ var s=KP_ASAMA[i][2]*olc; if(gec<t+s) return {i:i,kalan:Math.max(1,Math.ceil(t+s-gec))}; t+=s; } return {i:KP_ASAMA.length-1,kalan:0}; }
+function kpGuncelle(r){ var el=document.getElementById('konuKart'); if(!el) return; var s=kpSinifBul(r);
+  if(!s){ KP.sinif=null; el.classList.add('hide'); return; }
+  KP.sinif=s.c; KP.durum=s.durum; KP.a=s.a||0; KP.b=s.b||0; KP.sec=s.sec||0;
+  var D=kpDersler(s.c); if(!D||!D.list.length){ el.classList.add('hide'); return; }
+  var d=D.list[0], as=kpAsama();
+  var h='<span class="kk-ust">'+(s.durum==='ders'?'📚 Bugünün konusu':'📚 Sıradaki derste')+' · '+d.sira+'/'+d.toplam+'</span><span class="kk-konu">'+kpEsc(d.konu)+(d.islendi?' ✅':'')+'</span>'+
+    (as?'<span class="kk-asama">⏱️ Şimdi: '+KP_ASAMA[as.i][0]+' '+KP_ASAMA[as.i][1]+(as.kalan?' · '+as.kalan+' dk':'')+'</span>':'')+'<span class="kk-ac">Dokun → anlatım rehberi</span>';
+  if(h!==KP.sonKart){ el.innerHTML=h; KP.sonKart=h; }
+  el.classList.remove('hide');
+  var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')&&!KP.secili) kpCiz(); }
+function kpRehHTML(t){ var R=[[/^🎬/,'#fff7ed'],[/^🗣️/,'#e0f2fe'],[/^🎲/,'#fae8ff'],[/^🧠/,'#ede9fe'],[/^❓/,'#fef9c3'],[/^💡|^⚠️/,'#ffe4e6'],[/^🌱/,'#dcfce7'],[/^🏁/,'#d1fae5']];
+  return String(t||'').split('\n').filter(function(l){return l.trim();}).map(function(l){ var r=R.filter(function(x){return x[0].test(l.trim());})[0]; return '<div class="kp-sat" style="background:'+(r?r[1]:'#f1f5f9')+'">'+kpEsc(l).replace(/^(\S+\s[^:]{1,60}:)/,'<b>$1</b>')+'</div>'; }).join(''); }
+function kpBugunSiniflar(){ try{ var d=(new Date().getDay()+6)%7; if(d>4) return []; var row=S.grid[d]||[], out=[]; row.forEach(function(c){ if(c&&c.c&&out.indexOf(c.c)<0) out.push(c.c); }); return out; }catch(e){ return []; } }
+function kpCiz(){ var cls=KP.secili||KP.sinif; var p=document.getElementById('kpIc'); if(!p) return;
+  var bug=kpBugunSiniflar(); if(cls&&bug.indexOf(cls)<0) bug.unshift(cls);
+  var chips=bug.map(function(c){ return '<button class="kp-chip'+(c===cls?' akt':'')+'" onclick="KP.secili=\''+kpEsc(c)+'\';kpCiz()">'+kpEsc(c)+'</button>'; }).join('');
+  if(!cls){ p.innerHTML='<div class="kp-bos">Şu an ders yok. Yukarıdan bir sınıf seçebilirsin.</div>'+(chips?'<div class="kp-chips">'+chips+'</div>':''); return; }
+  var D=kpDersler(cls); var as=(cls===KP.sinif)?kpAsama():null;
+  var h='<div class="kp-chips">'+chips+'</div>';
+  if(!D){ p.innerHTML=h+'<div class="kp-bos">Bu sınıf için konu bulunamadı.</div>'; return; }
+  D.list.forEach(function(d){
+    var akis=KP_ASAMA.map(function(a,i){ return '<div class="kp-as'+(as&&as.i===i?' simdi':'')+'"><span>'+a[0]+'</span><b>'+a[1]+'</b><i>'+a[2]+' dk</i></div>'; }).join('');
+    h+='<div class="kp-ders"><div class="kp-baslik">'+d.ik+' '+kpEsc(d.ad)+' · <span>'+d.sira+'. hafta / '+d.toplam+'</span></div>'+
+      '<div class="kp-konu">'+kpEsc(d.konu)+(d.islendi?' <span class="kp-ok">✅ işlendi</span>':'')+'</div>'+
+      (d.z?'<div class="kp-hedef">🎯 '+kpEsc(d.z)+'</div>':'')+
+      '<div class="kp-alt">⏱️ 40 dakikalık akış'+(as?' · <b>şu an: '+KP_ASAMA[as.i][1]+'</b>':'')+'</div><div class="kp-akis">'+akis+'</div>'+
+      (d.akil?'<div class="kp-akil"><div>🧠 <b>Akılda kalsın</b> <small>(ders sonunda hep birlikte söyleyin)</small></div><p>'+kpEsc(d.akil)+'</p><button class="kp-btn" onclick="kpBuyuk('+JSON.stringify(d.akil).replace(/"/g,'&quot;')+')">📺 Tahtada büyük göster</button></div>':'')+
+      '<div class="kp-alt">🗣️ Anlatım rehberi'+(d.ozel?' <small>(senin düzenlemen)</small>':'')+'</div>'+kpRehHTML(d.rehber)+
+      '<div class="kp-btns">'+(d.islendi?'<button class="kp-btn" onclick="kpIsledim(\''+kpEsc(cls)+'\','+d.gi+',\''+d.k+'\','+d.idx+',true)">↩️ İşaretimi geri al</button>':'<button class="kp-btn yesil" onclick="kpIsledim(\''+kpEsc(cls)+'\','+d.gi+',\''+d.k+'\','+d.idx+',false)">✅ Bu konuyu işledim</button>')+
+        (D.url?'<button class="kp-btn" onclick="window.open(\''+kpEsc(D.url)+'#tahta='+d.gi+'|'+d.k+'|'+d.idx+'\',\'_blank\')">📘 Yıllık planda aç</button>':'')+'</div>'+
+      (d.islendi&&d.sonraki?'<div class="kp-not">➡️ Sıradaki konu: <b>'+kpEsc(d.sonraki.konu)+'</b> ('+d.sonraki.sira+'. hafta) — Yıllık Plan açılınca rehberi de gelir.</div>':'')+'</div>'; });
+  h+='<div class="kp-not">'+(D.kaynak==='plan'?'🔗 Yıllık Plan’dan geliyor · son güncelleme '+new Date(D.ts).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'ℹ️ Yerleşik Maarif planı (takvime göre '+kpHafta()+'. hafta). Yıllık Plan’ı bu tahtada bir kez açarsan senin planın, ilerlemen ve yapay zekâ rehberin buraya gelir.')+'</div>';
+  p.innerHTML=h; }
+function kpIsledim(cls,gi,k,idx,geri){ try{ var o=JSON.parse(localStorage.getItem('dk_ilr')||'{}')||{}; o[gi]=o[gi]||{}; o[gi][k]=o[gi][k]||{}; if(geri) delete o[gi][k][idx]; else o[gi][k][idx]=1; localStorage.setItem('dk_ilr',JSON.stringify(o));
+  var v=kpVeri(); if(v&&v.siniflar[cls]){ v.siniflar[cls].forEach(function(e){ if(e.gi===gi&&e.k===k&&e.idx===idx) e.islendi=!geri; }); localStorage.setItem('dk_tahta_paylas',JSON.stringify(v)); }
+  toast(geri?'↩️ İşaret geri alındı':'✅ İşlendi olarak kaydedildi — Yıllık Plan’da da görünür'); KP.sonKart=''; kpCiz(); }catch(e){ toast('Kaydedilemedi'); } }
+function kpBuyuk(t){ var o=document.createElement('div'); o.className='kp-buyuk'; o.innerHTML='<div class="kp-buyuk-ic"><div class="kp-buyuk-ust">🧠 Akılda kalsın</div><div class="kp-buyuk-metin">'+kpEsc(t)+'</div><div class="kp-buyuk-alt">Kapatmak için dokun</div></div>'; o.onclick=function(){ o.remove(); }; document.body.appendChild(o); }
+function kpAc(){ KP.secili=null; var p=document.getElementById('konuPanel'); if(!p) return; p.classList.remove('hide'); kpCiz(); }
+function kpKapat(){ var p=document.getElementById('konuPanel'); if(p) p.classList.add('hide'); KP.secili=null; }
+(function(){ var b=document.getElementById('btnKonu'); if(b) b.addEventListener('click',function(){ var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')) kpKapat(); else kpAc(); });
+  var k=document.getElementById('konuKart'); if(k) k.addEventListener('click',kpAc);
+  document.addEventListener('keydown',function(e){ if((e.key==='k'||e.key==='K')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')) kpKapat(); else kpAc(); } });
+  window.addEventListener('storage',function(e){ if(e.key==='dk_tahta_paylas'||e.key==='dk_ilr'){ KP.sonKart=''; var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')) kpCiz(); } }); })();
+var _renderLiveKP=renderLive; renderLive=function(r){ var info=_renderLiveKP(r); try{ kpGuncelle(r); }catch(e){} return info; };
+
 </script>
 </body>
 </html>
