@@ -444,6 +444,39 @@ body.bgIsik .blobs{display:block}
 .mup{font-weight:800;font-size:1.6vh;color:#5a638f}
 .mx{border:none;background:#ffe3e8;color:#b0122f;border-radius:.8vh;font-weight:900;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.eq i,.noiseWarn.show .nwIn{animation:none}}
+
+/* v8 */
+.cele{position:fixed;inset:0;z-index:36;display:none;place-items:center;overflow:hidden;cursor:pointer;
+  background:radial-gradient(circle at 50% 45%,var(--cc,#7a5cff) 0,#1a0f4a 55%,#07091f 100%)}
+.cele.show{display:grid;animation:celeIn .5s ease-out}
+.cele.bday{background:radial-gradient(circle at 50% 45%,#ff4f8b 0,#5b0f63 55%,#14062a 100%)}
+@keyframes celeIn{from{opacity:0}}
+.celeRays{position:absolute;inset:-50%;background:repeating-conic-gradient(rgba(255,255,255,.13) 0 10deg,transparent 10deg 20deg);animation:rays 18s linear infinite}
+@keyframes rays{to{transform:rotate(360deg)}}
+.celeIn{position:relative;text-align:center;color:#fff;padding:3vh 4vw;max-width:92vw}
+.celeTop{display:inline-block;background:rgba(255,255,255,.18);border-radius:99px;padding:.8vh 2vw;font-weight:900;font-size:3vh}
+.celeE{font-size:20vh;line-height:1.1;animation:bounce 1.2s ease-in-out infinite}
+@keyframes bounce{50%{transform:translateY(-3vh) scale(1.08)}}
+.celeN{font-family:var(--fd);font-weight:800;font-size:clamp(40px,17vh,220px);line-height:1;
+  background:linear-gradient(90deg,#fff,#ffd166,#fff,#ff9fbf,#fff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1vh 0 rgba(0,0,0,.25));animation:shine 3s linear infinite,popN .8s cubic-bezier(.2,1.6,.4,1)}
+@keyframes shine{to{background-position:-200% 0}}
+@keyframes popN{from{transform:scale(.3);opacity:0}}
+.celeT{font-weight:900;font-size:4.6vh;line-height:1.25;margin-top:2vh;max-width:80vw;margin-left:auto;margin-right:auto}
+.celeIn small{display:block;margin-top:3vh;opacity:.7;font-weight:800;font-size:1.8vh}
+.bdBar{margin-top:1.6vh;display:block;border-radius:2vh;padding:1.4vh 1.6vw;font-weight:900;font-size:3.2vh;background:linear-gradient(90deg,#ff4f8b,#ffb020);color:#fff;box-shadow:0 1vh 3vh rgba(0,0,0,.3)}
+.bdBar b{font-family:var(--fd);font-size:3.8vh}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:1.4vw;margin:1vh 0 2vh;min-height:10vh}
+.pod{display:flex;flex-direction:column;align-items:center;gap:.4vh;width:15vw;min-width:120px}
+.pod .pm{font-size:6vh;line-height:1}.pod b{font-family:var(--fd);font-size:3vh;color:#16204a}.pod span{font-weight:900;color:#e89b00;font-size:2.2vh}
+.pod i{display:block;width:100%;border-radius:1.4vh 1.4vh 0 0;background:linear-gradient(#ffd166,#e89b00)}
+.pod.p1 i{background:linear-gradient(#e3e8f5,#a3add9)}.pod.p2 i{background:linear-gradient(#ffc9a0,#c2410c)}
+.stGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.8vw}
+.stB{border:none;border-radius:1.6vh;padding:1.4vh 1vw;background:#fff8e1;border:3px solid #ffd166;color:#16204a;display:flex;justify-content:space-between;align-items:center;gap:.6vw;font-weight:900;font-size:2vh;text-align:left}
+.stB b{font-family:var(--fd);font-size:2.6vh;color:#e89b00;white-space:nowrap}
+.stB:active{transform:scale(.96)}
+.stB.pop{animation:pop .5s cubic-bezier(.2,1.6,.4,1);background:#ffe38a}
+@media (prefers-reduced-motion:reduce){.celeRays,.celeE,.celeN{animation:none}}
 </style>
 </head>
 <body>
@@ -451,6 +484,7 @@ body.bgIsik .blobs{display:block}
 <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="noiseWarn" id="noiseWarn" aria-live="assertive"><div class="nwIn"><div class="nwE">🙉</div><b>Çok gürültü var!</b><span>Biraz sessiz olalım 🤫</span></div></div>
 <button class="musicNow hide" id="musicNow"></button>
+<div class="cele" id="cele" role="dialog" aria-live="assertive"><div class="celeRays"></div><div class="celeIn"><div class="celeTop" id="celeTop"></div><div class="celeE" id="celeE">🌟</div><div class="celeN" id="celeN"></div><div class="celeT" id="celeT"></div><small>Kapatmak için dokun</small></div></div>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <button class="fx" id="focusExit">✕ Odaktan çık</button>
 
@@ -497,6 +531,7 @@ body.bgIsik .blobs{display:block}
         <div class="trackLbl"><span id="tA"></span><span id="tB"></span></div>
       </div>
       <div class="dutyBar hide" id="dutyBar"></div>
+      <div class="bdBar hide" id="bdBar"></div>
       <button class="board hide" id="board" title="Mesajı düzenle"></button>
     </div>
     <div class="act hide" id="act"><span id="actL">⏱️ Etkinlik</span><b id="actT">00:00</b><button id="actBig" title="Tahtada büyüt">⤢</button><button id="actP" title="Duraklat">⏸</button><button id="actX" title="Kapat">✕</button></div>
@@ -563,6 +598,20 @@ body.bgIsik .blobs{display:block}
       <div class="tabs" id="tabs"></div>
       <div class="panes">
 
+
+    <div class="pane" data-p="stars">
+      <p class="s">Öğrenciye dokun, yıldız kazansın. Her 5 yıldızda kocaman kutlama yapılır. Yıldızlar sınıf sınıf saklanır.</p>
+      <div class="podium" id="stPod"></div>
+      <div class="stGrid" id="stGrid"></div>
+      <div class="acts"><button class="btn" id="stUndo">↶ Son yıldızı geri al</button><button class="btn red" id="stReset">Sınıfın yıldızlarını sıfırla</button></div>
+    </div>
+
+    <div class="pane" data-p="bday">
+      <p class="s">Sınıf listesinde isimden sonra doğum gününü yaz (<b>Ayşe Yılmaz - 12.03</b>). O gün o sınıfın dersi başlayınca tahta kendiliğinden kutlar: şarkı, konfeti ve sesli tebrik.</p>
+      <div id="bdToday"></div>
+      <div class="row"><select id="bdSel" style="min-width:220px"></select><input type="text" id="bdName" placeholder="ya da başka bir isim yaz" maxlength="40"><button class="btn pri huge" id="bdGo">🎂 Şimdi kutla!</button></div>
+      <div class="list" id="bdList"></div>
+    </div>
 
     <div class="pane" data-p="say">
       <p class="s">Yaz ya da hazır cümleye dokun; tahta sınıfa sesli söylesin.</p>
@@ -757,7 +806,7 @@ body.bgIsik .blobs{display:block}
     </div>
 
     <div class="pane" data-p="roster">
-      <p class="s">Her satıra bir öğrenci yaz ya da e-Okul listesinden kopyalayıp yapıştır. Çark, öğrenci seçme, grup ve yoklama bu listeyi kullanır.</p>
+      <p class="s">Her satıra bir öğrenci yaz ya da e-Okul listesinden yapıştır. İstersen doğum gününü de ekle: <b>Ayşe Yılmaz - 12.03</b>. Çark, öğrenci seçme, yıldız tablosu, grup ve yoklama bu listeyi kullanır.</p>
       <label class="fld"><span id="roL">Sınıf listesi</span><textarea id="roText" placeholder="Ayşe Yılmaz&#10;Mehmet Demir&#10;..."></textarea></label>
       <div class="acts"><span id="roCount" style="margin-right:auto;font-weight:900;color:#5a638f"></span><button class="btn pri" id="roSave">Listeyi kaydet</button></div>
     </div>
@@ -784,6 +833,7 @@ body.bgIsik .blobs{display:block}
     </div>
     <label class="toggle"><input type="checkbox" id="sWarn"> Son 5 dakikada uyarı sesi çal</label>
     <label class="toggle"><input type="checkbox" id="sConf"> Ders bitince konfeti patlat</label>
+    <label class="toggle"><input type="checkbox" id="sCele"> Çarktan/seçimden çıkan öğrenciyi büyük ekranda kutla ve sesli motive et</label>
     <div class="sep"></div>
     <div class="fld"><span>🗣️ Sesli duyurular ve okul zili</span>
       <label class="toggle"><input type="checkbox" id="sVoice"> Sesli duyurular açık (Türkçe)</label>
@@ -801,7 +851,8 @@ body.bgIsik .blobs{display:block}
     </div>
     <div class="sep"></div>
     <div class="fld"><span>⏱️ Okul zili ile eşitle</span>
-      <div class="row"><input type="range" id="sShift" min="-10" max="30" step="1"><b id="sShiftV"></b><button class="btn pri" id="sSyncBell">🔔 Zil şimdi çaldı — otomatik ayarla</button></div>
+      <div class="row"><button class="btn" id="sShM" style="font-size:3vh;padding:.6vh 1.6vw">−</button><input type="number" id="sShift" min="-30" max="60" step="1" style="width:110px;text-align:center;font-size:3vh"><button class="btn" id="sShP" style="font-size:3vh;padding:.6vh 1.6vw">+</button><b>saniye</b><button class="btn pri" id="sSyncBell">🔔 Zil şimdi çaldı — otomatik ayarla</button></div>
+      <p id="sShiftV" style="font-weight:700;margin:1vh 0 0;color:#16204a"></p>
       <p class="s" style="margin-top:1vh">Okulun zili sistemden birkaç saniye sonra çalıyorsa sayaç ve duyurular da o kadar kayar. En kolayı: okulun zili çaldığı anda bu butona (ya da ana ekrandaki 🔔 Zil çaldı) bas.</p></div>
     <div class="sep"></div>
     <div class="fld"><span>🎵 Zil şarkıları (her sınıf seviyesine)</span>
@@ -884,7 +935,7 @@ const DEFAULT={
   ]),
   ov:{}, notes:{}, rosters:{}, att:{}, light:null, msg:null, score:null, wheelCustom:'', qr:'', miniSize:1,
   me:'Barış', dutyOv:{}, dutyBell:true, rem:[], todo:[],
-  shift:6, bg:'illuzyon', musicWhen:'end', musicVol:.6, musicMax:25, music:{}, noiseGuard:false, ngLimit:60, ngHold:3, ngLesson:true, ngLight:false, ngCool:45,
+  shift:6, celebrate:true, stars:{}, bdays:{}, bg:'illuzyon', musicWhen:'end', musicVol:.6, musicMax:25, music:{}, noiseGuard:false, ngLimit:60, ngHold:3, ngLesson:true, ngLight:false, ngCool:45,
   voice:true, v5:true, v1:true, v10:false, vEnd:true, vStart:true, vDuty:true, bellType:'klasik', voiceRate:0.95, voiceName:'',
   duty:{places:['Ön Bahçe','3. Kat','4. Kat','Arka Bahçe'],table:[
     ['Necmettin h.','Tuncay h.','Nurbanu h.','Gülay h.'],
@@ -1153,7 +1204,7 @@ $('eUnOv').addEventListener('click',()=>{const o=S.ov[dateKey(editing.date)];if(
 
 /* Öğretmen araçları */
 const TOOLS=[
-  ['ai','📸','Fotoğraftan program','#111827'],['say','📢','Sesli duyuru','#d1006b'],['duty','🛡️','Nöbet','#0e7c66'],
+  ['ai','📸','Fotoğraftan program','#111827'],['say','📢','Sesli duyuru','#d1006b'],['stars','⭐','Yıldız tablosu','#e8a500'],['bday','🎂','Doğum günü','#ff4f8b'],['duty','🛡️','Nöbet','#0e7c66'],
   ['wheel','🎡','Şans çarkı','#ff5d8f'],['pick','🎯','Kim cevaplasın?','#7a5cff'],
   ['groups','👥','Grup kur','#1e8ef5'],['score','🏆','Puan tablosu','#f7981d'],
   ['act','⏱️','Etkinlik sayacı','#12b39a'],['stop','⏲️','Kronometre','#19a3d6'],
@@ -1186,7 +1237,7 @@ function refreshPane(){
   $('pkBox').classList.toggle('hide',!L.length);$('pkEmpty').classList.toggle('hide',!!L.length);
   const used=picked[c]?picked[c].size:0;$('pkInfo').textContent=L.length?`${c} • ${L.length} öğrenci • ${used} kişi seçildi`:'';
   $('ntL').textContent=`${c} ders notu`;$('ntText').value=S.notes[c]||'';
-  $('roL').textContent=`${c} sınıf listesi`;$('roText').value=L.join('\n');$('roCount').textContent=`${L.length} öğrenci`;
+  $('roL').textContent=`${c} sınıf listesi`;$('roText').value=rosterText(c);$('roCount').textContent=`${L.length} öğrenci`;
   if(tab==='groups'&&!L.length)$('grOut').innerHTML=emptyRoster(c);
   if(tab==='wheel')drawWheel();
   if(tab==='score')renderScore();
@@ -1244,7 +1295,7 @@ function spinWheel(){
   (function fr(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,4);whAng=start+delta*e;drawWheel();
     const i=whIndex(it.length);if(i!==lastI){lastI=i;sfx('tick');}
     if(p<1){requestAnimationFrame(fr);return;}
-    whSpin=false;const w=it[whIndex(it.length)];$('whWin').textContent='🎉 '+w;sfx('fan');confetti(WC);
+    whSpin=false;const w=it[whIndex(it.length)];$('whWin').textContent='🎉 '+w;sfx('fan');confetti(WC);if(whSrc==='list'&&S.celebrate!==false)setTimeout(()=>celebrate(w,$('tCls').value,{emoji:'🎡'}),700);else if(S.voice)say(w,true);
     if($('whRemove').checked){const k=whKey();(whOut[k]=whOut[k]||new Set()).add(w);setTimeout(drawWheel,1800);}
   })(t0);
 }
@@ -1265,7 +1316,7 @@ $('pkGo').addEventListener('click',()=>{
   const win=pool[Math.floor(Math.random()*pool.length)];const el=$('pkName');let k=0;
   el.classList.remove('win');el.classList.add('spin');$('pkGo').disabled=true;
   const iv=setInterval(()=>{el.textContent=L[Math.floor(Math.random()*L.length)];sfx('tick');if(++k>16){clearInterval(iv);
-    el.textContent=win;el.classList.remove('spin');void el.offsetWidth;el.classList.add('win');used.add(win);$('pkGo').disabled=false;
+    el.textContent=win;el.classList.remove('spin');void el.offsetWidth;el.classList.add('win');used.add(win);$('pkGo').disabled=false;if(S.celebrate!==false)setTimeout(()=>celebrate(win,c,{emoji:'🎯'}),500);
     sfx('yes');refreshPane();}},75);
 });
 $('pkReset').addEventListener('click',()=>{const c=$('tCls').value;if(picked[c])picked[c].clear();$('pkName').textContent='?';refreshPane();});
@@ -1426,7 +1477,7 @@ $('qrIn').value=S.qr||'';
 /* Ders notu ve sınıf listesi */
 $('ntSave').addEventListener('click',()=>{const c=$('tCls').value;const v=$('ntText').value.trim();if(v)S.notes[c]=v;else delete S.notes[c];save();tick(true);toast(`${c} notu kaydedildi`);});
 $('ntDel').addEventListener('click',()=>{const c=$('tCls').value;delete S.notes[c];save();refreshPane();tick(true);toast('Not silindi');});
-$('roSave').addEventListener('click',()=>{const c=$('tCls').value;const L=$('roText').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+$('roSave').addEventListener('click',()=>{const c=$('tCls').value;const P=parseRosterText($('roText').value);const L=P.names;S.bdays=S.bdays||{};if(Object.keys(P.bd).length)S.bdays[c]=P.bd;else delete S.bdays[c];
   if(L.length)S.rosters[c]=L;else delete S.rosters[c];if(picked[c])picked[c].clear();delete whOut['L:'+c];save();refreshPane();toast(`${c}: ${L.length} öğrenci kaydedildi`);});
 $('note').addEventListener('click',()=>openTools('notes',$('note').dataset.cls));
 
@@ -1559,7 +1610,7 @@ function onMiniClick(e){
   if(k==='pick'){const cls=focusClass();const L=roster(cls);
     if(!L.length){miniOverlay(cls||'Liste yok','Araçlar → Sınıf listesi');return;}
     const used=picked[cls]||(picked[cls]=new Set());let pool=L.filter(n=>!used.has(n));if(!pool.length){used.clear();pool=L.slice();}
-    const w=pool[Math.floor(Math.random()*pool.length)];used.add(w);sfx('yes');miniOverlay(w,`🎯 ${cls}`,colorOf(cls));}
+    const w=pool[Math.floor(Math.random()*pool.length)];used.add(w);sfx('yes');miniOverlay(w,`🎯 ${cls}`,colorOf(cls));if(S.voice)say(praiseFor(w,cls),true);}
 }
 function miniOverlay(big,small,col){if(!pipWin)return;const o=pipWin.document.getElementById('ov');
   o.innerHTML=`<small>${esc(small||'')}</small><b>${esc(big)}</b><small>Kapatmak için dokun</small>`;o.style.setProperty('--oc',col&&inkOf(col)==='#ffffff'?col:'#7a2cff');
@@ -1923,7 +1974,7 @@ async function pwaInstall(){
 $('sInstall').addEventListener('click',pwaInstall);
 
 /* ===== v5: ortak döngü ve bölme ===== */
-function refreshPaneV5(){if(tab==='noise')ngPaneInit();if(tab==='duty')renderDutyPane();if(tab==='rem')renderRem();if(tab==='todo')renderTodo();if(tab==='vote')renderVote();if(tab==='ai')renderAiState();}
+function refreshPaneV5(){if(tab==='stars')renderStars();if(tab==='bday')renderBdPane();if(tab==='noise')ngPaneInit();if(tab==='duty')renderDutyPane();if(tab==='rem')renderRem();if(tab==='todo')renderTodo();if(tab==='vote')renderVote();if(tab==='ai')renderAiState();}
 function nextSlotText(r,idx){const n=r.next,P=S.periods;
   if(idx>=P.length)return n?`Bugünlük bitti • Sonra ${n.c.c} ${whenText(n)}`:'Günün son dersi';
   const c=cellOn(r.d,idx);if(c)return `Sonraki: ${c.c} • ${P[idx][0]}`;
@@ -2014,7 +2065,7 @@ function syncBell(){
   if(best===null||Math.abs(best)>90){toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.');return;}
   S.shift=Math.max(-30,Math.min(60,Math.round(best)));save();fired={};
   toast(`✔ Okul zili ${S.shift>=0?S.shift+' sn sonra':(-S.shift)+' sn önce'} çalıyor. Duyurular buna göre ayarlandı.`);
-  if($('sShift')){$('sShift').value=S.shift;$('sShiftV').textContent=S.shift+' sn';}tick(true);
+  if($('sShift')){$('sShift').value=S.shift;shiftInfo();}tick(true);
 }
 
 /* ===== v7: Sessizlik koruması (kendi seslerimizi gürültü sanmasın) ===== */
@@ -2077,7 +2128,7 @@ function playSynth(id){
   const spb=60/sg.bpm,L=parseSeq(sg.lead),B=parseSeq(sg.bass);const beats=L.reduce((x,y)=>x+y[1],0);const loops=Math.max(1,Math.round((+S.musicMax||25)/(beats*spb)));
   let t=a.currentTime+.08;const t0=t;
   for(let r=0;r<loops;r++){let tl=t;L.forEach(([n,d])=>{if(n!=='-')inst(a,g,sg.ins,nf(n),tl,d*spb);tl+=d*spb;});
-    let tb=t;B.forEach(([n,d])=>{inst(a,g,'bass',nf(n)/2,tb,d*spb);tb+=d*spb;});
+    let tb=t;B.forEach(([n,d])=>{if(n!=='-'&&tb<t+beats*spb)inst(a,g,'bass',nf(n)/2,tb,d*spb);tb+=d*spb;});
     for(let i=0;i<beats*2;i++){const k=sg.dr[i%sg.dr.length];if(k!=='-')drum(a,g,k,t+i*spb/2);}
     t+=beats*spb;}
   const total=t-t0;g.gain.setValueAtTime(g.gain.value,t-1);g.gain.linearRampToValueAtTime(0,t);
@@ -2099,7 +2150,7 @@ async function playForLevel(lv){
   const ch=(S.music||{})[lv]||'mix';if(ch==='off')return;
   if(ch==='upload'){if(await idbGet(lv))return playUpload(lv);}
   if(SONGS[ch])return playSynth(ch);
-  const pool=Object.keys(SONGS).filter(k=>SONGS[k].lv===lv);const all=pool.length?pool:Object.keys(SONGS);playSynth(all[Math.floor(Math.random()*all.length)]);
+  const pool=Object.keys(SONGS).filter(k=>SONGS[k].lv===lv&&k!=='dogum');const all=pool.length?pool:Object.keys(SONGS);playSynth(all[Math.floor(Math.random()*all.length)]);
 }
 let remoteMusic=null;
 function musicUI(){const el=$('musicNow');const nm=mus?mus.name:remoteMusic;el.classList.toggle('hide',!nm);if(nm)el.innerHTML=`<span class="eq"><i></i><i></i><i></i></span> ${esc(nm)} <b>⏹ Durdur</b>`;}
@@ -2220,7 +2271,7 @@ requestAnimationFrame(bgFrame);
 
 /* ===== v7: Ayarlar bağlantıları ===== */
 function fillV7Settings(){
-  $('sShift').value=S.shift||0;$('sShiftV').textContent=(S.shift||0)+' sn';
+  $('sShift').value=S.shift||0;shiftInfo();
   $('sBg').innerHTML=Object.keys(BGS).map(k=>`<option value="${k}"${(S.bg||'illuzyon')===k?' selected':''}>${BGS[k]}</option>`).join('');
   $('sMusicWhen').value=S.musicWhen||'end';$('sMusicVol').value=S.musicVol||.6;$('sMusicMax').value=S.musicMax||25;$('sMusicMaxV').textContent=(S.musicMax||25)+' sn';
   drawMusicRows();
@@ -2242,13 +2293,173 @@ $('sMusicRows').addEventListener('click',async e=>{const p=e.target.closest('[da
   if(p){S.musicVol=+$('sMusicVol').value;S.musicMax=+$('sMusicMax').value;const lv=p.dataset.play;const v=$('sMusicRows').querySelector(`select[data-lv="${lv}"]`).value;
     if(mus){stopMusic();return;}if(v==='upload')playUpload(lv);else if(SONGS[v])playSynth(v);else if(v==='mix')playForLevel(lv);}
   if(d){await idbDel(d.dataset.del);drawMusicRows();}});
-$('sShift').addEventListener('input',()=>{$('sShiftV').textContent=$('sShift').value+' sn';});
 $('sSyncBell').addEventListener('click',()=>{syncBell();});
 $('sMusicMax').addEventListener('input',()=>{$('sMusicMaxV').textContent=$('sMusicMax').value+' sn';});
 $('sBg').addEventListener('change',()=>{S.bg=$('sBg').value;save();});
 function readV7Settings(){S.shift=+$('sShift').value;S.bg=$('sBg').value;S.musicWhen=$('sMusicWhen').value;S.musicVol=+$('sMusicVol').value;S.musicMax=+$('sMusicMax').value;}
 
 ngUI();
+/* ===== v8: Daha çok şarkı (seviyelere göre) ===== */
+Object.assign(SONGS,{
+  kuzu:{n:'🐑 Küçük Kuzu (klasik)',lv:'pre',bpm:120,ins:'marimba',dr:'k-h-s-h-',
+    lead:'E5:1 D5:1 C5:1 D5:1 E5:1 E5:1 E5:2 D5:1 D5:1 D5:2 E5:1 G5:1 G5:2 E5:1 D5:1 C5:1 D5:1 E5:1 E5:1 E5:1 E5:1 D5:1 D5:1 E5:1 D5:1 C5:4',
+    bass:'C3:4 G2:4 C3:4 G2:4 C3:4 C3:4 G2:4 C3:4'},
+  annemiz:{n:'🌼 Daha Dün Annemizin (geleneksel)',lv:'pre',bpm:116,ins:'xylo',dr:'k---s---',
+    lead:'G5:1 E5:1 E5:2 F5:1 D5:1 D5:2 C5:1 D5:1 E5:1 F5:1 G5:1 G5:1 G5:2 G5:1 E5:1 E5:2 F5:1 D5:1 D5:2 C5:1 E5:1 G5:1 G5:1 C5:4',
+    bass:'C3:4 G2:4 C3:4 C3:4 C3:4 G2:4 C3:2 G2:2 C3:4'},
+  tembel:{n:'🔔 Tembel Çocuk (geleneksel)',lv:'pre',bpm:120,ins:'bell',dr:'k-h-k-h-',
+    lead:'C5:1 D5:1 E5:1 C5:1 C5:1 D5:1 E5:1 C5:1 E5:1 F5:1 G5:2 E5:1 F5:1 G5:2 G5:.5 A5:.5 G5:.5 F5:.5 E5:1 C5:1 G5:.5 A5:.5 G5:.5 F5:.5 E5:1 C5:1 C5:1 G4:1 C5:2 C5:1 G4:1 C5:2',
+    bass:'C3:4 C3:4 C3:4 C3:4 C3:4 C3:4 C3:2 G2:2 C3:4'},
+  ciftlik:{n:'🐮 Ali Baba\'nın Çiftliği (geleneksel)',lv:'pre',bpm:132,ins:'marimba',dr:'k-hsk-hs',
+    lead:'C5:1 C5:1 C5:1 G4:1 A4:1 A4:1 G4:2 E5:1 E5:1 D5:1 D5:1 C5:3 G4:1 C5:1 C5:1 C5:1 G4:1 A4:1 A4:1 G4:2 E5:1 E5:1 D5:1 D5:1 C5:4',
+    bass:'C3:4 F2:2 C3:2 C3:2 G2:2 C3:4 C3:4 F2:2 C3:2 C3:2 G2:2 C3:4'},
+  balon:{n:'🎈 Balon Avı',lv:'pre',bpm:138,ins:'xylo',dr:'k-h-s-h-',
+    lead:'E5:.5 G5:.5 C6:1 G5:.5 E5:.5 D5:1 F5:.5 A5:.5 D6:1 A5:.5 F5:.5 E5:1 E5:.5 G5:.5 C6:.5 E6:.5 D6:.5 C6:.5 B5:.5 G5:.5 A5:.5 B5:.5 C6:2',
+    bass:'C3:2 C3:2 D3:2 G2:2 C3:2 E3:2 G2:2 C3:2'},
+  dogum:{n:'🎂 İyi ki Doğdun (klasik)',lv:'genel',bpm:100,ins:'piano',dr:'k---h---',
+    lead:'G4:.75 G4:.25 A4:1 G4:1 C5:1 B4:2 G4:.75 G4:.25 A4:1 G4:1 D5:1 C5:2 G4:.75 G4:.25 G5:1 E5:1 C5:1 B4:1 A4:1 F5:.75 F5:.25 E5:1 C5:1 D5:1 C5:3',
+    bass:'C3:3 G2:3 G2:3 C3:3 C3:3 F2:3 C3:2 G2:1 C3:3'},
+  turk:{n:'🎹 Türk Marşı (Mozart)',lv:'ilk',bpm:132,ins:'piano',dr:'k-h-s-h-',
+    lead:'B4:.5 A4:.5 G#4:.5 A4:.5 C5:2 D5:.5 C5:.5 B4:.5 C5:.5 E5:2 F5:.5 E5:.5 D#5:.5 E5:.5 B5:.5 A5:.5 G#5:.5 A5:.5 B5:.5 A5:.5 G#5:.5 A5:.5 C6:2 A5:1 C6:1 B5:1 A5:1 G5:1 A5:1 B5:1 A5:1 G5:1 A5:1 B5:1 A5:1 G5:1 F#5:1 E5:2',
+    bass:'A2:2 A2:2 A2:2 A2:2 A2:2 E2:2 A2:2 A2:2 E2:2 A2:2 E2:2 E2:2 E2:2'},
+  canbel:{n:'🔔 Çan Çan Çan (klasik)',lv:'ilk',bpm:132,ins:'bell',dr:'k-hsk-hs',
+    lead:'E5:1 E5:1 E5:2 E5:1 E5:1 E5:2 E5:1 G5:1 C5:1.5 D5:.5 E5:4 F5:1 F5:1 F5:1.5 F5:.5 F5:1 E5:1 E5:1 E5:.5 E5:.5 E5:1 D5:1 D5:1 E5:1 D5:2 G5:2',
+    bass:'C3:4 C3:4 C3:4 C3:4 F2:4 C3:4 G2:4 G2:4'},
+  kosu:{n:'🏃 Koşu Bandı',lv:'ilk',bpm:150,ins:'pluck',dr:'k-hsk-hs',
+    lead:'C5:.5 E5:.5 G5:.5 E5:.5 A5:.5 G5:.5 E5:.5 C5:.5 D5:.5 F5:.5 A5:.5 F5:.5 G5:1 G4:1 C5:.5 E5:.5 G5:.5 C6:.5 B5:.5 G5:.5 A5:.5 F5:.5 G5:.5 E5:.5 D5:.5 B4:.5 C5:2',
+    bass:'C3:1 C3:1 A2:1 A2:1 D3:1 D3:1 G2:1 G2:1 C3:1 E3:1 F2:1 F2:1 G2:1 G2:1 C3:2'},
+  sapsal:{n:'🦒 Zıp Zıp Zürafa',lv:'ilk',bpm:126,ins:'marimba',dr:'k-h-s-hh',
+    lead:'G4:.5 G4:.5 C5:1 E5:.5 D5:.5 C5:1 A4:.5 A4:.5 D5:1 F5:.5 E5:.5 D5:1 B4:.5 B4:.5 E5:1 G5:.5 F5:.5 E5:.5 D5:.5 C5:.5 E5:.5 D5:1 C5:2',
+    bass:'C3:2 C3:2 D3:2 G2:2 E3:2 A2:2 G2:2 C3:2'},
+  dag:{n:'⛰️ Dağ Kralının Sarayında (Grieg)',lv:'orta',bpm:150,ins:'square',dr:'k-h-k-hs',
+    lead:'A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 C5:.5 E5:1 D#5:.5 B4:.5 D#5:1 D5:.5 A#4:.5 D5:1 A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 C5:.5 E5:.5 A5:.5 G5:.5 E5:.5 C5:.5 E5:.5 G5:2',
+    bass:'A2:2 A2:2 B2:2 A#2:2 A2:2 A2:2 E2:2 E2:2'},
+  elise:{n:'🎼 Für Elise (Beethoven)',lv:'orta',bpm:96,ins:'piano',dr:'--------',
+    lead:'E5:.5 D#5:.5 E5:.5 D#5:.5 E5:.5 B4:.5 D5:.5 C5:.5 A4:1.5 C4:.5 E4:.5 A4:.5 B4:1.5 E4:.5 G#4:.5 B4:.5 C5:1.5 E4:.5 E5:.5 D#5:.5 E5:.5 D#5:.5 E5:.5 B4:.5 D5:.5 C5:.5 A4:1.5 C4:.5 E4:.5 A4:.5 B4:1.5 E4:.5 C5:.5 B4:.5 A4:2',
+    bass:'-:4 A2:1.5 -:.5 E2:1.5 -:.5 A2:1.5 -:2.5 A2:1.5 -:.5 E2:1.5 -:.5 A2:2'},
+  eglence:{n:'🎩 Eğlence Ustası (Joplin)',lv:'orta',bpm:110,ins:'piano',dr:'k-h-s-h-',
+    lead:'D5:.5 D#5:.5 E5:.5 C6:1 E5:.5 C6:1 E5:.5 C6:2.5 C6:.5 D6:.5 D#6:.5 E6:.5 C6:.5 D6:.5 E6:1 B5:.5 D6:1 C6:3',
+    bass:'C3:2 C3:2 C3:2 G2:2 G2:2 C3:2'},
+  piksel:{n:'👾 Piksel Koşusu',lv:'orta',bpm:160,ins:'square',dr:'k-hsk-hs',
+    lead:'E5:.5 E5:.5 -:.5 E5:.5 -:.5 C5:.5 E5:1 G5:2 G4:2 C5:1 G4:1 E4:1 A4:1 B4:1 A#4:.5 A4:1 G4:.75 E5:.75 G5:.75 A5:1 F5:.5 G5:1 E5:1 C5:.5 D5:.5 B4:1.5',
+    bass:'D3:1 D3:1 D3:1 D3:1 G2:2 G2:2 C3:2 G2:2 E2:2 A2:2 B2:1 A#2:1 A2:2 G2:2 C3:2 A2:2 F2:2 G2:2'},
+  neon:{n:'💡 Neon Şehir',lv:'orta',bpm:118,ins:'flute',dr:'k-h-s-hh',
+    lead:'A4:1 C5:1 E5:1.5 D5:.5 C5:1 B4:1 G4:2 F4:1 A4:1 C5:1.5 B4:.5 A4:1 G#4:1 E4:2 A4:1 C5:1 E5:1 A5:1 G5:1.5 F5:.5 E5:1 D5:1 E5:4',
+    bass:'A2:4 E2:4 F2:4 E2:4 A2:4 C3:4 E2:4 E2:4'},
+  bahar:{n:'🌸 İlkbahar (Vivaldi)',lv:'genel',bpm:112,ins:'flute',dr:'k---s---',
+    lead:'E5:1 G#5:.5 G#5:.5 G#5:.5 F#5:.5 E5:.5 B5:2.5 B5:.5 A5:.5 G#5:.5 G#5:.5 G#5:.5 F#5:.5 E5:.5 B5:2.5 B5:.5 A5:.5 G#5:.5 A5:.5 B5:.5 A5:1 G#5:1 F#5:2',
+    bass:'E3:4 E3:4 E3:4 E3:4 B2:4 E3:4'},
+  sabah:{n:'🌅 Sabah (Grieg)',lv:'genel',bpm:96,ins:'flute',dr:'--------',
+    lead:'G5:1 E5:1 D5:1 C5:1 D5:1 E5:1 G5:1 E5:1 D5:1 C5:1 D5:.5 E5:.5 D5:.5 E5:.5 G5:1 E5:1 G5:1 A5:1 E5:1 A5:1 G5:1 E5:1 D5:1 C5:3',
+    bass:'C3:4 C3:4 C3:4 C3:2 G2:2 A2:4 F2:4 G2:2 C3:2'}
+});
+const _inst=inst;
+inst=function(a,dst,kind,f,t,d){
+  if(kind==='marimba'){const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.45,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.45);
+    const o2=a.createOscillator(),g2=a.createGain();o2.type='sine';o2.frequency.value=f*3.9;g2.gain.setValueAtTime(.06,t);g2.gain.exponentialRampToValueAtTime(.0001,t+.08);
+    o.connect(g);g.connect(dst);o2.connect(g2);g2.connect(dst);o.start(t);o.stop(t+.5);o2.start(t);o2.stop(t+.1);return;}
+  if(kind==='piano'){[[1,.32,'triangle'],[2,.07,'sine'],[3,.03,'sine']].forEach(([m,v,ty])=>{const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.value=f*m;
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.006);g.gain.exponentialRampToValueAtTime(v*.3,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.4,d+.35));o.connect(g);g.connect(dst);o.start(t);o.stop(t+d+.5);});return;}
+  if(kind==='flute'){const o=a.createOscillator(),g=a.createGain(),l=a.createOscillator(),lg=a.createGain();o.type='sine';o.frequency.value=f;l.frequency.value=5.5;lg.gain.value=f*.006;l.connect(lg);lg.connect(o.frequency);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.28,t+.06);g.gain.setValueAtTime(.26,t+Math.max(.07,d*.85));g.gain.exponentialRampToValueAtTime(.0001,t+d+.05);
+    o.connect(g);g.connect(dst);o.start(t);o.stop(t+d+.1);l.start(t);l.stop(t+d+.1);return;}
+  return _inst(a,dst,kind,f,t,d);
+};
+
+/* ===== v8: Motivasyon cümleleri ===== */
+const PRAISE={
+  pre:['Aferin {n}! Sen bir yıldızsın!','Haydi {n}, sıra sende! Sana çok güveniyorum!','Bravo {n}! Bugün ışıl ışıl parlıyorsun!','{n}, kocaman bir alkış senin için!',
+    'Süpersin {n}! Kalbin de aklın da çok güzel!','{n}, sen minik bir kahramansın!','Yaşasın, {n} seçildi! Haydi bakalım!','{n}, gülümsemen bütün sınıfı aydınlatıyor!',
+    'Harikasın {n}! Denemek en güzel şey!','{n}, bugün şanslı günündesin!','Ellerine sağlık {n}! Çok güzel yapacaksın!','{n}, sen yaparsın! Hepimiz seninleyiz!',
+    'Vay canına {n}! Sen bir süper kahramansın!','{n}, merak eden çocuklar çok şey öğrenir. Aferin sana!','Tebrikler {n}! Bugün sınıfımızın güneşi sensin!'],
+  ilk:['Sıra sende {n}! Bugün harikalar yaratacaksın!','{n}, beynin bir süper bilgisayar gibi çalışıyor!','Tebrikler {n}! Merakın seni çok uzaklara götürecek!',
+    '{n}, hata yapmaktan korkma. Her hata yeni bir öğrenmedir!','Bravo {n}! Bu sınıfın parlayan yıldızlarından birisin!','{n}, düşün, dene, başar! Sana güveniyoruz!',
+    'Haydi {n}, bugünün kâşifi sensin!','{n}, emeğin her gün biraz daha büyüyor!','Süper {n}! Takımının en güçlü oyuncusu gibisin!',
+    '{n}, bir mucit gibi düşün. Fikirlerin çok değerli!','Aferin {n}! Azmin seni zirveye taşıyacak!','{n}, bugün kendini aşacaksın, buna eminim!',
+    'Yaşasın {n}! Robotlar bile seni alkışlıyor!','{n}, cesaretin en büyük süper gücün!','Harika {n}! Öğrenmeye bu kadar istekli olman çok güzel!'],
+  orta:['Sahne senin {n}! Fikirlerini merakla bekliyoruz.','{n}, geleceğin mühendisi belki de sensin!','Harika {n}! Bir algoritma gibi adım adım düşün, başaracaksın.',
+    '{n}, öğrenmek bir süper güç ve sende bolca var!','Sıra sende {n}! Hata ayıklamak da başarının bir parçası.','{n}, kod yazan değil, geleceği yazan biri ol!',
+    'Tebrikler {n}! Bugün dünden bir adım daha ileridesin.','{n}, cesaretin bilginle birleşince durdurulamazsın!','Haydi {n}, yaratıcılığını göster bize!',
+    '{n}, büyük fikirler küçük denemelerle başlar.','Bravo {n}! Teknolojiyi kullanan değil, üreten birisin!','{n}, merak et, sorgula, üret! Sen yaparsın.',
+    '{n}, bugün attığın her adım yarının başarısı.','Süper {n}! Problem çözmek senin işin!','{n}, zekân kadar azmin de parlıyor. Devam!']
+};
+PRAISE.genel=PRAISE.ilk.concat(PRAISE.orta);
+const STAR_SAY=['Bravo {n}! Bir yıldız daha!','Harika {n}! Yıldızın parlıyor!','Süper {n}!','Aferin {n}, böyle devam!','Muhteşem {n}!'];
+const lastPraise={};
+function praiseFor(n,cls){const lv=levelOf(cls||'');const L=PRAISE[lv]||PRAISE.genel;let i;do{i=Math.floor(Math.random()*L.length);}while(L.length>1&&i===lastPraise[lv]);lastPraise[lv]=i;
+  const first=String(n).trim().split(/\s+/)[0];return L[i].replace(/\{n\}/g,first);}
+const firstName=n=>String(n).trim().split(/\s+/)[0];
+
+/* ===== v8: Büyük kutlama ekranı ===== */
+let celeT=null;
+function celebrate(name,cls,o){
+  o=o||{};const el=$('cele');const col=cls?colorOf(cls):'#7a5cff';
+  el.style.setProperty('--cc',col);el.className='cele show '+(o.kind||'pick');
+  $('celeE').textContent=o.emoji||'🌟';$('celeTop').textContent=o.top||(cls?`🎯 ${cls}`:'');$('celeN').textContent=name;
+  const txt=o.text||praiseFor(name,cls);$('celeT').textContent=txt;
+  confetti([col,'#ffffff','#ffd166','#ff5d8f','#19e6f0','#3dd68c']);setTimeout(()=>confetti([col,'#ffd166','#9b5de5']),900);
+  if(o.kind==='bday'){playSynth('dogum');}else sfx('fan');
+  if(S.voice)setTimeout(()=>say(o.speak||txt,true),o.kind==='bday'?600:900);
+  clearTimeout(celeT);celeT=setTimeout(closeCele,o.kind==='bday'?16000:10000);
+  if(pipWin)miniOverlay(name,(o.emoji||'🌟')+' '+(cls||''),col);
+}
+function closeCele(){$('cele').classList.remove('show');}
+$('cele').addEventListener('click',closeCele);
+
+/* ===== v8: Doğum günleri ===== */
+const BD_RE=/^(.*?)[\s,;|–-]+(\d{1,2})[.\/-](\d{1,2})(?:[.\/-]\d{2,4})?\s*$/;
+function parseRosterText(txt){const names=[],bd={};String(txt).split(/\r?\n/).map(x=>x.trim()).filter(Boolean).forEach(l=>{const m=l.match(BD_RE);
+  if(m&&+m[2]<=31&&+m[3]<=12&&m[1].trim()){const n=m[1].trim();names.push(n);bd[n]=`${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;}else names.push(l);});return {names,bd};}
+function rosterText(c){const B=(S.bdays||{})[c]||{};return roster(c).map(n=>B[n]?`${n} - ${B[n]}`:n).join('\n');}
+const ddmm=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
+function bdaysToday(c,d){const B=(S.bdays||{})[c]||{};const k=ddmm(d||now());return Object.keys(B).filter(n=>B[n]===k&&roster(c).includes(n));}
+function bdCelebrate(names,cls){if(!names.length)return;const n=names.map(firstName).join(' ve ');
+  celebrate(names.length>1?names.map(firstName).join(' & '):names[0],cls,{kind:'bday',emoji:'🎂',top:`🎉 ${cls||''} • Doğum günü`,text:`İyi ki doğdun ${n}! Nice mutlu, sağlıklı ve başarılı yıllara! 🎈`,
+    speak:`Bugün çok özel bir gün! İyi ki doğdun ${n}! Hep birlikte alkışlayalım! Nice mutlu yıllara!`});}
+function renderBdPane(){const c=$('tCls').value;const L=roster(c);const B=(S.bdays||{})[c]||{};
+  $('bdSel').innerHTML=L.length?L.map(n=>`<option>${esc(n)}</option>`).join(''):'<option value="">Liste boş</option>';
+  const today=bdaysToday(c);$('bdToday').innerHTML=today.length?`<div class="dutyNow">🎂 <b>Bugün doğum günü:</b> ${today.map(esc).join(', ')}</div>`:'';
+  const d=now();const days=n=>{const [dd,mm]=B[n].split('.').map(Number);let x=new Date(d.getFullYear(),mm-1,dd);if(x<new Date(d.getFullYear(),d.getMonth(),d.getDate()))x=new Date(d.getFullYear()+1,mm-1,dd);return Math.round((x-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/864e5);};
+  const up=Object.keys(B).filter(n=>L.includes(n)).sort((a,b)=>days(a)-days(b));
+  $('bdList').innerHTML=up.length?up.map(n=>`<div class="li"><b>🎂</b><span>${esc(n)}</span><em>${B[n]} • ${days(n)===0?'Bugün!':days(n)+' gün sonra'}</em></div>`).join(''):'<div class="empty-msg">Doğum günü kayıtlı değil. 📋 Sınıf listesinde isimden sonra tarih yaz: <b>Ayşe Yılmaz - 12.03</b></div>';}
+$('bdGo').addEventListener('click',()=>{const n=$('bdName').value.trim()||$('bdSel').value;if(!n){toast('Bir öğrenci seç ya da isim yaz');return;}closeModals();bdCelebrate([n],$('tCls').value);});
+
+/* ===== v8: Yıldız tablosu ===== */
+let starUndo=[];
+function starsOf(c){S.stars=S.stars||{};return S.stars[c]=S.stars[c]||{};}
+function renderStars(pop){const c=$('tCls').value;const L=roster(c);const St=starsOf(c);
+  if(!L.length){$('stGrid').innerHTML=emptyRoster(c);$('stPod').innerHTML='';return;}
+  const top=L.slice().sort((a,b)=>(St[b]||0)-(St[a]||0)).filter(n=>St[n]>0).slice(0,3);const medal=['🥇','🥈','🥉'],hh=[16,12,9];
+  $('stPod').innerHTML=top.length?[1,0,2].filter(i=>top[i]).map(i=>`<div class="pod p${i}"><div class="pm">${medal[i]}</div><b>${esc(firstName(top[i]))}</b><span>⭐ ${St[top[i]]}</span><i style="height:${hh[i]}vh"></i></div>`).join(''):'<div class="empty-msg">Öğrenciye dokun, yıldız kazansın ⭐</div>';
+  $('stGrid').innerHTML=L.map(n=>`<button class="stB${pop===n?' pop':''}" data-n="${esc(n)}"><span>${esc(n)}</span><b>⭐ ${St[n]||0}</b></button>`).join('');}
+$('stGrid').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(!b)return;const c=$('tCls').value,n=b.dataset.n;const St=starsOf(c);St[n]=(St[n]||0)+1;starUndo.push([c,n]);save();
+  sfx('yes');renderStars(n);const k=St[n];
+  if(k%5===0){celebrate(n,c,{emoji:'🏆',top:`⭐ ${k} yıldız!`,text:`${firstName(n)} ${k} yıldıza ulaştı! Süper yıldız!`,speak:`Muhteşem! ${firstName(n)} ${k} yıldıza ulaştı! Kocaman bir alkış!`});}
+  else if(S.voice)say(STAR_SAY[Math.floor(Math.random()*STAR_SAY.length)].replace('{n}',firstName(n)),true);});
+$('stUndo').addEventListener('click',()=>{const u=starUndo.pop();if(!u)return;const St=starsOf(u[0]);St[u[1]]=Math.max(0,(St[u[1]]||0)-1);save();renderStars();});
+$('stReset').addEventListener('click',()=>{const c=$('tCls').value;if(!confirm(`${c} sınıfının bütün yıldızları sıfırlansın mı?`))return;S.stars[c]={};save();renderStars();});
+
+/* ===== v8: Zil farkı (saniye saniye) ===== */
+function hms(s){s=((Math.round(s)%86400)+86400)%86400;return `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function shiftInfo(){const sh=+S.shift||0;const d=now();const real=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();let nb=null;
+  S.periods.forEach(([a,b])=>[toS(a),toS(b)].forEach(x=>{if(x+sh>real&&(nb===null||x<nb))nb=x;}));
+  const el=$('sShiftV');if(el)el.innerHTML=`<b>${sh>0?'+':''}${sh} sn</b>`+(nb!==null?` • Sıradaki zil saati ${hm(nb)} → duyuru tam <b>${hms(nb+sh)}</b>'de`:'');}
+function setShift(v){S.shift=Math.max(-30,Math.min(60,Math.round(+v||0)));save();$('sShift').value=S.shift;shiftInfo();}
+$('sShift').addEventListener('input',()=>setShift($('sShift').value));
+$('sShM').addEventListener('click',()=>setShift((+S.shift||0)-1));
+$('sShP').addEventListener('click',()=>setShift((+S.shift||0)+1));
+setInterval(()=>{if($('mSet').classList.contains('show'))shiftInfo();},1000);
+
+/* ===== v8: tick kancası ===== */
+const announced=new Set();
+const bdDone=new Set();
+function v8Tick(r){
+  const bar=$('bdBar');let names=[],cls='';
+  if(r.wd<=4){cls=r.cell?r.cell.c:(r.seg&&(r.t==='break'||r.t==='lunch')?((cellOn(r.d,r.seg.next)||{}).c||''):'');if(cls)names=bdaysToday(cls,r.d);}
+  bar.classList.toggle('hide',!names.length);if(names.length)bar.innerHTML=`🎂 Bugün <b>${esc(names.map(firstName).join(', '))}</b> doğum günü! 🎉`;
+  if(r.t==='lesson'&&r.cell&&names.length&&soundHere()){const k=dateKey(r.d)+'|'+r.cell.c;if(!bdDone.has(k)&&r.sec-r.a>12&&r.sec-r.a<600){bdDone.add(k);bdCelebrate(names,r.cell.c);}}
+}
+
 /* Ayarlar */
 let draftP=null;
 function drawPeriods(){
@@ -2258,7 +2469,7 @@ $('sPeriods').addEventListener('input',e=>{const t=e.target;if(t.dataset.i!=null
 $('sAddP').addEventListener('click',()=>{const last=draftP[draftP.length-1];const st=last?toS(last[1])+600:32400;draftP.push([hm(st),hm(st+2400)]);drawPeriods();});
 $('sDelP').addEventListener('click',()=>{if(draftP.length>1){draftP.pop();drawPeriods();}});
 function openSettings(){
-  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;fillVoiceSettings();fillV7Settings();$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
+  $('sName').value=S.name;$('sSubj').value=S.subject;$('sWarn').checked=S.warn;$('sConf').checked=S.confetti;$('sCele').checked=S.celebrate!==false;fillVoiceSettings();fillV7Settings();$('sMe').value=S.me||'';$('sKeys').value=kisiselKeys().join('\n');$('sKeyRes').textContent='';draftP=clone(S.periods);drawPeriods();
   const d=now();const pad=x=>String(x).padStart(2,'0');
   $('sSim').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   openModal('mSet');
@@ -2267,7 +2478,7 @@ $('sSave').addEventListener('click',()=>{
   for(let i=0;i<draftP.length;i++){const [a,b]=draftP[i];
     if(!a||!b||toS(b)<=toS(a)){toast(`${i+1}. dersin bitişi başlangıçtan sonra olmalı`);return;}
     if(i>0&&toS(a)<toS(draftP[i-1][1])){toast(`${i+1}. ders, önceki dersle çakışıyor`);return;}}
-  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;readVoiceSettings();readV7Settings();S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
+  S.name=$('sName').value.trim()||DEFAULT.name;S.subject=$('sSubj').value.trim()||SUBJ;S.warn=$('sWarn').checked;S.confetti=$('sConf').checked;S.celebrate=$('sCele').checked;readVoiceSettings();readV7Settings();S.me=$('sMe').value.trim();kisiselKeysKaydet($('sKeys').value);
   S.periods=clone(draftP);S.grid=S.grid.map(row=>S.periods.map((_,i)=>row[i]||null));
   save();closeModals();renderAll();toast('Ayarlar kaydedildi');
 });
@@ -2330,17 +2541,18 @@ function tick(force){
   const segKey=r.seg?`${dateKey(d)}|${r.seg.a}`:`${dateKey(d)}|${r.t}`;
   if(force||segKey!==lastSegKey||Math.floor(r.sec/15)!==lastQ){renderTimeline(r);lastQ=Math.floor(r.sec/15);}
   if(lastSegKey&&segKey!==lastSegKey&&r.wd<=4){
-    announce(r,info,lastInfo);
+    if(!announced.has(segKey)){announced.add(segKey);announce(r,info,lastInfo);}
     if(lastInfo&&lastInfo.isLesson){const c=colorOf(lastInfo.big);confetti([c,'#ffffff','#ffef1a','#ff1ee8','#19e6f0']);}
     if(view==='week')renderWeek();
   }
   voiceTick(r,info,segKey);
   v5Tick(r,segKey,lastSegKey);
   ngSync();
+  v8Tick(r);
   lastSegKey=segKey;lastInfo=info;
 }
 renderAll();
-setInterval(tick,500);
+setInterval(tick,250);
 })();
 </script>
 </body>
