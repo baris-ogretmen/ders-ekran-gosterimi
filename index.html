@@ -533,6 +533,105 @@ body.bgIsik .blobs{display:block}
 .kid-ovgu{display:inline-block;font-weight:900}
 .kid-sure{display:inline-block;margin-left:.4em;opacity:.95}
 .konuKart .kk-akil{font-size:min(2.2vh,16px);font-weight:900;color:#c4b5fd}
+
+/* ===== v9: ✅ İşledim kısayolu · 🎯 ders seçici · 📨 veliye bilgi · 👋 karşılama ===== */
+.konuKart .kk-isle{margin-top:6px;display:inline-flex;align-items:center;gap:6px;background:#16a34a;color:#fff;border-radius:999px;padding:6px 14px;font-size:min(1.9vh,15px);font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer}
+.konuKart .kk-isle:hover{filter:brightness(1.1)}
+.konuKart .kk-isle.ok{background:#0e7490}
+.kp-dsec,.kp-vbt{background:#111c33;border:1px solid #334155;border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.kp-vbt{margin-top:4px}
+.kp-dsec-bas{font-size:13px;font-weight:900;color:#fde68a;margin-bottom:8px}
+.kp-dsec-bas small{color:#94a3b8;font-weight:700}
+.kp-dsec .kp-chips,.kp-vbt .kp-chips{margin-bottom:0}
+.kp-vb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed #334155}
+.kp-vb .kp-btn{padding:8px 12px;font-size:13px}
+.kp-vbd{font-size:12.5px;font-weight:800;border-radius:999px;padding:5px 10px;flex:1;min-width:0}
+.kp-vbd.ok{background:rgba(34,197,94,.16);color:#86efac}
+.kp-vbd.bek{background:rgba(245,158,11,.16);color:#fde68a}
+.kp-vbd.haf{background:rgba(124,58,237,.18);color:#c4b5fd}
+
+.vb-ov{position:fixed;inset:0;z-index:9700;background:rgba(5,9,26,.74);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:2vh 16px}
+.vb-kutu{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:22px;width:min(640px,100%);max-height:96vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);font-family:var(--ft);animation:vbIn .28s ease-out}
+@keyframes vbIn{from{transform:translateY(18px) scale(.97);opacity:0}}
+.vb-bas{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;background:linear-gradient(135deg,var(--dr),var(--dr2));color:#fff}
+.vb-bas h3{margin:0;font-size:20px;font-family:var(--fd);line-height:1.1}
+.vb-ik{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:24px;flex:none}
+.vb-alt{font-size:13px;font-weight:700;opacity:.95;margin-top:4px;line-height:1.45}
+.vb-x{background:rgba(255,255,255,.22);border:none;color:#fff;font-size:20px;width:42px;height:42px;border-radius:12px;flex:none}
+.vb-gov{padding:14px 18px 18px;overflow:auto}
+.vb-durum{border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:800;margin-bottom:10px;line-height:1.45}
+.vb-durum.ok{background:rgba(34,197,94,.16);color:#86efac}
+.vb-durum.bek{background:rgba(245,158,11,.16);color:#fde68a}
+.vb-durum.uyar{background:rgba(59,130,246,.14);color:#bfdbfe;font-weight:700}
+.vb-kart{background:#fff;color:#0f172a;border-radius:18px;padding:14px 14px 12px;border-top:8px solid var(--dr);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.vb-kust{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.vb-kust b{font-size:18px;font-weight:900;color:var(--dr)}
+.vb-kust span{font-size:11.5px;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--dr),var(--dr2));padding:4px 10px;border-radius:999px}
+.vb-govde{outline:none;border-radius:10px;margin-top:6px}
+.vb-govde[contenteditable="true"]:focus{box-shadow:0 0 0 3px rgba(59,130,246,.35)}
+.vb-govde>div{border-radius:10px;padding:6px 9px;margin:4px 0;font-size:15px;line-height:1.45;color:#1e293b}
+.vb-kalt{margin-top:8px;font-size:11.5px;color:#64748b}
+.vb-btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.vb-btns.ince{margin-top:8px}
+.vb-b{flex:1 1 220px;border:none;border-radius:16px;padding:14px 16px;font-weight:900;font-size:18px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;text-align:left;color:#fff;font-family:inherit;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.vb-b small{font-size:12.5px;font-weight:700;opacity:.9}
+.vb-b.gun{background:linear-gradient(135deg,#16a34a,#22c55e);color:#052012}
+.vb-b.haf{background:linear-gradient(135deg,#7c3aed,#6366f1)}
+.vb-b.gri{background:#1e293b;color:#cbd5e1;font-size:14px;padding:10px 14px;align-items:center;box-shadow:none;border:1px solid #334155}
+.vb-hep{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;font-weight:800;cursor:pointer;flex-wrap:wrap}
+.vb-hep input{width:22px;height:22px}
+.vb-hep small{color:#94a3b8;font-weight:700}
+.vb-not{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.5}
+
+.ks{position:fixed;inset:0;z-index:9300;display:none;overflow:hidden;color:#fff;font-family:var(--ft);
+  background:radial-gradient(circle at 32% 50%,var(--kc,#7a5cff) 0,#160b35 62%,#0a0620 100%)}
+.ks.show{display:block;animation:celeIn .5s ease-out}
+.ks-rays{position:absolute;inset:-50%;background:repeating-conic-gradient(rgba(255,255,255,.07) 0 9deg,transparent 9deg 18deg);animation:rays 30s linear infinite;pointer-events:none}
+.ks-gec{position:absolute;top:2vh;right:2vw;z-index:3;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:1vh 1.6vw;font-weight:900;font-size:2vh}
+.ks-ic{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;gap:4vw;padding:3vh 4vw}
+.ks-sol{flex:0 0 auto}
+.ks-cark{position:relative;width:min(84vh,54vw);height:min(84vh,54vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.10) 0 34%,transparent 34.5%),repeating-conic-gradient(rgba(255,255,255,.10) 0 15deg,rgba(255,255,255,.03) 15deg 30deg);
+  box-shadow:0 0 0 1.2vh rgba(255,255,255,.14),0 0 12vh rgba(0,0,0,.45),inset 0 0 8vh rgba(0,0,0,.35)}
+.ks-ok{position:absolute;left:50%;top:-1.2vh;transform:translateX(-50%);width:0;height:0;border-left:2.2vh solid transparent;border-right:2.2vh solid transparent;border-top:4vh solid #ffd166;filter:drop-shadow(0 .6vh .8vh rgba(0,0,0,.45));z-index:3}
+.ks-don{position:absolute;inset:0;border-radius:50%}
+.ks-ch{position:absolute;transform:translate(-50%,-50%);z-index:2}
+.ks-ch span{display:inline-block;white-space:nowrap;padding:.38em .8em;border-radius:999px;font-weight:900;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);border:2px solid rgba(255,255,255,.18);transition:background .3s,color .3s,box-shadow .3s}
+.ks-ch.on span{background:#fff;color:#1e1b4b;border-color:#fff;box-shadow:0 .5vh 1.4vh rgba(0,0,0,.3)}
+.ks-ch.simdi span{background:#ffd166;color:#1e1b4b;box-shadow:0 0 0 .6vh rgba(255,209,102,.35),0 0 4vh rgba(255,209,102,.8)}
+.ks-ch.simdi{animation:ksPop .5s cubic-bezier(.2,1.6,.4,1)}
+.ks-ch.secildi span{background:linear-gradient(135deg,#ffd166,#ff5d8f);color:#1e1b4b;box-shadow:0 0 0 .8vh rgba(255,209,102,.45),0 0 6vh rgba(255,209,102,.95)}
+.ks-ch.secildi{z-index:4;animation:ksPop .6s cubic-bezier(.2,1.6,.4,1) 2}
+@keyframes ksPop{50%{transform:translate(-50%,-50%) scale(1.35)}}
+.ks-merkez{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:46%;text-align:center;z-index:1}
+.ks-ikon{font-size:min(11vh,7vw);line-height:1;animation:bounce 1.4s ease-in-out infinite}
+.ks-ad{font-family:var(--fd);font-weight:800;font-size:min(8.5vh,5.4vw);line-height:1.05;margin-top:1vh;min-height:1em;text-shadow:0 .6vh 2vh rgba(0,0,0,.45)}
+.ks-ad.pop{animation:popN .45s cubic-bezier(.2,1.6,.4,1)}
+.ks-say{font-weight:900;font-size:min(2.8vh,1.9vw);opacity:.85;margin-top:.6vh}
+.ks-sag{flex:1 1 auto;max-width:44vw;min-width:0}
+.ks-pill{display:inline-block;background:rgba(255,255,255,.18);border-radius:999px;padding:.8vh 1.8vw;font-weight:900;font-size:2.6vh}
+.ks-sinif{font-family:var(--fd);font-weight:800;font-size:min(22vh,13vw);line-height:.95;margin-top:1vh;text-shadow:0 1vh 4vh rgba(0,0,0,.45)}
+.ks-ders{font-weight:900;font-size:4.2vh;margin-top:.6vh}
+.ks-konu{font-weight:800;font-size:2.9vh;opacity:.92;margin-top:1vh;line-height:1.3}
+.ks-selam{font-weight:800;font-size:3.4vh;line-height:1.35;margin-top:2.4vh}
+.ks-selam b{color:#ffd166}
+.ks-selam small{font-size:2vh;opacity:.75}
+.ks-bd{margin-top:1.4vh;display:table;background:#ff5d8f;border-radius:999px;padding:.6vh 1.6vw;font-size:2.8vh}
+.ks-yard{margin-top:2vh;display:inline-block;background:rgba(255,209,102,.18);border:2px solid #ffd166;border-radius:2vh;padding:1.2vh 1.8vw;font-weight:900;font-size:3.6vh}
+.ks-yard b{color:#ffd166}
+.ks-hazir{display:block;margin-top:3vh;border:none;border-radius:2.4vh;padding:2.2vh 3.4vw;font-family:var(--fd);font-weight:800;font-size:5.4vh;background:#ffd166;color:#1e1b4b;box-shadow:0 1vh 0 #c99a2e,0 2vh 5vh rgba(0,0,0,.4);animation:bounce 1.6s ease-in-out infinite}
+.ks-hazir:active{transform:translateY(.8vh);box-shadow:0 .2vh 0 #c99a2e}
+@media (max-aspect-ratio:1/1){
+  .ks-ic{flex-direction:column;justify-content:flex-start;gap:1.6vh;padding:8vh 16px 3vh;overflow-y:auto}
+  .ks-cark{width:min(84vw,40vh);height:min(84vw,40vh);flex:none}
+  .ks-sag{max-width:100%;text-align:center}
+  .ks-pill{font-size:1.9vh} .ks-sinif{font-size:min(9vh,20vw)} .ks-ders{font-size:2.8vh} .ks-konu{font-size:2.1vh}
+  .ks-selam{font-size:2.4vh;margin-top:1.4vh} .ks-yard{font-size:2.4vh} .ks-bd{font-size:2vh;margin-left:auto;margin-right:auto}
+  .ks-hazir{margin:1.8vh auto 0;font-size:3.4vh}
+  .ks-ad{font-size:min(5vh,9vw)} .ks-say{font-size:1.7vh} .ks-ikon{font-size:min(6vh,10vw)}
+  .ks-ch{font-size:min(1.9vh,3.3vw)!important}
+}
+@media (prefers-reduced-motion:reduce){.ks-rays,.ks-ikon,.ks-hazir,.ks-ch.simdi,.ks-ch.secildi{animation:none}}
 </style>
 </head>
 <body>
@@ -2813,6 +2912,313 @@ window.kpBuyuk=function(){ return kpBuyuk.apply(null,arguments); };
 window.kpBuyukOzet=function(){ return kpBuyukOzet.apply(null,arguments); };
 window.kpOzetAI=function(){ return kpOzetAI.apply(null,arguments); };
 window.kpOzetSifirla=function(){ return kpOzetSifirla.apply(null,arguments); };
+
+
+/* ============================================================
+   v9 · 🎯 DOĞRU DERSİN KONUSU · 📨 İŞLEDİM → VELİYE BİLGİ · 👋 İSİMLERLE KARŞILAMA
+   · Kart o saatteki dersi (Robotik / Satranç / Yapay Zekâ / Akıl-Zekâ) öne alır;
+     programdaki ders adından anlaşılır, Konu panelinden o güne özel değiştirilebilir.
+   · ✅ İşledim → renkli veli kartı hazır: 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak.
+     Gönderim Yıllık Plan’daki mevcut 📤 Okula Gönder yolundan, son onayınla gider (okul sistemine dokunulmaz).
+   · Ders başlayınca sınıf listesindeki isimler çarkta tek tek yanar, sesli okunur; derse göre selamlama.
+   ============================================================ */
+/* ---- 📨 Ortak veli bilgisi metni (Ders Saati ve Yıllık Plan'da birebir aynı) ---- */
+var VB_LOG='dk_veli_akis', VB_DUZ='dk_veli_duzen', VB_TER='dk_veli_tercih';
+var VB_AD={robokod:['Robotik-Kodlama','🤖'],satranc:['Satranç','♟️'],yz:['Yapay Zekâ','🧠'],akil:['Akıl-Zekâ Oyunları','🧩'],kocluk:['Eğitim Koçluğu','🎯'],genel:['Dersimiz','📚']};
+var VB_RENK={robokod:['#7c3aed','#22d3ee'],satranc:['#059669','#34d399'],yz:['#0891b2','#22d3ee'],akil:['#db2777','#f472b6'],kocluk:['#b45309','#f59e0b'],genel:['#f59e0b','#ec4899']};
+var VB_KAZ={
+ kocluk:{ana:'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','12':'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','34':'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','56':'hedef koyma, zaman yönetimi ve öz düzenleme becerisini geliştiriyor','78':'LGS yolunda hedef belirleme, zaman yönetimi ve verimli çalışma becerisini güçlendiriyor'},
+ robokod:{ana:'sıralama, yön (ileri-geri-sağ-sol) ve sebep-sonuç ilişkisini oyunla keşfediyor','12':'adım adım düşünmeyi (algoritma) ve basit komut dizileri kurmayı öğreniyor','34':'döngü ve koşul gibi kavramlarla problemi parçalara ayırıp çözmeyi deneyimliyor','56':'tasarla-dene-düzelt döngüsüyle kendi projesini geliştirmeyi ve hatadan öğrenmeyi öğreniyor','78':'gerçek bir problemi analiz edip algoritmik çözüm üretmeyi ve fikrini savunmayı geliştiriyor'},
+ satranc:{ana:'dikkat, sabır ve sıra bekleme becerisini eğlenceli bir hikâyeyle geliştiriyor','12':'taşların hareketleriyle dikkat, kural takibi ve öngörü becerisini geliştiriyor','34':'hamle öncesi düşünmeyi, plan yapmayı ve sonuçları tahmin etmeyi öğreniyor','56':'strateji kurma, alternatifleri karşılaştırma ve karar verme becerisini güçlendiriyor','78':'uzun vadeli plan, analitik düşünme ve doğru karar verme becerisini pekiştiriyor'},
+ yz:{ana:'makinelerin nasıl “öğrendiğini” resimler ve oyunlarla merak ederek keşfediyor','12':'yapay zekânın günlük hayattaki yerini ve güvenli teknoloji kullanımını tanıyor','34':'verinin ne olduğunu, makinenin örneklerle nasıl öğrendiğini deneyerek görüyor','56':'basit modeller eğitip yapay zekânın güçlü ve sınırlı yanlarını sorguluyor','78':'kendi modelini eğitip yapay zekâ etiği, doğruluk ve sorumluluk üzerine tartışıyor'},
+ akil:{ana:'eşleştirme, örüntü ve hafıza oyunlarıyla dikkatini ve görsel algısını geliştiriyor','12':'örüntü bulma, hafıza ve mantık oyunlarıyla düşünme hızını artırıyor','34':'mantık bulmacalarıyla akıl yürütme ve farklı çözüm yolları bulma becerisini geliştiriyor','56':'zorlayıcı bulmacalarla sistemli düşünme ve sabırla çözüme ulaşmayı deneyimliyor','78':'karmaşık problemlerde strateji kurma ve eleştirel düşünme becerisini pekiştiriyor'},
+ genel:{ana:'oyun yoluyla merak, dikkat ve birlikte çalışma becerisini geliştiriyor','12':'oyun ve etkinliklerle dikkat, kural takibi ve düşünme becerisini geliştiriyor','34':'etkinliklerle problem çözme ve iş birliği becerisini geliştiriyor','56':'proje ve oyunlarla planlama, deneme ve kendini ifade etme becerisini güçlendiriyor','78':'proje ve tartışmalarla analitik ve eleştirel düşünme becerisini pekiştiriyor'}};
+var VB_SORU={robokod:'Bugün robotik-kodlamada ne yaptın, bana adım adım anlatır mısın?',satranc:'Bugün satrançta ne öğrendin, bana da gösterir misin?',yz:'Bugün yapay zekâ dersinde ne keşfettin?',akil:'Bugün hangi zekâ oyununu oynadın, birlikte oynayalım mı?',kocluk:'Bu haftaki hedefin ne, nasıl gidiyor?',genel:'Bugün derste ne yaptın, bana anlatır mısın?'};
+var VB_SORU_ANA={robokod:'Bugün robota nasıl yol gösterdin?',satranc:'Bugün satranç taşlarıyla ne oynadın?',yz:'Bugün akıllı makineler hakkında ne öğrendin?',akil:'Bugün hangi oyunu oynadın?'};
+var VB_EK={ana:'diye sormanız çok değerli 💛','12':'diye sorabilirsiniz 😊','34':'diye sorup anlatmasını isteyebilirsiniz 👏','56':'diye sorabilirsiniz; anlatmak öğrenmeyi pekiştirir 🌟','78':'diye sorup fikrini dinleyebilirsiniz 💡'};
+var VB_SATIR_RENK=[[/^📚|^📝|^📅|^🗓️/,'#e0f2fe'],[/^🎯/,'#d1fae5'],[/^🏠/,'#fef3c7'],[/^🧠|^📖/,'#ede9fe'],[/^✨|^✅|^💡|^🎨|^🧩/,'#fae8ff'],[/^📱|^🎒/,'#ffe4e6'],[/^🎈|^🌟/,'#fff7ed']];
+function vbBand(gi){ gi=+gi; return gi<=0?'ana':gi<=2?'12':gi<=4?'34':gi<=6?'56':'78'; }
+function vbKonuSade(k){ return String(k||'').replace(/^Tanışalım:\s*/,'').replace(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/,'').trim(); }
+function vbGunKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function vbAnlatim(a,konu){ var s=String(a||'').replace(/\s*Derste:.*$/,'').replace(/\s+/g,' ').trim(); var k=vbKonuSade(konu); if(k && s.indexOf(k+':')===0) s=s.slice(k.length+1).trim(); return s; }
+/* L: aynı gün aynı sınıfta işlenen dersler [{k,konu,akil}] → veliye gidecek kısa, renkli kart metni */
+function vbMetin(L,sinifAd,gi,tarih){ var sev=vbBand(gi), bugun=(tarih===vbGunKey()), ks=[];
+  var gunAd=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][new Date(tarih+'T12:00:00').getDay()];
+  var s=[(bugun?'🌟 Bugün Derste':'🌟 '+gunAd+' Dersimizde')+' · '+sinifAd];
+  L.forEach(function(e){ var A=VB_AD[e.k]||VB_AD.genel, konu=vbKonuSade(e.konu), a=vbAnlatim(e.akil,e.konu);
+    s.push('📚 '+A[1]+' '+A[0]+': '+konu); if(a && a!==konu) s.push('📖 Kısaca: '+a); if(ks.indexOf(e.k)<0) ks.push(e.k); });
+  ks.slice(0,2).forEach(function(k){ var kz=(VB_KAZ[k]||VB_KAZ.genel)[sev]; if(kz) s.push('🎯 '+(ks.length>1?(VB_AD[k]||VB_AD.genel)[0]+' ile ':'Bu çalışmayla ')+'çocuğumuz '+kz+'.'); });
+  var k0=ks[0]||'genel', soru=(sev==='ana'&&VB_SORU_ANA[k0])||VB_SORU[k0]||VB_SORU.genel;
+  s.push('🏠 '+(bugun?'Akşam':'Evde')+' “'+soru+'” '+VB_EK[sev]);
+  s.push('— Barış Öğretmen'); return s.join('\n'); }
+function vbOku(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:(JSON.parse(v)||d); }catch(e){ return d; } }
+function vbYaz(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function vbGet(){ var a=vbOku(VB_LOG,[]); return Array.isArray(a)?a:[]; }
+function vbSet(a){ var sinir=vbGunKey(new Date(Date.now()-120*864e5)); vbYaz(VB_LOG,a.filter(function(x){ return x&&x.tarih>=sinir; }).slice(-600)); }
+function vbGrup(tarih,gi){ return vbGet().filter(function(x){ return x.tarih===tarih&&x.gi===gi; }).sort(function(a,b){ return a.ts-b.ts; }); }
+/* Aynı gün aynı sınıfın henüz gönderilmemiş dersleri (hepsi gittiyse hepsi) */
+function vbGrupAcik(tarih,gi){ var L=vbGrup(tarih,gi), b=L.filter(function(x){ return !x.gon; }); return b.length?b:L; }
+function vbBul(gi,k,idx){ var a=vbGet().filter(function(x){ return x.gi===gi&&x.k===k&&x.idx===idx; }); return a.length?a[a.length-1]:null; }
+function vbKaydet(o){ var a=vbGet(), id=o.tarih+'|'+o.gi+'|'+o.k+'|'+o.idx, es=a.filter(function(x){ return x.id===id; })[0];
+  var e=Object.assign({tur:'hafta',gon:0,ts:Date.now()},o,{id:id}); if(es){ e.tur=es.tur; e.gon=es.gon; e.ts=es.ts; }
+  a=a.filter(function(x){ return x.id!==id; }); a.push(e); vbSet(a);
+  var gk=o.tarih+'|'+o.gi, dz=vbOku(VB_DUZ,{}); if(dz[gk] && dz[gk].n!==vbGrupAcik(o.tarih,o.gi).length){ delete dz[gk]; vbYaz(VB_DUZ,dz); }
+  return e; }
+function vbSil(gi,k,idx){ vbSet(vbGet().filter(function(x){ return !(x.gi===gi&&x.k===k&&x.idx===idx&&!x.gon); })); }
+function vbTurYap(tarih,gi,tur){ var a=vbGet(); a.forEach(function(x){ if(x.tarih===tarih&&x.gi===gi&&!x.gon) x.tur=tur; }); vbSet(a); }
+function vbTercih(gi){ var t=vbOku(VB_TER,{}); return t[gi]||'sor'; }
+function vbTercihSet(gi,v){ var t=vbOku(VB_TER,{}); if(v==='sor') delete t[gi]; else t[gi]=v; vbYaz(VB_TER,t); }
+function vbGrupMetin(tarih,gi,sinifAd){ var L=vbGrupAcik(tarih,gi), dz=vbOku(VB_DUZ,{})[tarih+'|'+gi]; return (dz&&dz.n===L.length&&dz.t)?dz.t:vbMetin(L,sinifAd,gi,tarih); }
+
+
+/* ---------- 🎯 Doğru dersin konusu ---------- */
+var KP_DSEC='dk_tahta_dsec';
+function kpDersK(s){ s=String(s||'').toLocaleLowerCase('tr');
+  if(/satran/.test(s)) return 'satranc'; if(/yapay|\byz\b|\bai\b/.test(s)) return 'yz'; if(/ak[ıi]l|zek[aâ]|mant[ıi]k/.test(s)) return 'akil';
+  if(/ko[çc]/.test(s)) return 'kocluk'; if(/robot|kod/.test(s)) return 'robokod'; return null; }
+function kpDsecGet(){ var o=vbOku(KP_DSEC,{}), sinir=dateKey(addDays(new Date(),-7)), deg=false; Object.keys(o).forEach(function(k){ if(k.slice(0,10)<sinir){ delete o[k]; deg=true; } }); if(deg) vbYaz(KP_DSEC,o); return o; }
+/* Bu sınıfın şu an (ya da bugün) ilgili ders saati */
+function kpSlot(cls){ var r=lastR; if(!r||r.wd>4||!cls) return null; var d=r.d;
+  if(r.t==='lesson'&&r.cell&&r.cell.c===cls) return {i:r.seg.i,s:r.cell.s,durum:'ders',d:d};
+  if((r.t==='break'||r.t==='lunch')&&r.seg){ var up=cellOn(d,r.seg.next); if(up&&up.c===cls) return {i:r.seg.next,s:up.s,durum:'sirada',d:d}; }
+  var P=S.periods, son=null, ilk=null;
+  for(var i=0;i<P.length;i++){ var c=cellOn(d,i); if(!c||c.c!==cls) continue; if(toS(P[i][0])>r.sec){ if(!ilk) ilk={i:i,s:c.s,durum:'sirada',d:d}; } else son={i:i,s:c.s,durum:'gecti',d:d}; }
+  return son||ilk; }
+function kpSlotKey(cls,sl){ return dateKey(sl.d)+'|'+cls+'|'+sl.i; }
+function kpAktifK(cls){ var sl=kpSlot(cls); if(!sl) return null; return kpDsecGet()[kpSlotKey(cls,sl)]||kpDersK(sl.s); }
+/* Liste her yerde (kart, panel, zil duyurusu, karşılama) o saatteki ders başta olacak şekilde gelir */
+var _kpDerslerV9=kpDersler;
+kpDersler=function(cls){ var D=_kpDerslerV9(cls);
+  /* Yerleşik (yedek) planda da ✅ işaretini göster: dk_ilr’den oku */
+  if(D&&D.kaynak==='yedek'&&D.list){ var o=vbOku('dk_ilr',{}); D=Object.assign({},D,{list:D.list.map(function(d){ var ok=!!(o[d.gi]&&o[d.gi][d.k]&&o[d.gi][d.k][d.idx]); return ok?Object.assign({},d,{islendi:true}):d; })}); }
+  if(!D||!D.list||D.list.length<2) return D; var k=null; try{ k=kpAktifK(cls); }catch(e){} if(!k) return D;
+  var i=-1; D.list.forEach(function(d,j){ if(i<0&&d.k===k) i=j; }); if(i<=0) return D;
+  var L=D.list.slice(), x=L.splice(i,1)[0]; L.unshift(x); return Object.assign({},D,{list:L}); };
+function kpDsecYap(cls,k){ var sl=kpSlot(cls); if(!sl){ toast('Bugün bu sınıfın dersi yok'); return; } var o=kpDsecGet(), key=kpSlotKey(cls,sl);
+  if(kpDersK(sl.s)===k) delete o[key]; else o[key]=k; vbYaz(KP_DSEC,o); KP.sonKart=''; KP.panelSon=''; try{ kpGuncelle(lastR); }catch(e){} kpCiz();
+  var A=VB_AD[k]||VB_AD.genel; toast(A[1]+' '+cls+' · '+(sl.i+1)+'. ders: '+A[0]+' (sadece bugün)'); }
+
+/* ---------- 📨 İşledim → veliye bilgi ---------- */
+function vbDersBul(cls,gi,k,idx){ var D=kpDersler(cls); if(!D) return null; return D.list.filter(function(d){ return d.gi===gi&&d.k===k&&d.idx===idx; })[0]||null; }
+function vbSaat(ts){ return new Date(ts).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}); }
+function vbPlanUrl(){ var v=kpVeri(); return (v&&v.url)||''; }
+function vbBekleyenIds(){ return vbGet().filter(function(x){ return x.tur==='gunluk'&&!x.gon; }).map(function(x){ return x.id; }); }
+var VB={bek:vbBekleyenIds()};
+function vbIsle(cls,d){ if(!d) return; var t=vbGunKey();
+  var e=vbKaydet({tarih:t,gi:d.gi,k:d.k,idx:d.idx,konu:d.konu,akil:d.akil||d.ozet||'',cls:cls,kaynak:'tahta'});
+  var tr=vbTercih(d.gi);
+  if(e.gon){ vbAc(cls,d.gi,t); return; }
+  if(tr==='gunluk'){ vbTurYap(t,d.gi,'gunluk'); if(!vbPlanAc()) vbAc(cls,d.gi,t,'url'); return; }
+  if(tr==='hafta'){ toast('🗓️ '+cls+' · haftalık veli özetine eklendi'); return; }
+  vbAc(cls,d.gi,t); }
+function vbPlanAc(){ var u=vbPlanUrl(); if(!u) return false;
+  var w=null; try{ w=window.open(u+'#veli=bugun','dkYillikPlan','popup=yes,width=760,height=900,left='+Math.max(0,(screen.availWidth||1200)-800)+',top=30'); }catch(e){}
+  if(!w){ var a=document.createElement('a'); a.href=u+'#veli=bugun'; a.target='dkYillikPlan'; a.rel='opener'; document.body.appendChild(a); try{ a.click(); }catch(e){} a.remove(); }
+  toast('📤 Yıllık Plan’da son onay açıldı → “Okula gönder”e bas'); VB.bek=vbBekleyenIds(); return true; }
+function vbSatirHTML(metin){ return String(metin||'').split('\n').filter(function(l,i){ return i>0&&l.trim(); }).map(function(l){ var r=VB_SATIR_RENK.filter(function(x){ return x[0].test(l.trim()); })[0];
+  return '<div style="background:'+(r?r[1]:'transparent')+'">'+esc(l)+'</div>'; }).join(''); }
+function vbKapat(){ var o=$('vbOv'); if(o) o.remove(); }
+function vbAc(cls,gi,tarih,not){ vbKapat(); var L=vbGrupAcik(tarih,gi); if(!L.length) return;
+  var metin=vbGrupMetin(tarih,gi,cls), ilk=metin.split('\n')[0], son=L[L.length-1], R=VB_RENK[son.k]||VB_RENK.genel;
+  var gon=L.every(function(x){ return x.gon; }), bek=L.some(function(x){ return x.tur==='gunluk'&&!x.gon; }), url=vbPlanUrl(), gk=tarih+'|'+gi;
+  var isl=L.map(function(x){ var A=VB_AD[x.k]||VB_AD.genel; return A[1]+' '+A[0]+' · “'+esc(vbKonuSade(x.konu))+'”'; }).join('<br>');
+  var o=document.createElement('div'); o.id='vbOv'; o.className='vb-ov';
+  var durum = gon ? '<div class="vb-durum ok">✅ Bu bilgi '+vbSaat(Math.max.apply(null,L.map(function(x){return x.gon;})))+'’de velilere gönderildi.</div>'
+    : bek ? '<div class="vb-durum bek">⏳ Yıllık Plan’da son onayını bekliyor. Pencere kapandıysa aşağıdan yeniden aç.</div>' : '';
+  if(not==='url'||(!url&&!gon)) durum+='<div class="vb-durum uyar">ℹ️ Yıllık Plan bu tahtada henüz hiç açılmamış, adresini bilmiyorum. Yıllık Plan’ı bu tahtada bir kez aç; bu bilgi orada <b>⚡ Hızlı Paylaş → ✅ Bugün işlenenler</b>’de hazır bekler. Şimdilik metni kopyalayabilirsin.</div>';
+  o.innerHTML='<div class="vb-kutu" role="dialog" aria-modal="true" aria-label="Veliye bilgi">'+
+    '<div class="vb-bas" style="--dr:'+R[0]+';--dr2:'+R[1]+'"><div class="vb-ik">📨</div><div style="flex:1;min-width:0"><h3>Veliye bilgi · '+esc(cls)+'</h3><div class="vb-alt">✅ İşlendi olarak kaydedildi:<br>'+isl+'</div></div><button class="vb-x" data-vb="kapat" title="Kapat">✕</button></div>'+
+    '<div class="vb-gov">'+durum+
+      '<div class="vb-kart" style="--dr:'+R[0]+';--dr2:'+R[1]+'"><div class="vb-kust"><b>'+esc(ilk)+'</b><span>'+(gi===0?'ANA':gi+'. SINIF')+'</span></div>'+
+        '<div class="vb-govde" id="vbGovde" contenteditable="'+(gon?'false':'true')+'" spellcheck="false">'+vbSatirHTML(metin)+'</div>'+
+        '<div class="vb-kalt">Barış Öğretmen · Değişim Koleji'+(gon?'':' · ✏️ metne dokunup düzeltebilirsin')+'</div></div>'+
+      (gon?'<div class="vb-btns"><button class="vb-b gri" data-vb="kapat">Kapat</button></div>':
+       '<div class="vb-btns"><button class="vb-b gun" data-vb="gun">📤 '+(bek?'Onay ekranını yeniden aç':'Şimdi gönder')+'<small>günlük · dersten hemen sonra</small></button>'+
+       '<button class="vb-b haf" data-vb="haf">🗓️ Haftalık özete bırak<small>“Bu hafta ne yaptık” kartına kendiliğinden girer</small></button></div>'+
+       '<label class="vb-hep"><input type="checkbox" id="vbHep"> '+esc(cls)+' için hep böyle yap, bir daha sorma <small>(Konu panelinden değiştirebilirsin)</small></label>'+
+       '<div class="vb-btns ince"><button class="vb-b gri" data-vb="kopya">📋 Metni kopyala</button><button class="vb-b gri" data-vb="kapat">Şimdilik kapat</button></div>')+
+      '<div class="vb-not">🔒 Gönderim, Yıllık Plan’daki <b>📤 Okula Gönder</b> yolundan ve senin son onayınla gider; okul sistemine dokunulmaz. Kart her durumda haftalık özete de eklenir.</div>'+
+    '</div></div>';
+  document.body.appendChild(o);
+  var gv=$('vbGovde'); if(gv&&!gon) gv.addEventListener('input',function(){ var dz=vbOku(VB_DUZ,{}); dz[gk]={t:ilk+'\n'+gv.innerText.replace(/\n{2,}/g,'\n').trim(),n:vbGrupAcik(tarih,gi).length}; vbYaz(VB_DUZ,dz); });
+  o.addEventListener('click',function(e){ if(e.target===o){ vbKapat(); return; } var b=e.target.closest('[data-vb]'); if(!b) return; var a=b.dataset.vb, hep=$('vbHep')&&$('vbHep').checked;
+    if(a==='kapat'){ vbKapat(); return; }
+    if(a==='kopya'){ var t=vbGrupMetin(tarih,gi,cls); try{ navigator.clipboard.writeText(t).then(function(){ toast('📋 Kopyalandı'); },function(){ toast('Kopyalanamadı'); }); }catch(er){ toast('Kopyalanamadı'); } return; }
+    if(a==='gun'){ if(hep) vbTercihSet(gi,'gunluk'); vbTurYap(tarih,gi,'gunluk'); if(vbPlanAc()){ vbKapat(); } else { vbAc(cls,gi,tarih,'url'); } kpYenile(); return; }
+    if(a==='haf'){ if(hep) vbTercihSet(gi,'hafta'); vbTurYap(tarih,gi,'hafta'); vbKapat(); toast('🗓️ '+cls+' · haftalık veli özetine eklendi'); kpYenile(); return; } });
+}
+function kpYenile(){ KP.sonKart=''; try{ var p=$('konuPanel'); if(p&&!p.classList.contains('hide')) kpCiz(); }catch(e){} }
+var _kpIsledimV9=kpIsledim;
+kpIsledim=function(cls,gi,k,idx,geri){ var d=vbDersBul(cls,gi,k,idx); _kpIsledimV9(cls,gi,k,idx,geri);
+  try{ if(geri) vbSil(gi,k,idx); else vbIsle(cls,d||{gi:gi,k:k,idx:idx,konu:'',akil:''}); kpYenile(); }catch(e){} };
+/* Yıllık Plan’da gönderilince tahtada haber ver */
+window.addEventListener('storage',function(e){ if(e.key!==VB_LOG) return; var simdi=vbGet(), yeni=[];
+  VB.bek.forEach(function(id){ var x=simdi.filter(function(y){ return y.id===id; })[0]; if(x&&x.gon&&yeni.indexOf(x.cls||String(x.gi))<0) yeni.push(x.cls||(x.gi+'. sınıf')); });
+  if(yeni.length) toast('✅ Veli bilgisi gönderildi → '+yeni.join(', ')); VB.bek=vbBekleyenIds(); kpYenile(); });
+
+/* ---------- Konu paneli eklentileri: ders seçici · veli durumu · tercih · karşılama ---------- */
+function vbDurumHTML(e){ if(!e) return '';
+  if(e.gon) return '<span class="kp-vbd ok">📨 Velilere gönderildi · '+vbSaat(e.gon)+'</span>';
+  if(e.tur==='gunluk') return '<span class="kp-vbd bek">⏳ Günlük bilgi Yıllık Plan’da onay bekliyor</span>';
+  return '<span class="kp-vbd haf">🗓️ Haftalık veli özetine eklendi</span>'; }
+function kpV9Ekle(){ var p=$('kpIc'); if(!p) return; var cls=KP.secili||KP.sinif; if(!cls) return; var D=kpDersler(cls); if(!D||!D.list.length) return;
+  var sl=kpSlot(cls), ilkCh=p.querySelector('.kp-chips');
+  if(D.list.length>1&&sl){ var ak=D.list[0].k, bx=document.createElement('div'); bx.className='kp-dsec';
+    bx.innerHTML='<div class="kp-dsec-bas">🎯 '+(sl.durum==='ders'?'Bu saatte':(sl.i+1)+'. derste')+' hangi dersi işliyoruz? <small>Kart ve duyurular buna göre</small></div><div class="kp-chips">'+
+      D.list.map(function(d){ var A=VB_AD[d.k]||[d.ad,d.ik]; return '<button class="kp-chip'+(d.k===ak?' akt':'')+'" data-dsec="'+esc(d.k)+'">'+A[1]+' '+esc(A[0])+'</button>'; }).join('')+'</div>';
+    if(ilkCh&&ilkCh.nextSibling) p.insertBefore(bx,ilkCh.nextSibling); else p.insertBefore(bx,p.firstChild); }
+  p.querySelectorAll('.kp-ders').forEach(function(b,i){ var d=D.list[i]; if(!d) return; var e=vbBul(d.gi,d.k,d.idx); if(!e&&!d.islendi) return;
+    var x=document.createElement('div'); x.className='kp-vb'; x.innerHTML=vbDurumHTML(e)+'<button class="kp-btn" style="background:#0e7490" data-vbac="'+i+'">📨 Veliye bilgi</button>'; b.appendChild(x); });
+  var gi=D.list[0].gi, tr=vbTercih(gi), t=document.createElement('div'); t.className='kp-vbt';
+  t.innerHTML='<div class="kp-dsec-bas">📨 '+esc(cls)+' · “✅ İşledim” deyince veliye bilgi</div><div class="kp-chips">'+[['sor','❓ Her seferinde sor'],['gunluk','📤 Hep günlük gönder'],['hafta','🗓️ Hep haftalığa bırak']].map(function(x){ return '<button class="kp-chip'+(tr===x[0]?' akt':'')+'" data-vbt="'+x[0]+'">'+x[1]+'</button>'; }).join('')+'</div>'+
+    (ksAktif()?'<button class="kp-btn" style="background:#db2777;margin-top:8px" data-ksbas="1">👋 '+esc(cls)+' sınıfını isimlerle karşıla</button>':'');
+  p.appendChild(t); }
+var _kpCizV9=kpCiz;
+kpCiz=function(){ _kpCizV9.apply(this,arguments); try{ kpV9Ekle(); }catch(e){ try{console.warn('v9 panel',e);}catch(_){} } };
+(function(){ var p=$('kpIc'); if(!p) return; p.addEventListener('click',function(e){ var cls=KP.secili||KP.sinif; if(!cls) return; var b;
+  if((b=e.target.closest('[data-dsec]'))){ kpDsecYap(cls,b.dataset.dsec); return; }
+  if((b=e.target.closest('[data-vbt]'))){ var D=kpDersler(cls); if(!D) return; vbTercihSet(D.list[0].gi,b.dataset.vbt); toast({sor:'❓ Her seferinde sorulacak',gunluk:'📤 '+cls+': işledim deyince günlük gönderim açılır',hafta:'🗓️ '+cls+': işlenenler haftalık özete bırakılır'}[b.dataset.vbt]); kpCiz(); return; }
+  if((b=e.target.closest('[data-vbac]'))){ var D2=kpDersler(cls); var d=D2&&D2.list[+b.dataset.vbac]; if(!d) return; var en=vbBul(d.gi,d.k,d.idx);
+    if(!en) en=vbKaydet({tarih:vbGunKey(),gi:d.gi,k:d.k,idx:d.idx,konu:d.konu,akil:d.akil||d.ozet||'',cls:cls,kaynak:'tahta'}); vbAc(cls,d.gi,en.tarih); return; }
+  if((b=e.target.closest('[data-ksbas]'))){ kpKapat(); ksElle(cls); return; } }); })();
+
+/* ---------- Canlı kart: hangi ders + ✅ İşledim kısayolu ---------- */
+var _kpGuncelleV9=kpGuncelle;
+kpGuncelle=function(r){ _kpGuncelleV9(r); var el=$('konuKart'); if(!el||el.classList.contains('hide')||!KP.sinif) return;
+  var D=kpDersler(KP.sinif); if(!D||!D.list.length) return; var d=D.list[0], A=VB_AD[d.k]||[d.ad,d.ik];
+  var ust=el.querySelector('.kk-ust'); if(ust&&ust.dataset.v9!==d.k){ ust.textContent=ust.textContent.replace(/^📚 ([^·]+)·/,'📚 $1· '+A[1]+' '+A[0]+' ·'); ust.dataset.v9=d.k; }
+  var e=vbBul(d.gi,d.k,d.idx), txt=d.islendi?(e&&e.gon?'✅ İşlendi · 📨 velilere gitti':'✅ İşlendi · 📨 veliye bilgi'):'✅ İşledim → veliye bilgi', pl=el.querySelector('.kk-isle');
+  if(!pl){ pl=document.createElement('span'); pl.className='kk-isle'; el.appendChild(pl); }
+  if(pl.textContent!==txt){ pl.textContent=txt; pl.classList.toggle('ok',!!d.islendi); }
+  pl.dataset.c=KP.sinif; pl.dataset.gi=d.gi; pl.dataset.k=d.k; pl.dataset.i=d.idx; pl.dataset.ok=d.islendi?'1':''; };
+(function(){ var el=$('konuKart'); if(!el) return; el.addEventListener('click',function(e){ var p=e.target.closest('.kk-isle'); if(!p) return; e.preventDefault(); e.stopImmediatePropagation();
+  var cls=p.dataset.c, gi=+p.dataset.gi, k=p.dataset.k, i=+p.dataset.i;
+  if(p.dataset.ok){ var en=vbBul(gi,k,i); if(!en){ var d=vbDersBul(cls,gi,k,i); en=vbKaydet({tarih:vbGunKey(),gi:gi,k:k,idx:i,konu:d?d.konu:'',akil:d?(d.akil||d.ozet||''):'',cls:cls,kaynak:'tahta'}); } vbAc(cls,gi,en.tarih); }
+  else kpIsledim(cls,gi,k,i,false); },true); })();
+
+/* ---------- 👋 Derse girişte isimlerle karşılama ---------- */
+var KS={acik:false,t:[],wd:null,idx:-1,isimler:[],bitti:false,cls:'',konustu:false,sonOlay:0,baska:0};
+var KS_SELAM={
+ robokod:{ana:'Minik mucitler, robot arkadaşlarımız sizi bekliyor!','12':'Robotlarımız hazır, komutlarımız hazır!','34':'Bugün yine düşünecek, kodlayacak ve keşfedeceğiz!','56':'Tasarla, kodla, dene: mucit modu açık!','78':'Problemi analiz et, algoritmanı kur: mühendis modu açık!'},
+ satranc:{ana:'Satranç krallığına hoş geldiniz minikler!','12':'Taşlarımız dizildi, satranç krallığı bizi bekliyor!','34':'Taşlar dizildi, hamle sırası sizde!','56':'Strateji zamanı: taşlar dizildi, saat çalışıyor!','78':'Tahta hazır: planını kur, hamleni düşün!'},
+ yz:{ana:'Akıllı makineler dünyasına yolculuk başlıyor!','12':'Akıllı makinelerin sırrını keşfetmeye hazır mıyız?','34':'Yapay zekâ dünyasında yeni bir keşif bizi bekliyor!','56':'Makineler nasıl öğrenir? Bugün birlikte keşfedeceğiz!','78':'Veri, model, etik: yapay zekâ laboratuvarı açıldı!'},
+ akil:{ana:'Zekâ oyunları başlıyor, minik beyinler hazır mı?','12':'Zekâ oyunlarıyla beyinlerimizi ısıtalım!','34':'Bulmacalar hazır, düşünme kaslarımızı çalıştıralım!','56':'Zorlu bulmacalar sizi bekliyor, pes etmek yok!','78':'Strateji ve mantık: zekâ arenası açıldı!'},
+ kocluk:{ana:'Hedeflerimize bir adım daha yaklaşıyoruz!','12':'Hedeflerimize bir adım daha yaklaşıyoruz!','34':'Hedeflerimize bir adım daha yaklaşıyoruz!','56':'Hedefini koy, planını yap, adım adım ilerle!','78':'Hedef belli, plan hazır: bugün bir adım daha!'}};
+function ksAktif(){ return S.ksOn!==false; }
+/* Türkçe -in eki: Elif’in, Ayşe’nin, Umut’un, Gülsüm’ün */
+function ksIn(ad){ ad=String(ad||'').trim(); var m=ad.toLocaleLowerCase('tr').match(/[aeıioöuü](?=[^aeıioöuü]*$)/), v=m?m[0]:'e', son=/[aeıioöuü]$/i.test(ad.toLocaleLowerCase('tr'));
+  var ek={a:'ın','ı':'ın',e:'in',i:'in',o:'un',u:'un','ö':'ün','ü':'ün'}[v]||'in'; return ad+'’'+(son?'n':'')+ek; }
+function ksIsimler(cls){ var L=roster(cls), ilk=L.map(firstName), say={}; ilk.forEach(function(n){ say[n]=(say[n]||0)+1; });
+  return L.map(function(n,i){ var f=ilk[i]; if(say[f]>1){ var p=String(n).trim().split(/\s+/); if(p[1]) f+=' '+p[1].charAt(0).toLocaleUpperCase('tr')+'.'; } return f; }); }
+function ksTemizle(){ KS.t.forEach(clearTimeout); KS.t=[]; if(KS.wd){ clearInterval(KS.wd); KS.wd=null; } }
+function ksKonus(t,o){ o=o||{}; var bitti=false, son=function(){ if(bitti) return; bitti=true; if(o.son) o.son(); };
+  if(!S.voice||!('speechSynthesis' in window)||!t){ KS.t.push(setTimeout(son,o.sessizMs||1800)); return; }
+  try{ quiet(1500+String(t).length*85); var u=new SpeechSynthesisUtterance(kpSes(t)); u.lang='tr-TR'; if(trVoice) u.voice=trVoice; u.rate=+S.voiceRate||0.95; u.pitch=1.08;
+    u.onstart=function(){ KS.konustu=true; }; u.onend=son; u.onerror=son; KS.t.push(setTimeout(son,Math.max(3000,String(t).length*95))); speechSynthesis.speak(u); }catch(e){ son(); } }
+function ksDOM(){ var o=$('ksOv'); if(o) return o; o=document.createElement('div'); o.id='ksOv'; o.className='ks'; o.setAttribute('role','dialog'); o.setAttribute('aria-live','polite');
+  o.innerHTML='<div class="ks-rays"></div><button class="ks-gec" id="ksGec">⏭ Geç</button>'+
+    '<div class="ks-ic"><div class="ks-sol"><div class="ks-cark" id="ksCark"><div class="ks-ok"></div><div class="ks-don" id="ksDon"></div><div class="ks-merkez"><div class="ks-ikon" id="ksIkon"></div><div class="ks-ad" id="ksAd"></div><div class="ks-say" id="ksSay"></div></div></div></div>'+
+    '<div class="ks-sag"><div class="ks-pill" id="ksPill">👋 Hoş geldiniz</div><div class="ks-sinif" id="ksSinif"></div><div class="ks-ders" id="ksDers"></div><div class="ks-konu" id="ksKonu"></div>'+
+    '<div class="ks-selam" id="ksSelam"></div><div class="ks-yard hide" id="ksYard"></div><button class="ks-hazir hide" id="ksHazir">🙌 Hazırız!</button></div></div>';
+  document.body.appendChild(o);
+  $('ksGec').addEventListener('click',function(e){ e.stopPropagation(); ksKapat(true); });
+  $('ksHazir').addEventListener('click',function(e){ e.stopPropagation(); ksHazir(false); });
+  return o; }
+function ksKapat(sus){ ksTemizle(); KS.acik=false; if(sus!==false){ try{ speechSynthesis.cancel(); }catch(e){} } var o=$('ksOv'); if(o) o.classList.remove('show'); }
+function ksHazir(sessiz){ if(!KS.acik) return; ksTemizle(); var c=colorOf(KS.cls); confetti([c,'#ffffff','#ffd166','#ff5d8f','#19e6f0','#3dd68c']); sfx('fan');
+  try{ speechSynthesis.cancel(); }catch(e){} if(S.voice&&!sessiz) ksKonus(kpSec(['Harika! Haydi başlayalım!','Süper! O zaman başlıyoruz!','İşte bu! Haydi derse!'],Date.now()));
+  KS.t.push(setTimeout(function(){ ksKapat(false); },sessiz?900:2200)); }
+function ksBlok(cls,i,d){ return i>0 && !!(cellOn(d,i-1)&&cellOn(d,i-1).c===cls); }
+function ksElle(cls){ cls=cls||focusClass(lastR); if(!cls){ toast('Şu an bir sınıf yok'); return; } var sl=kpSlot(cls); ksAc(cls,{slot:sl?sl.i:null}); }
+function ksAc(cls,o){ o=o||{}; if(!cls) return; ksTemizle(); try{ speechSynthesis.cancel(); }catch(e){} var el=ksDOM();
+  var D=kpDersler(cls), d=D&&D.list[0], k=(d&&d.k)||kpAktifK(cls)||'robokod', A=VB_AD[k]||VB_AD.genel, sev=kpSeviye(cls), col=colorOf(cls);
+  KS.acik=true; KS.bitti=false; KS.idx=-1; KS.cls=cls; KS.konustu=false; KS.isimler=ksIsimler(cls); KS.k=k; KS.konu=d?kpKonuSade(d.konu):'';
+  try{ if(o.slot!=null) localStorage.setItem('dk_ks_son',dateKey(now())+'|'+cls+'|'+o.slot); }catch(e){}
+  el.style.setProperty('--kc',col); el.style.setProperty('--ki',inkOf(col));
+  $('ksSinif').textContent=cls; $('ksDers').textContent=A[1]+' '+A[0]; $('ksKonu').textContent=KS.konu?('📚 Bugün: '+KS.konu):'';
+  $('ksIkon').textContent=A[1]; $('ksAd').textContent=''; $('ksYard').classList.add('hide'); $('ksHazir').classList.add('hide');
+  var saat=now().getHours(); $('ksPill').textContent=(saat<12?'☀️ Günaydın':'👋 Merhaba')+' · Hoş geldiniz';
+  var N=KS.isimler.length; $('ksSay').textContent=N?('0 / '+N):'';
+  $('ksSelam').innerHTML=N?'Yoklama zamanı! Adını duyan <b>el sallasın</b> 👋':'<small>İsimler için: 🧰 Araçlar → 📋 Sınıf listesi</small>';
+  var don=$('ksDon'); don.style.transition='none'; don.style.transform='rotate(0deg)'; void don.offsetWidth;
+  var fs=N<=10?'min(3.2vh,2.2vw)':N<=18?'min(2.6vh,1.8vw)':N<=26?'min(2.15vh,1.5vw)':'min(1.8vh,1.25vw)';
+  don.innerHTML=KS.isimler.map(function(n,i){ var a=(-90+i*360/N)*Math.PI/180, r=(N>18&&i%2)?33:43;
+    return '<div class="ks-ch" data-i="'+i+'" style="left:'+(50+r*Math.cos(a)).toFixed(2)+'%;top:'+(50+r*Math.sin(a)).toFixed(2)+'%;font-size:'+fs+'"><span>'+esc(n)+'</span></div>'; }).join('');
+  el.classList.add('show'); if(pipWin) try{ miniOverlay('👋 '+cls,'Hoş geldiniz',col); }catch(e){}
+  if(bc&&!MINI_MODE) try{ bc.postMessage({t:'ks'}); }catch(e){}
+  if(!N){ KS.t.push(setTimeout(ksIsimBitti,900)); return; }
+  var sesli=S.voice&&S.ksSes!==false&&('speechSynthesis' in window);
+  if(!sesli){ ksZamanla(0,1100); return; }
+  /* Chrome: cancel() hemen ardından speak() bazen yutulur → kısa bekle */
+  KS.t.push(setTimeout(function(){ if(!KS.acik) return; ksKonus('Yoklama zamanı! Adını duyan el sallasın!');
+    KS.isimler.forEach(function(n,i){ try{ var u=new SpeechSynthesisUtterance(n); u.lang='tr-TR'; if(trVoice) u.voice=trVoice; u.rate=Math.min(1.15,(+S.voiceRate||0.95)+0.08); u.pitch=1.1;
+      u.onstart=function(){ KS.konustu=true; KS.sonOlay=Date.now(); ksGoster(i); }; if(i===N-1){ u.onend=function(){ KS.t.push(setTimeout(ksIsimBitti,350)); }; } speechSynthesis.speak(u); }catch(e){} }); },180));
+  KS.sonOlay=Date.now()+2800; quiet(4000+N*900);
+  KS.wd=setInterval(function(){ if(!KS.acik||KS.bitti){ clearInterval(KS.wd); KS.wd=null; return; }
+    if(!KS.konustu && Date.now()-KS.sonOlay>1200){ clearInterval(KS.wd); KS.wd=null; try{ speechSynthesis.cancel(); }catch(e){} ksZamanla(KS.idx+1,0); return; }
+    if(KS.konustu && Date.now()-KS.sonOlay>2200){ KS.sonOlay=Date.now(); if(KS.idx<N-1) ksGoster(KS.idx+1); else ksIsimBitti(); } },300); }
+function ksZamanla(bas,gecikme){ var N=KS.isimler.length; for(var i=bas;i<N;i++) KS.t.push(setTimeout(ksGoster.bind(null,i),gecikme+(i-bas)*420)); KS.t.push(setTimeout(ksIsimBitti,gecikme+(N-bas)*420+500)); }
+function ksGoster(i){ if(!KS.acik||KS.bitti||i<KS.idx) return; var N=KS.isimler.length; KS.idx=Math.max(KS.idx,i);
+  var don=$('ksDon'); don.querySelectorAll('.ks-ch').forEach(function(c){ var j=+c.dataset.i; c.classList.toggle('on',j<=KS.idx); c.classList.toggle('simdi',j===KS.idx); });
+  var ad=$('ksAd'); ad.textContent=KS.isimler[KS.idx]; ad.classList.remove('pop'); void ad.offsetWidth; ad.classList.add('pop');
+  $('ksSay').textContent=(KS.idx+1)+' / '+N; if(S.sound) try{ tone(560+(KS.idx%6)*90,0,.12,'sine',.07); }catch(e){} }
+function ksIsimBitti(){ if(!KS.acik||KS.bitti) return; KS.bitti=true; if(KS.wd){ clearInterval(KS.wd); KS.wd=null; }
+  var N=KS.isimler.length; $('ksDon').querySelectorAll('.ks-ch').forEach(function(c){ c.classList.add('on'); c.classList.remove('simdi'); });
+  $('ksAd').textContent=N?String(N):KS.cls; $('ksSay').textContent=N?'arkadaş · hepimiz buradayız 💪':'';
+  if(N>=2&&S.ksCark!==false) ksYardimci(); else ksSelam(); }
+function ksYardimci(){ var N=KS.isimler.length, sec=Math.floor(Math.random()*N), don=$('ksDon');
+  $('ksSelam').innerHTML='🎡 Çark dönüyor… <b>Günün yardımcısı</b> kim olacak?'; sfx('roll');
+  var aci=-(sec*360/N)-360*4; don.style.transition='transform 3.6s cubic-bezier(.15,.7,.12,1)'; don.style.transform='rotate('+aci+'deg)';
+  don.querySelectorAll('.ks-ch span').forEach(function(s){ s.style.transition='transform 3.6s cubic-bezier(.15,.7,.12,1)'; s.style.transform='rotate('+(-aci)+'deg)'; });
+  KS.t.push(setTimeout(function(){ if(!KS.acik) return; var c=don.querySelector('.ks-ch[data-i="'+sec+'"]'); if(c) c.classList.add('secildi');
+    var ad=KS.isimler[sec]; $('ksAd').textContent=ad; $('ksSay').textContent='🎡 günün yardımcısı';
+    var y=$('ksYard'); y.innerHTML='🎡 Günün yardımcısı: <b>'+esc(ad)+'</b> 🌟'; y.classList.remove('hide'); sfx('clap');
+    ksKonus('Bugünün yardımcısı '+ad+'! Kocaman bir alkış!',{son:ksSelam}); },3800)); }
+function ksSelam(){ if(!KS.acik) return; var cls=KS.cls, sev=kpSeviye(cls), N=KS.isimler.length, A=VB_AD[KS.k]||VB_AD.genel;
+  var sel=(KS_SELAM[KS.k]||KS_SELAM.robokod)[sev]||'', saat=now().getHours(), bd=[]; try{ bd=bdaysToday(cls,now()); }catch(e){}
+  var soru=N?(N+' arkadaşımızla güzel bir derse hazır mısınız?'):'Güzel bir derse hazır mısınız?';
+  $('ksSelam').innerHTML='<b>'+esc(sel)+'</b><br>'+esc(soru)+(bd.length?'<div class="ks-bd">🎂 Bugün '+esc(bd.length>1?bd.slice(0,-1).map(firstName).join(', ')+' ve '+ksIn(firstName(bd[bd.length-1])):ksIn(firstName(bd[0])))+' doğum günü!</div>':'');
+  $('ksHazir').classList.remove('hide');
+  var t=(saat<12?'Günaydın ':'Merhaba ')+spk(cls)+'! '+sel+' '+(KS.konu?('Bugün '+A[0]+' dersimizde '+KS.konu+' konusunu keşfedeceğiz. '):'')+soru;
+  ksKonus(t,{son:function(){ KS.t.push(setTimeout(function(){ if(KS.acik) ksHazir(true); },14000)); },sessizMs:2500}); }
+/* Ders başlayınca: zil → karşılama (sesli duyuru yerine). Mini pencere varsa zil onda, karşılama büyük ekranda. */
+if(bc){ bc.addEventListener('message',function(e){ var m=e.data||{}; if(m.t==='ks') KS.baska=Date.now(); }); }
+function ksBurada(){ return ksAktif()&&!MINI_MODE&&document.visibilityState==='visible'; }
+var _announceV9=announce;
+announce=function(r,info,prev){ var is=!!(info&&info.isLesson);
+  if(!(is&&r.cell)||r.wd>4) return _announceV9(r,info,prev);
+  var c=r.cell.c, i=r.seg?r.seg.i:0;
+  if(ksBurada()&&!ksBlok(c,i,r.d)){ var delay=0;
+    if(soundHere()){ if(S.vStart&&S.sound){ schoolBell(); delay=BELL_MS[S.bellType]||3400; } else if(S.sound) beep([523,659,784]); } else delay=BELL_MS[S.bellType]||3400;
+    if(bc) try{ bc.postMessage({t:'ks'}); }catch(e){}
+    KS.t.push(setTimeout(function(){ ksAc(c,{slot:i,oto:true}); },delay)); return; }
+  if(MINI_MODE&&ksAktif()){ if(!soundHere()) return; var sv=kpSeviye(c), dl=0;
+    if(S.vStart){ if(S.sound){ schoolBell(); dl=BELL_MS[S.bellType]||3400; }
+      var tb=(prev&&(prev.pill||'').indexOf('Teneffüs')>=0?'Teneffüs bitti. ':'')+KP_MSG.basla[sv].replace('{S}',spk(c)).replace('{D}',r.cell.s); var D=kpDersler(c); if(D&&D.list[0]) tb+=' Bugünkü konumuz: '+kpKonuSade(D.list[0].konu)+'.';
+      setTimeout(function(){ if(Date.now()-KS.baska<30000) return; if(S.voice) say(kpSes(tb)); },dl); }
+    else if(S.sound) beep([523,659,784]); return; }
+  return _announceV9(r,info,prev); };
+/* Sayfa ders başında açıldıysa (ilk 4 dakika) bir kez karşıla */
+var _v8TickV9=v8Tick;
+v8Tick=function(r){ if(KS.acik) return; _v8TickV9(r);
+  if(!KS.ilk){ KS.ilk=true; try{ if(ksBurada()&&r.t==='lesson'&&r.cell&&r.wd<=4&&r.sec-r.a<240&&r.sec-r.a>=0&&!ksBlok(r.cell.c,r.seg.i,r.d)){
+      var key=dateKey(r.d)+'|'+r.cell.c+'|'+r.seg.i; if(localStorage.getItem('dk_ks_son')!==key){ var c=r.cell.c, i=r.seg.i; KS.t.push(setTimeout(function(){ ksAc(c,{slot:i,oto:true}); },1200)); } } }catch(e){} } };
+/* Hızlı araç çubuğuna 👋 Karşılama */
+(function(){ var q=document.querySelector('.quick'); if(!q||MINI_MODE) return; var b=document.createElement('button'); b.className='qb'; b.dataset.q='ks'; b.title='Sınıfı isimlerle karşıla (çark + selamlama)'; b.textContent='👋 Karşılama';
+  var ref=q.querySelector('[data-q="pick"]'); q.insertBefore(b,ref?ref.nextSibling:null);
+  q.addEventListener('click',function(e){ if(!e.target.closest('[data-q="ks"]')) return; e.stopImmediatePropagation(); ksElle(); },true); })();
+/* Ayarlar: karşılama seçenekleri */
+(function(){ var box=document.querySelector('#mSet .box'); var ref=$('sVoice'); if(!box||!ref) return; var fld=ref.closest('.fld'); if(!fld) return;
+  var sep=document.createElement('div'); sep.className='sep'; var f=document.createElement('div'); f.className='fld';
+  f.innerHTML='<span>👋 Derse girişte isimlerle karşılama</span>'+
+    '<label class="toggle"><input type="checkbox" id="sKsOn"> Ders başlayınca sınıfı isimlerle karşıla (zil → çarkta isimler → derse göre selamlama)</label>'+
+    '<label class="toggle"><input type="checkbox" id="sKsSes"> İsimleri tek tek sesli oku</label>'+
+    '<label class="toggle"><input type="checkbox" id="sKsCark"> Sonunda çark dönsün, “günün yardımcısı”nı seçsin</label>'+
+    '<p class="s" style="margin-top:1vh">İsimler 🧰 Araçlar → 📋 Sınıf listesi’nden gelir. Aynı sınıfın arka arkaya ikinci dersinde tekrar karşılamaz. İstediğin an sağdaki <b>👋 Karşılama</b> ile başlatabilirsin.</p>';
+  fld.parentNode.insertBefore(sep,fld.nextSibling); fld.parentNode.insertBefore(f,sep.nextSibling);
+  $('btnSet').addEventListener('click',function(){ $('sKsOn').checked=S.ksOn!==false; $('sKsSes').checked=S.ksSes!==false; $('sKsCark').checked=S.ksCark!==false; });
+  $('sSave').addEventListener('click',function(){ S.ksOn=$('sKsOn').checked; S.ksSes=$('sKsSes').checked; S.ksCark=$('sKsCark').checked; save(); }); })();
+window.ksElle=function(c){ return ksElle(c); };
 
 renderAll();
 setInterval(tick,250);
