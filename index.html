@@ -2990,7 +2990,7 @@ function vbDersKs(s,d){ s=String(s||'');
 var VB_FILM=[
  {ad:'Akeelah and the Bee',yil:2006,der:'PG',tema:'azim, düzenli çalışma ve bir koçla hedefe hazırlanmak',bag:'Etkili ders çalışma · hedef',soru:['Akeelah’ın çalışma yöntemlerinden hangisini sen de kullanabilirsin?','Zorlandığı anda onu ne ayağa kaldırdı?']},
  {ad:'Hidden Figures',tr:'Gizli Sayılar',yil:2016,der:'PG',tema:'matematiğe emek, ekip çalışması ve engellere rağmen ilerlemek',bag:'Motivasyon · büyüme zihniyeti',soru:['Karakterler engellerle nasıl baş etti?','Senin “henüz” başaramadığın ama çalıştığın bir konu ne?']},
- {ad:'October Sky',yil:1999,der:'PG',tema:'hedef koyma, bilime merak ve deneme-yanılmayla öğrenmek',bag:'Hedef · hata defteri',soru:['Roket her patladığında gençler ne yaptı?','Senin hatalarından en çok öğrendiğin şey ne oldu?']},
+ {ad:'Soul Surfer',yil:2011,der:'PG',tema:'büyük bir zorluktan sonra yeniden ayağa kalkmak ve hedefe bağlı kalmak',bag:'Motivasyon · büyüme zihniyeti',soru:['Bethany zorlandığında hedefini nasıl korudu?','Senin vazgeçmeyeceğin hedef ne?']},
  {ad:'Queen of Katwe',tr:'Katwe Kraliçesi',yil:2016,der:'PG',tema:'satrançta yetenek + emek, koç-öğrenci ilişkisi ve kendine inanmak',bag:'Kendini tanıma · motivasyon',soru:['Koçu Phiona’ya en çok hangi konuda destek oldu?','Yenildiğinde nasıl toparlandı?']},
  {ad:'Searching for Bobby Fischer',yil:1993,der:'PG',tema:'baskıyla baş etmek, sportmenlik ve kendi yolunu bulmak',bag:'Sınav kaygısı · öz-değerlendirme',soru:['Josh baskı altında nasıl hissetti?','Kazanmak mı, iyi bir insan olmak mı? Neden?']},
  {ad:'Remember the Titans',tr:'Titanları Hatırla',yil:2000,der:'PG',tema:'takım ruhu, liderlik ve birlikte başarmak',bag:'İletişim · akran desteği',soru:['Takımı birleştiren şey neydi?','Sınıfında birlikte çalışmayı nasıl güçlendirebilirsin?']},
@@ -3020,18 +3020,84 @@ function vbDagitimHesap(grid,genelMi){ var sl={}, out={};
     tekil.forEach(function(x){ out[x.d+'|'+x.i]=VB_DAG_ET[rest.shift()||'RY']; }); });
   return out; }
 
+/* ---- 🎬 Film bağlantıları (fragman · ebeveyn rehberi · nereden izlenir) ---- */
+function vbFilmLink(f,tur){ var q=encodeURIComponent; var ad=f.ad+' '+f.yil;
+  if(tur==='fragman') return 'https://www.youtube.com/results?search_query='+q(ad+' fragman türkçe altyazılı');
+  if(tur==='rehber') return 'https://www.google.com/search?q='+q(ad+' parents guide imdb');
+  return 'https://www.google.com/search?q='+q(ad+' film nereden izlenir'); }
+/* ============================================================
+   📽️ SLAYT MOTORU (Ders Saati ve Yıllık Plan’da ortak) — tam ekran, ← → / kaydır / dokun, N: öğretmen notu
+   deste: {baslik, renk:[c1,c2], slaytlar:[{ik, ust, baslik, satirlar:[], buyuk, not, alt}]}
+   ============================================================ */
+function vbE(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var VBS=null;
+function vbSunumCss(){ if(document.getElementById('vbsCss')) return; var st=document.createElement('style'); st.id='vbsCss';
+  st.textContent='.vbs{position:fixed;inset:0;z-index:99990;display:flex;flex-direction:column;color:#fff;font-family:Nunito,system-ui,"Segoe UI",sans-serif;background:radial-gradient(circle at 20% 15%,var(--s1),#0b1024 62%);user-select:none;-webkit-user-select:none}'+
+  '.vbs-ust{display:flex;align-items:center;gap:10px;padding:10px 16px;font-weight:800;font-size:clamp(12px,1.9vh,18px);opacity:.92}.vbs-ust b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+  '.vbs-ust button,.vbs-alt button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:12px;padding:8px 12px;font-weight:900;font-size:clamp(12px,1.8vh,17px);cursor:pointer;font-family:inherit}'+
+  '.vbs-sah{flex:1;display:flex;align-items:center;justify-content:center;padding:1vh 6vw;min-height:0;overflow:hidden}'+
+  '.vbs-k{width:min(1400px,100%);max-height:100%;overflow:auto;animation:vbsIn .45s cubic-bezier(.2,.8,.2,1)}@keyframes vbsIn{from{opacity:0;transform:translateX(40px) scale(.98)}}'+
+  '.vbs-ik{font-size:clamp(40px,11vh,130px);line-height:1}.vbs-u{display:inline-block;margin-top:1.4vh;background:rgba(255,255,255,.16);border-radius:999px;padding:.6vh 1.6vw;font-weight:900;font-size:clamp(13px,2.4vh,26px)}'+
+  '.vbs-b{font-weight:900;font-size:clamp(26px,7vh,84px);line-height:1.08;margin:1.6vh 0 2vh;text-shadow:0 1vh 3vh rgba(0,0,0,.35)}.vbs-k.buyuk .vbs-b{font-size:clamp(30px,9.5vh,120px)}'+
+  '.vbs-s{font-size:clamp(16px,3.6vh,44px);font-weight:800;line-height:1.35;margin:1.2vh 0;padding:1.2vh 1.6vw;border-radius:2vh;background:rgba(255,255,255,.10);border-left:.8vh solid var(--s2)}'+
+  '.vbs-k.cok .vbs-s{font-size:clamp(13px,2.6vh,30px);padding:.8vh 1.2vw;margin:.7vh 0}.vbs-k.cokcok .vbs-s{font-size:clamp(12px,2.1vh,24px)}.vbs-k.cok .vbs-b{font-size:clamp(22px,5vh,60px)}'+
+  '.vbs-s.ac{background:#fff;color:#16204a;border-left-color:var(--s1)}.vbs-alt2{margin-top:2vh;font-size:clamp(13px,2.4vh,26px);opacity:.85;font-weight:700}'+
+  '.vbs-not{position:absolute;right:16px;bottom:78px;width:min(560px,92vw);max-height:46vh;overflow:auto;background:#fff;color:#16204a;border-radius:16px;padding:12px 14px;font-size:15px;line-height:1.5;box-shadow:0 20px 50px rgba(0,0,0,.45);display:none}.vbs.notlu .vbs-not{display:block}'+
+  '.vbs-alt{display:flex;align-items:center;gap:10px;padding:10px 16px}.vbs-noktalar{flex:1;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.vbs-noktalar i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}.vbs-noktalar i.on{background:#fff;transform:scale(1.25)}'+
+  '@media (max-width:640px){.vbs-sah{padding:1vh 16px}.vbs-ust button span{display:none}}';
+  document.head.appendChild(st); }
+function vbSunum(deste){ if(!deste||!deste.slaytlar||!deste.slaytlar.length) return; vbSunumCss(); vbSunumKapat(); VBS={d:deste,i:0};
+  var o=document.createElement('div'); o.className='vbs'; o.id='vbsOv'; var r=deste.renk||['#7c3aed','#22d3ee']; o.style.setProperty('--s1',r[0]); o.style.setProperty('--s2',r[1]);
+  o.innerHTML='<div class="vbs-ust"><b>📽️ '+vbE(deste.baslik||'Sunum')+'</b><span id="vbsSay"></span><button data-v="not" title="Öğretmen notu (N)">👀 <span>Öğretmen notu</span></button><button data-v="tam" title="Tam ekran">⛶</button><button data-v="kapat" title="Kapat (Esc)">✕</button></div>'+
+    '<div class="vbs-sah" id="vbsSah"></div><div class="vbs-not" id="vbsNot"></div><div class="vbs-alt"><button data-v="geri">◀ Geri</button><div class="vbs-noktalar" id="vbsNok"></div><button data-v="ileri">İleri ▶</button></div>';
+  document.body.appendChild(o);
+  o.addEventListener('click',function(e){ var b=e.target.closest('[data-v]'); if(b){ var v=b.dataset.v; if(v==='kapat') vbSunumKapat(); else if(v==='ileri') vbSunumGit(1); else if(v==='geri') vbSunumGit(-1); else if(v==='not') o.classList.toggle('notlu'); else if(v==='tam'){ try{ (document.fullscreenElement?document.exitFullscreen():o.requestFullscreen()); }catch(_){} } return; }
+    var n=e.target.closest('.vbs-noktalar i'); if(n){ VBS.i=+n.dataset.i; vbSunumCiz(); return; }
+    if(e.target.closest('#vbsSah')){ vbSunumGit(e.clientX<innerWidth*0.3?-1:1); } });
+  var x0=null; o.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true}); o.addEventListener('touchend',function(e){ if(x0==null) return; var dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>50) vbSunumGit(dx<0?1:-1); x0=null; });
+  document.addEventListener('keydown',vbSunumTus,true); vbSunumCiz(); }
+function vbSunumTus(e){ if(!VBS) return; var k=e.key; if(['ArrowRight','PageDown',' ','Enter'].indexOf(k)>=0){ vbSunumGit(1); e.preventDefault(); e.stopPropagation(); } else if(['ArrowLeft','PageUp','Backspace'].indexOf(k)>=0){ vbSunumGit(-1); e.preventDefault(); e.stopPropagation(); } else if(k==='Escape'){ vbSunumKapat(); e.stopPropagation(); } else if(k==='n'||k==='N'){ var o=document.getElementById('vbsOv'); if(o) o.classList.toggle('notlu'); e.stopPropagation(); } }
+function vbSunumGit(d){ if(!VBS) return; var n=VBS.d.slaytlar.length; VBS.i=Math.max(0,Math.min(n-1,VBS.i+d)); vbSunumCiz(); }
+function vbSunumKapat(){ var o=document.getElementById('vbsOv'); if(o) o.remove(); VBS=null; document.removeEventListener('keydown',vbSunumTus,true); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(_){} }
+function vbSunumCiz(){ if(!VBS) return; var s=VBS.d.slaytlar[VBS.i], n=VBS.d.slaytlar.length;
+  var _n=(s.satirlar||[]).filter(Boolean).length;
+  document.getElementById('vbsSah').innerHTML='<div class="vbs-k'+(s.buyuk?' buyuk':'')+(_n>4?' cok':'')+(_n>7?' cokcok':'')+'">'+(s.ik?'<div class="vbs-ik">'+s.ik+'</div>':'')+(s.ust?'<div class="vbs-u">'+vbE(s.ust)+'</div>':'')+'<div class="vbs-b">'+vbE(s.baslik||'')+'</div>'+
+    (s.satirlar||[]).filter(Boolean).map(function(x,j){ return '<div class="vbs-s'+(s.vurgu===j?' ac':'')+'">'+vbE(x)+'</div>'; }).join('')+(s.alt?'<div class="vbs-alt2">'+vbE(s.alt)+'</div>':'')+'</div>';
+  document.getElementById('vbsSay').textContent=(VBS.i+1)+' / '+n;
+  document.getElementById('vbsNot').innerHTML='<b>👀 Öğretmen notu</b> <small>(N ile aç/kapat · tahtada açıkken öğrenciler de görür)</small><div style="white-space:pre-wrap;margin-top:6px">'+vbE(s.not||'Bu slayt için not yok.')+'</div>';
+  document.getElementById('vbsNok').innerHTML=VBS.d.slaytlar.map(function(_,j){ return '<i data-i="'+j+'" class="'+(j===VBS.i?'on':'')+'"></i>'; }).join(''); }
+/* ---- 📚 Bir dersin slaytları (öğrenciye dönük dil; öğretmen yönergeleri yalnızca “Öğretmen notu”nda) ---- */
+function vbRehSatir(reh,emo){ var l=String(reh||'').split('\n').filter(function(x){ return x.trim().indexOf(emo)===0; })[0]; return l?l.replace(/^\S+\s[^:]{1,70}:\s*/,'').trim():''; }
+function vbDersSlaytlari(o){ var A=VB_AD[o.k]||VB_AD.genel, sev=vbBand(o.gi), genc=(sev==='ana'||sev==='12'), konu=vbKonuSade(o.konu), reh=String(o.rehber||''), akil=vbAnlatim(o.akil,o.konu)||String(o.z||'').trim();
+  var et=(vbRehSatir(reh,'🎲')||String(o.e||'')).split(/\s*(?:→|;)\s*/).map(function(x){ return x.replace(/[.\s]+$/,'').trim(); }).filter(Boolean).slice(0,4);
+  var sor=(vbRehSatir(reh,'❓')||'').split(/\s*·\s*/).filter(Boolean).slice(0,3);
+  if(!sor.length) sor=genc?['Bugün ne yaptık?','Bana bir kez daha gösterir misin?']:['“'+konu+'” nedir? Kendi cümlenle anlat.','Bunu nerede kullanırız?','En çok neyi merak ettin?'];
+  var notGenel=reh||('Konu: '+konu+'\nHedef: '+(o.z||''));
+  var S=[{ik:A[1],ust:(o.sinif||'')+' · '+A[0]+(o.sira?' · '+o.sira+'. ders':''),baslik:konu,buyuk:true,alt:'Hazır mıyız? Haydi başlayalım! 🚀',not:notGenel},
+    {ik:'🎯',ust:'Bugün ne öğreneceğiz?',baslik:genc?'Bugünkü maceramız':'Bugünün hedefi',satirlar:[akil||konu],not:vbRehSatir(reh,'🎬')?('Giriş: '+vbRehSatir(reh,'🎬')):''},
+    {ik:'💬',ust:'Merak ediyorum…',baslik:genc?'Sizce?':'Düşünelim',satirlar:[genc?('“'+konu+'” deyince aklınıza ne geliyor?'):('“'+konu+'” günlük hayatta nerede karşımıza çıkar?')],not:vbRehSatir(reh,'🗣️')?('Şöyle anlat: '+vbRehSatir(reh,'🗣️')):''}];
+  if(et.length) S.push({ik:genc?'🎈':'🛠️',ust:genc?'Haydi oynayalım!':'Haydi deneyelim!',baslik:'Etkinlik',satirlar:et.map(function(x,j){ return (j+1)+'. '+x; }),not:vbRehSatir(reh,'💡')?('İpucu: '+vbRehSatir(reh,'💡')):''});
+  if(akil) S.push({ik:'🧠',ust:'Akılda kalsın',baslik:akil,buyuk:true,alt:'Hep birlikte söyleyelim! 🗣️',not:''});
+  S.push({ik:'❓',ust:'Düşün ve cevapla',baslik:'Kontrol soruları',satirlar:sor,not:''});
+  if(o.k==='kocluk'){ var f=vbFilmHafta(o.tarih?new Date(o.tarih+'T12:00:00'):new Date()); S.push({ik:'🎬',ust:'Haftanın film önerisi',baslik:f.ad+(f.tr?' · '+f.tr:''),satirlar:[f.yil+' · '+f.der,f.tema].concat(f.soru.map(function(q){ return '💬 '+q; })),not:'Sınıfta göstermeden önce izleyip uygun sahneleri seç. Ebeveyn rehberi: '+vbFilmLink(f,'rehber')}); }
+  S.push({ik:'🏁',ust:'Çıkış bileti',baslik:sev==='ana'?'Bugün çok güzel oynadık!':'Bugün ne öğrendim?',satirlar:sev==='ana'?['Hep birlikte: '+(akil||konu)]:(sev==='12'?['Bugün … öğrendim. (3 kelimeyle söyle)']:['Bugün … öğrendim çünkü …','Bu hafta bunu … yerde kullanacağım.']),alt:'Emeğinize sağlık! 👏',not:vbRehSatir(reh,'🏁')?('Kapanış: '+vbRehSatir(reh,'🏁')):''});
+  return S; }
+
 
 /* ---------- 🎯 Doğru dersin konusu ---------- */
 var KP_DSEC='dk_tahta_dsec';
 function kpDersK(s){ return vbDersK1(s); }
 function kpDsecGet(){ var o=vbOku(KP_DSEC,{}), sinir=dateKey(addDays(new Date(),-7)), deg=false; Object.keys(o).forEach(function(k){ if(k.slice(0,10)<sinir){ delete o[k]; deg=true; } }); if(deg) vbYaz(KP_DSEC,o); return o; }
 /* Bu sınıfın şu an (ya da bugün) ilgili ders saati */
-function kpSlot(cls){ var r=lastR; if(!r||r.wd>4||!cls) return null; var d=r.d;
+function kpSlot(cls){ var r=lastR; if(!r||!cls) return null; var d=r.d;
+  if(r.wd>4){ var n0=r.next; return (n0&&n0.c&&n0.c.c===cls)?{i:n0.i,s:n0.c.s,durum:'sirada',d:addDays(d,n0.k)}:kpSlotIleri(cls,d); }
   if(r.t==='lesson'&&r.cell&&r.cell.c===cls) return {i:r.seg.i,s:r.cell.s,durum:'ders',d:d};
   if((r.t==='break'||r.t==='lunch')&&r.seg){ var up=cellOn(d,r.seg.next); if(up&&up.c===cls) return {i:r.seg.next,s:up.s,durum:'sirada',d:d}; }
   var P=S.periods, son=null, ilk=null;
   for(var i=0;i<P.length;i++){ var c=cellOn(d,i); if(!c||c.c!==cls) continue; if(toS(P[i][0])>r.sec){ if(!ilk) ilk={i:i,s:c.s,durum:'sirada',d:d}; } else son={i:i,s:c.s,durum:'gecti',d:d}; }
-  return son||ilk; }
+  return son||ilk||kpSlotIleri(cls,d); }
+/* Bugün bu sınıfın dersi yoksa: önümüzdeki ilk ders günü */
+function kpSlotIleri(cls,d){ for(var k=1;k<=7;k++){ var dt=addDays(d,k); if(wdOf(dt)>4) continue; for(var i=0;i<S.periods.length;i++){ var c=cellOn(dt,i); if(c&&c.c===cls) return {i:i,s:c.s,durum:'sirada',d:dt}; } } return null; }
 function kpSlotKey(cls,sl){ return dateKey(sl.d)+'|'+cls+'|'+sl.i; }
 /* O saatte işlenen ders(ler): bugüne özel seçim > programdaki ders adı ("Satranç ve Akıl-Zekâ" → iki ders, "Dönüşümlü" → bu haftanın dersi) */
 function kpAktifKs(cls){ var sl=kpSlot(cls); if(!sl) return []; var ov=kpDsecGet()[kpSlotKey(cls,sl)]; if(ov) return String(ov).split('+').filter(Boolean); var ks=vbDersKs(sl.s,sl.d); if(kpGi(cls)===8) return ['kocluk']; return ks; }
@@ -3341,6 +3407,34 @@ renderWeek=function(){ _renderWeekV10(); try{ var WD=weekDates();
   box.innerHTML=['R','S','Y','A','RY','SA','SR','D','K'].map(function(k){ var ks=vbDersKs(DS_ET[k]); return '<button type="button" class="pk" data-ds="'+k+'" style="background:#eef0ff;color:#16204a">'+(k==='D'?'🔄 Dönüşümlü':k==='SR'?'🔄 ♟️↔🤖 Satranç / Robotik (haftalık)':ks.map(function(x){ return (VB_AD[x]||VB_AD.genel)[1]; }).join('')+' '+esc(DS_ET[k]))+'</button>'; }).join('');
   f.parentNode.insertBefore(box,f.nextSibling);
   box.addEventListener('click',function(e){ var b=e.target.closest('[data-ds]'); if(!b) return; inp.value=DS_ET[b.dataset.ds]; box.querySelectorAll('.pk').forEach(function(x){ x.classList.toggle('sel',x===b); }); }); })();
+
+/* ============================================================
+   v11 · 📽️ DERSİ SLAYTLA ANLAT · 🗓️ DERS YOKKEN DE SIRADAKİ SINIF · 🎬 FİLM BAĞLANTILARI
+   ============================================================ */
+/* Şu an ders yoksa (akşam, hafta sonu) sıradaki dersin sınıfı gelsin */
+var _kpSinifBulV11=kpSinifBul;
+kpSinifBul=function(r){ var s=_kpSinifBulV11(r); if(s) return s; try{ if(r&&r.next&&r.next.c) return {c:r.next.c.c,durum:'sirada'}; }catch(e){} return null; };
+/* Konu panelinde sınıf düğmeleri: bugün yoksa haftanın tüm sınıfları */
+var _kpBugunSiniflarV11=kpBugunSiniflar;
+kpBugunSiniflar=function(){ var a=_kpBugunSiniflarV11()||[]; try{ var t=[]; S.grid.forEach(function(row){ row.forEach(function(c){ if(c&&c.c&&t.indexOf(c.c)<0) t.push(c.c); }); }); t.sort(function(x,y){ return x.localeCompare(y,'tr'); }); t.forEach(function(c){ if(a.indexOf(c)<0) a.push(c); }); }catch(e){} return a; };
+/* Ders verisinden slayt destesi */
+function kpSunumAc(cls,hangi){ var D=kpDersler(cls); if(!D||!D.list.length){ toast('Bu sınıf için konu bulunamadı'); return; }
+  var L=(hangi!=null)?[D.list[hangi]]:D.list.slice(0,D.aktifN||1), sl=[], sl0=kpSlot(cls), tarih=sl0?dateKey(sl0.d):dateKey(now());
+  L.forEach(function(d){ if(!d) return; sl=sl.concat(vbDersSlaytlari({sinif:cls,gi:d.gi,k:d.k,konu:d.konu,z:d.z,e:d.e,b:d.b,rehber:d.rehber,akil:d.akil||d.ozet,sira:d.sira,tarih:tarih})); });
+  var R=VB_RENK[L[0].k]||VB_RENK.genel; vbSunum({baslik:cls+' · '+kpDersAdlari(L.map(function(x){ return x.k; }),false),renk:R,slaytlar:sl}); }
+window.kpSunumAc=function(c,h){ return kpSunumAc(c,h); };
+var _kpV9EkleV11=kpV9Ekle;
+kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP.sinif; if(!p||!cls) return; var D=kpDersler(cls); if(!D||!D.list.length) return;
+  var top=document.createElement('button'); top.className='kp-btn'; top.style.cssText='background:linear-gradient(135deg,#7c3aed,#0ea5e9);width:100%;margin-bottom:12px;font-size:15px'; top.textContent='📽️ '+cls+' · bugünkü dersi slaytla anlat'; top.onclick=function(){ kpKapat(); kpSunumAc(cls); };
+  var ch=p.querySelector('.kp-dsec')||p.querySelector('.kp-chips'); if(ch&&ch.nextSibling) p.insertBefore(top,ch.nextSibling); else p.insertBefore(top,p.firstChild);
+  p.querySelectorAll('.kp-ders').forEach(function(b,i){ var bt=b.querySelector('.kp-btns'); if(!bt||bt.querySelector('[data-slayt]')) return; var x=document.createElement('button'); x.className='kp-btn'; x.dataset.slayt=i; x.style.background='#7c3aed'; x.textContent='📽️ Slayt'; x.onclick=function(){ kpKapat(); kpSunumAc(cls,i); }; bt.appendChild(x); });
+  var fm=Array.prototype.slice.call(p.querySelectorAll('.kp-vbt')).filter(function(x){ return /Haftanın koçluk filmi/.test(x.textContent); })[0];
+  if(fm&&!fm.querySelector('.kp-flink')){ var f=vbFilmHafta(new Date()), l=document.createElement('div'); l.className='kp-chips kp-flink'; l.style.marginTop='8px';
+    l.innerHTML=[['fragman','🎞️ Fragman'],['rehber','🛡️ Ebeveyn rehberi'],['izle','📺 Nereden izlenir']].map(function(x){ return '<a class="kp-chip" target="_blank" rel="noopener" href="'+esc(vbFilmLink(f,x[0]))+'" style="text-decoration:none">'+x[1]+'</a>'; }).join(''); fm.appendChild(l); } }catch(e){ try{console.warn('v11 panel',e);}catch(_){} } };
+/* Hızlı araç çubuğuna 📽️ Slayt */
+(function(){ var q=document.querySelector('.quick'); if(!q||MINI_MODE) return; var b=document.createElement('button'); b.className='qb'; b.dataset.q='slayt'; b.title='Bu dersi slaytla anlat'; b.textContent='📽️ Slayt';
+  var ref=q.querySelector('[data-q="ks"]'); q.insertBefore(b,ref?ref.nextSibling:null);
+  q.addEventListener('click',function(e){ if(!e.target.closest('[data-q="slayt"]')) return; e.stopImmediatePropagation(); var c=KP.sinif||focusClass(lastR); if(!c){ toast('Programda ders yok'); return; } kpSunumAc(c); },true); })();
 
 renderAll();
 setInterval(tick,250);
