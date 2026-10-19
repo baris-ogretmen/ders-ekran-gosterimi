@@ -3281,6 +3281,100 @@ function ykToast(m,geri){ try{ if(YK.kaynak&&YK.kaynak.toast&&!geri) return YK.k
   t.textContent=m; if(geri){ var b=document.createElement('button'); b.textContent='↩️ Geri al'; b.style.cssText='border:0;border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer'; b.onclick=function(){ geri(); t.remove(); }; t.appendChild(b); }
   document.body.appendChild(t); setTimeout(function(){ t.remove(); },geri?6000:3000); }
 
+/* ============================================================
+   📋 YOKLAMA v2 — DERS DERS kayıt + 🔄 yeniden al
+   yk[gün][sınıf].dersler[dersSaati] = {y:[gelmeyen], g:[geç], al:1, s:'ders adı', saat:'10:50', t}
+   Günlük alanlar (y, g, n, d, al) derslerden kendiliğinden toplanır → eski raporlar ve
+   Araçlar’daki eski yoklama paneli aynen çalışır. Eski (dersiz) kayıtlar olduğu gibi sayılır.
+   ============================================================ */
+YK.durum.ders=null;
+function ykDersListe(dk,c){ var L=[]; try{ L=((YK.kaynak.dersListe&&YK.kaynak.dersListe(dk,c))||[]).slice(); }catch(e){}
+  var r=ykKayit(dk,c); if(r&&r.dersler) Object.keys(r.dersler).forEach(function(i){ if(!L.some(function(x){ return String(x.i)===String(i); })) L.push({i:+i,saat:r.dersler[i].saat||'',s:r.dersler[i].s||''}); });
+  return L.sort(function(a,b){ return a.i-b.i; }); }
+function ykDersEtiket(x){ return (x.i+1)+'. ders'+(x.saat?' '+x.saat:'')+(x.s?' · '+x.s:''); }
+function ykDersKayit(dk,c,i,olustur){ var r=ykKayit(dk,c,olustur); if(!r) return null; if(!r.dersler){ if(!olustur) return null; r.dersler={}; if(r.al&&((r.y||[]).length||(r.g||[]).length)){ ykDersListe(dk,c).forEach(function(d){ r.dersler[d.i]={y:(r.y||[]).slice(),g:(r.g||[]).slice(),al:1,s:d.s,saat:d.saat,t:r.t||Date.now()}; }); } } var x=r.dersler[i]; if(!x){ if(!olustur) return null; x=r.dersler[i]={y:[],g:[]}; } x.y=x.y||[]; x.g=x.g||[]; return x; }
+function ykGunTopla(dk,c){ var r=ykKayit(dk,c); if(!r||!r.dersler) return; var y=[],g=[],n=0,ad=[];
+  Object.keys(r.dersler).sort(function(a,b){ return a-b; }).forEach(function(i){ var x=r.dersler[i]; if(!x||!x.al) return; n++; x.y.forEach(function(a){ if(y.indexOf(a)<0) y.push(a); }); x.g.forEach(function(a){ if(g.indexOf(a)<0) g.push(a); }); if(x.s&&ad.indexOf(x.s)<0) ad.push(x.s); });
+  r.y=y; r.g=g.filter(function(a){ return y.indexOf(a)<0; }); r.n=n||1; if(ad.length) r.d=ad.join(' · '); r.al=n?1:0; r.t=Date.now(); }
+function ykAktifDers(dk,c){ try{ var a=YK.kaynak.aktifDers&&YK.kaynak.aktifDers(c,dk); if(a!=null) return a; }catch(e){} return null; }
+function ykHedef(dk,c,i){ if(i!=null&&i!=='gun') return [+i]; var L=ykDersListe(dk,c); if(!L.length) return []; var a=ykAktifDers(dk,c); return a!=null&&L.some(function(x){ return x.i===a; })?[a]:L.map(function(x){ return x.i; }); }
+function ykDersBilgiYaz(dk,c,i,x){ var L=ykDersListe(dk,c), d=L.filter(function(z){ return z.i===+i; })[0]; if(d){ x.s=d.s||x.s||''; x.saat=d.saat||x.saat||''; } }
+function ykDurum(dk,c,ad,i){ var x=(i!=null&&i!=='gun')?ykDersKayit(dk,c,i):null, r=x||ykKayit(dk,c); if(!r) return 'var'; if((r.y||[]).indexOf(ad)>=0) return 'yok'; if((r.g||[]).indexOf(ad)>=0) return 'gec'; return 'var'; }
+function ykAyarla(dk,c,ad,durum,i){ if(ykSalt()) return; var H=ykHedef(dk,c,i);
+  if(!H.length){ var r=ykKayit(dk,c,true); r.y=r.y.filter(function(x){ return x!==ad; }); r.g=r.g.filter(function(x){ return x!==ad; }); if(durum==='yok') r.y.push(ad); if(durum==='gec') r.g.push(ad); r.al=1; r.t=Date.now(); ykBilgi(dk,c,r); ykYaz(dk,c); return; }
+  H.forEach(function(h){ var x=ykDersKayit(dk,c,h,true); x.y=x.y.filter(function(z){ return z!==ad; }); x.g=x.g.filter(function(z){ return z!==ad; }); if(durum==='yok') x.y.push(ad); if(durum==='gec') x.g.push(ad); x.al=1; x.t=Date.now(); ykDersBilgiYaz(dk,c,h,x); });
+  ykGunTopla(dk,c); ykYaz(dk,c); }
+function ykHerkes(dk,c,i){ if(ykSalt()) return; var H=ykHedef(dk,c,i);
+  if(!H.length){ var r=ykKayit(dk,c,true); r.y=[]; r.g=[]; r.al=1; r.t=Date.now(); ykBilgi(dk,c,r); ykYaz(dk,c); return; }
+  H.forEach(function(h){ var x=ykDersKayit(dk,c,h,true); x.y=[]; x.g=[]; x.al=1; x.t=Date.now(); ykDersBilgiYaz(dk,c,h,x); }); ykGunTopla(dk,c); ykYaz(dk,c); }
+function ykSil(dk,c,i){ if(ykSalt()) return; var v=ykVeri(), r=v[dk]&&v[dk][c];
+  if(r&&r.dersler&&i!=null&&i!=='gun'){ delete r.dersler[i]; if(Object.keys(r.dersler).length){ ykGunTopla(dk,c); ykYaz(dk,c); return; } }
+  if(v[dk]){ delete v[dk][c]; if(!Object.keys(v[dk]).length) delete v[dk]; } ykYaz(dk,c); }
+function ykAlindiMi(dk,c,i){ if(i!=null&&i!=='gun'){ var x=ykDersKayit(dk,c,i); return !!(x&&x.al); } var r=ykKayit(dk,c); return !!(r&&r.al); }
+function ykBugunAlinmadi(c){ if(!c||!ykListe(c).length) return false; var dk=ykDK(ykSimdi()), a=ykAktifDers(dk,c); return a!=null?!ykAlindiMi(dk,c,a):!ykAlindiMi(dk,c); }
+/* Özet: ders ders sayım (eski kayıtlar: o günün ders sayısı kadar) */
+function ykOzet(c,bas,bit){ var v=ykVeri(), gun=0, ders=0, kisi={}, gunler=[];
+  function K(a){ return kisi[a]||(kisi[a]={ad:a,yok:0,yokDers:0,gec:0,tar:[],eski:true}); }
+  ykListe(c).forEach(function(a){ kisi[a]={ad:a,yok:0,yokDers:0,gec:0,tar:[]}; });
+  Object.keys(v).sort().forEach(function(dk){ if(dk<bas||dk>bit) return; var r=v[dk]&&v[dk][c]; if(!r||!r.al) return; gun++; gunler.push(dk);
+    if(r.dersler&&Object.keys(r.dersler).some(function(i){ return r.dersler[i]&&r.dersler[i].al; })){
+      var D=Object.keys(r.dersler).filter(function(i){ return r.dersler[i]&&r.dersler[i].al; }).sort(function(a,b){ return a-b; }); ders+=D.length; var yk={}, gc={};
+      D.forEach(function(i){ var x=r.dersler[i], et=ykDersEtiket({i:+i,saat:x.saat,s:x.s}); (x.y||[]).forEach(function(a){ (yk[a]=yk[a]||[]).push(et); }); (x.g||[]).forEach(function(a){ (gc[a]=gc[a]||[]).push(et); }); });
+      Object.keys(yk).forEach(function(a){ var k=K(a); k.yok++; k.yokDers+=yk[a].length; k.tar.push({dk:dk,durum:'yok',d:yk[a].join(', ')+(yk[a].length<D.length?' (günün '+D.length+' dersinden '+yk[a].length+')':'')}); });
+      Object.keys(gc).forEach(function(a){ if(yk[a]) return; var k=K(a); k.gec++; k.tar.push({dk:dk,durum:'gec',d:gc[a].join(', ')}); }); }
+    else { var n=r.n||1; ders+=n; (r.y||[]).forEach(function(a){ var k=K(a); k.yok++; k.yokDers+=n; k.tar.push({dk:dk,durum:'yok',d:r.d||''}); }); (r.g||[]).forEach(function(a){ var k=K(a); k.gec++; k.tar.push({dk:dk,durum:'gec',d:r.d||''}); }); } });
+  var ogr=Object.keys(kisi).map(function(a){ var k=kisi[a]; k.devam=gun?Math.round((gun-k.yok)*100/gun):null; return k; }).sort(function(a,b){ return (b.yok-a.yok)||(b.gec-a.gec)||a.ad.localeCompare(b.ad,'tr'); });
+  return {gun:gun,ders:ders,ogr:ogr,gunler:gunler}; }
+/* Veliye mesaj: hangi ders(ler) */
+var _ykMesajGunV2=ykMesajGun;
+ykMesajGun=function(c,ad,dk,durum,i){ var r=ykKayit(dk,c)||{}, L=[];
+  if(r.dersler){ Object.keys(r.dersler).sort(function(a,b){ return a-b; }).forEach(function(k){ var x=r.dersler[k]; if(!x||!x.al) return; if((i==null||i==='gun'||+k===+i)&&((durum==='gec'?x.g:x.y)||[]).indexOf(ad)>=0) L.push(x.s?(+k+1)+'. ders ('+(x.saat||'')+') '+x.s:(+k+1)+'. ders'); }); }
+  var m=_ykMesajGunV2(c,ad,dk,durum); if(!L.length) return m;
+  var ders=L.length===1?L[0]+' dersimize':L.join(' ve ')+' derslerimize';
+  return m.replace(c+' '+ykDersAd(r),c+' '+ders); };
+/* ---------- Görünüm: ders seçimi + 🔄 yeniden al ---------- */
+function ykAc(o){ o=o||{}; ykCss(); var S=ykSiniflar(); YK.durum.sinif=o.sinif||YK.durum.sinif||S.bugun[0]||S.hep[0]||null;
+  if(S.hep.indexOf(YK.durum.sinif)<0&&YK.durum.sinif&&!ykListe(YK.durum.sinif).length&&S.hep.length) YK.durum.sinif=S.hep[0];
+  YK.durum.sekme=o.sekme||(ykSalt()?'rapor':'bugun'); YK.durum.tarih=o.tarih||ykDK(ykSimdi()); YK.durum.ogr=null; YK.durum.ders=(o.ders!=null)?o.ders:null;
+  var ov=document.getElementById('ykOv'); if(!ov){ ov=document.createElement('div'); ov.id='ykOv'; ov.className='yk-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Yoklama defteri');
+    ov.addEventListener('click',function(e){ if(e.target===ov) ykKapat(); }); document.body.appendChild(ov); }
+  ykCiz(); }
+function ykSeciliDers(dk,c){ var L=ykDersListe(dk,c), D=YK.durum; if(!L.length){ D.ders=null; return {L:L,i:null}; }
+  if(D.ders==null||!L.some(function(x){ return x.i===+D.ders; })){ var a=ykAktifDers(dk,c); D.ders=(a!=null&&L.some(function(x){ return x.i===a; }))?a:(L.filter(function(x){ return !ykAlindiMi(dk,c,x.i); })[0]||L[0]).i; }
+  return {L:L,i:+D.ders}; }
+function ykBugunCiz(g,c){ var D=YK.durum, dk=D.tarih, A=ykListe(c), salt=ykSalt(), bug=ykDK(ykSimdi()), SD=ykSeciliDers(dk,c), i=SD.i, x=i!=null?ykDersKayit(dk,c,i):ykKayit(dk,c);
+  var h='<div class="yk-sat"><button class="yk-b s" data-g="-1" aria-label="Önceki gün">◀</button><b style="font-size:17px">🗓️ '+ykTarihYaz(dk)+(dk===bug?' · bugün':'')+'</b><button class="yk-b s" data-g="1" aria-label="Sonraki gün">▶</button>'+(dk!==bug?'<button class="yk-b s" data-g="0">Bugüne dön</button>':'')+'</div>';
+  if(SD.L.length) h+='<div class="yk-cip" aria-label="Dersler">'+SD.L.map(function(d){ var al=ykAlindiMi(dk,c,d.i); return '<button data-ders="'+d.i+'" class="'+(d.i===i?'on':'')+'" style="'+(al&&d.i!==i?'border-color:#22c55e':'')+'">'+(al?'✅ ':'⏳ ')+ykE(ykDersEtiket(d))+'</button>'; }).join('')+'</div>';
+  else h+='<div class="yk-not" style="margin-top:0">Bu gün programda '+ykE(c)+' dersi görünmüyor; yoklama günlük kaydedilir.</div>';
+  if(!A.length){ g.innerHTML=h+'<div class="yk-oz">'+ykE(c)+' için öğrenci listesi yok. '+(salt?'':'<button class="yk-b p" data-liste>📋 Sınıf listesini ekle</button>')+'</div>'; ykBugunBagla(g,c); return; }
+  var yok=x?(x.y||[]).length:0, gec=x?(x.g||[]).length:0;
+  h+=salt?'':'<div class="yk-not" style="margin-top:0">Gelmeyenin adına dokun: <b>✓ geldi → ✕ gelmedi → ⏰ geç</b>. Yanındaki sayı bu yıl kaç gün gelmediğini gösterir.</div>';
+  h+='<div class="yk-grid">'+A.map(function(a){ var d=ykDurum(dk,c,a,i), ys=ykYilSay(c,a); return '<button class="yk-ad '+(d==='var'?'':d)+'" data-a="'+ykE(a)+'" '+(salt?'disabled':'')+' aria-label="'+ykE(a)+': '+(d==='yok'?'gelmedi':d==='gec'?'geç geldi':'geldi')+'"><i>'+(d==='yok'?'✕':d==='gec'?'⏰':'✓')+'</i><span>'+ykE(a)+'</span>'+(ys?'<small title="Bu yıl gelmediği gün">'+ys+'</small>':'')+'</button>'; }).join('')+'</div>';
+  h+='<div class="yk-oz">'+(x&&x.al?'✅ Yoklama alındı':'⏳ Yoklama henüz alınmadı')+(i!=null?' ('+ykE(ykDersEtiket(SD.L.filter(function(z){ return z.i===i; })[0]||{i:i}))+')':'')+' · Gelen <b>'+(A.length-yok)+'</b> · Gelmeyen <b style="color:#b91c1c">'+yok+'</b> · Geç <b style="color:#b45309">'+gec+'</b></div>';
+  if(!salt) h+='<div class="yk-sat"><button class="yk-b y" data-hep>✅ Herkes burada</button><button class="yk-b p" data-tamam>💾 Yoklamayı kaydet</button><button class="yk-b" data-tekrar>🔄 Yoklamayı yeniden al</button>'+(SD.L.length>1?'<button class="yk-b" data-hepsine>📋 Bugünkü diğer derslerine de uygula</button>':'')+'</div>';
+  if(x&&((x.y||[]).length||(x.g||[]).length)){ h+='<h4 style="margin:14px 0 4px">📨 Veliye bilgi</h4>';
+    (x.y||[]).concat(x.g||[]).forEach(function(a){ var d=(x.y||[]).indexOf(a)>=0?'yok':'gec'; h+='<div class="yk-sat2"><b>'+(d==='yok'?'✕ ':'⏰ ')+ykE(a)+'</b><span style="color:#64748b;font-size:13px">'+(d==='yok'?'gelmedi':'geç geldi')+' · bu yıl '+ykYilSay(c,a)+' gün</span><button class="yk-b s p" data-m="'+ykE(a)+'" data-d="'+d+'">📨 Veliye mesaj</button></div>'; }); }
+  g.innerHTML=h; ykBugunBagla(g,c); }
+function ykBugunBagla(g,c){ var D=YK.durum, dk=D.tarih, i=function(){ return D.ders==null?null:+D.ders; };
+  g.querySelectorAll('[data-g]').forEach(function(b){ b.onclick=function(){ var k=+b.dataset.g; if(!k){ D.tarih=ykDK(ykSimdi()); } else { var t=ykTarih(D.tarih); t.setDate(t.getDate()+k); D.tarih=ykDK(t); } D.ders=null; ykCiz(); }; });
+  g.querySelectorAll('[data-ders]').forEach(function(b){ b.onclick=function(){ D.ders=+b.dataset.ders; ykCiz(); }; });
+  g.querySelectorAll('[data-a]').forEach(function(b){ b.onclick=function(){ var a=b.dataset.a, d=ykDurum(D.tarih,c,a,i()); ykAyarla(D.tarih,c,a,d==='var'?'yok':d==='yok'?'gec':'var',i()==null?'gun':i()); ykCiz(); }; });
+  var q=function(s){ return g.querySelector(s); }, x;
+  x=q('[data-hep]'); if(x) x.onclick=function(){ ykHerkes(D.tarih,c,i()==null?'gun':i()); ykCiz(); ykToast('✅ '+c+': herkes burada'); };
+  x=q('[data-tamam]'); if(x) x.onclick=function(){ var k=i(); if(k!=null){ var z=ykDersKayit(D.tarih,c,k,true); z.al=1; z.t=Date.now(); ykDersBilgiYaz(D.tarih,c,k,z); ykGunTopla(D.tarih,c); } else { var r=ykKayit(D.tarih,c,true); r.al=1; r.t=Date.now(); ykBilgi(D.tarih,c,r); } ykYaz(D.tarih,c); ykToast('💾 '+c+' yoklaması kaydedildi'); ykKapat(); };
+  x=q('[data-tekrar]'); if(x) x.onclick=function(){ var k=i(); if(!ykAlindiMi(D.tarih,c,k==null?undefined:k)&&!ykKayit(D.tarih,c)){ ykToast('Bu derste henüz yoklama yok — adlara dokunarak al'); return; } if(!confirm(ykTarihYaz(D.tarih)+' · '+c+(k!=null?' · '+(k+1)+'. ders':'')+' yoklaması silinip baştan alınsın mı?')) return;
+    var r=ykKayit(D.tarih,c), yed=r?JSON.parse(JSON.stringify(r)):null, dk=D.tarih; ykSil(dk,c,k==null?'gun':k); ykCiz(); ykToast('🔄 Yoklama sıfırlandı — yeniden al',function(){ if(!yed) return; var v=ykVeri(); v[dk]=v[dk]||{}; v[dk][c]=yed; ykYaz(dk,c); ykCiz(); }); };
+  x=q('[data-hepsine]'); if(x) x.onclick=function(){ var k=i(), kay=ykDersKayit(D.tarih,c,k,true), L=ykDersListe(D.tarih,c); L.forEach(function(d){ if(d.i===k) return; var z=ykDersKayit(D.tarih,c,d.i,true); z.y=kay.y.slice(); z.g=kay.g.slice(); z.al=1; z.t=Date.now(); ykDersBilgiYaz(D.tarih,c,d.i,z); }); kay.al=1; ykDersBilgiYaz(D.tarih,c,k,kay); ykGunTopla(D.tarih,c); ykYaz(D.tarih,c); ykCiz(); ykToast('📋 '+L.length+' derse uygulandı'); };
+  x=q('[data-liste]'); if(x) x.onclick=function(){ ykKapat(); try{ YK.kaynak.listeAc&&YK.kaynak.listeAc(c); }catch(e){} };
+  g.querySelectorAll('[data-m]').forEach(function(b){ b.onclick=function(){ ykMesajAc(c,b.dataset.m,ykMesajGun(c,b.dataset.m,D.tarih,b.dataset.d,i())); }; }); }
+function ykGunCiz(g,c){ var v=ykVeri(), gunler=Object.keys(v).filter(function(dk){ return v[dk][c]&&v[dk][c].al; }).sort().reverse();
+  var h='<div class="yk-oz">'+ykE(c)+' · yoklama alınan <b>'+gunler.length+'</b> gün (bu cihazdaki kayıt)</div>';
+  h+=gunler.length?gunler.map(function(dk){ var r=v[dk][c], ic='';
+    if(r.dersler) ic=Object.keys(r.dersler).sort(function(a,b){ return a-b; }).filter(function(i){ return r.dersler[i]&&r.dersler[i].al; }).map(function(i){ var x=r.dersler[i]; return '<div style="font-size:13.5px;margin-top:3px">• <b>'+ykE(ykDersEtiket({i:+i,saat:x.saat,s:x.s}))+'</b>: '+((x.y||[]).length?'✕ '+x.y.map(ykE).join(', '):'✅ herkes geldi')+((x.g||[]).length?' · ⏰ '+x.g.map(ykE).join(', '):'')+'</div>'; }).join('');
+    else ic='<div style="font-size:13.5px">'+(r.y.length?'✕ '+r.y.map(ykE).join(', '):'✅ Herkes geldi')+(r.g&&r.g.length?' · ⏰ '+r.g.map(ykE).join(', '):'')+(r.d?' · '+ykE(r.d):'')+'</div>';
+    return '<div class="yk-sat2"><span style="flex:1"><b>'+ykTarihYaz(dk)+'</b>'+(r.n?' · '+r.n+' ders':'')+ic+'</span>'+(ykSalt()?'':'<button class="yk-b s" data-du="'+dk+'">✏️ Düzelt</button>')+'</div>'; }).join(''):'<div class="yk-not">Henüz kayıt yok.</div>';
+  g.innerHTML=h; g.querySelectorAll('[data-du]').forEach(function(b){ b.onclick=function(){ YK.durum.tarih=b.dataset.du; YK.durum.sekme='bugun'; YK.durum.ders=null; ykCiz(); }; }); }
+
 
 /* ---------- 🎯 Doğru dersin konusu ---------- */
 var KP_DSEC='dk_tahta_dsec';
@@ -3638,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='12.0';
+var ZSTD_SURUM='12.2';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -3692,8 +3786,14 @@ var _v8TickV12=v8Tick; v8Tick=function(r){ _v8TickV12(r); try{ v12Hatirlat(); }c
   q.addEventListener('click',function(e){ if(!e.target.closest('[data-q="yoklama"]')) return; e.stopImmediatePropagation(); ykAc({sinif:focusClass(lastR)||null}); },true); })();
 /* Konu panelinde de yoklama düğmesi */
 var _kpV9EkleV12=kpV9Ekle;
-kpV9Ekle=function(){ _kpV9EkleV12.apply(this,arguments); try{ var p=$('kpIc'); if(!p||p.querySelector('[data-ykp]')) return; var c=KP.secili||KP.sinif||focusClass(lastR); if(!c||!roster(c).length) return; var al=ykAlindiMi(dateKey(now()),c);
+kpV9Ekle=function(){ _kpV9EkleV12.apply(this,arguments); try{ var p=$('kpIc'); if(!p||p.querySelector('[data-ykp]')) return; var c=KP.secili||KP.sinif||focusClass(lastR); if(!c||!roster(c).length) return; var al=!ykBugunAlinmadi(c);
   var b=document.createElement('button'); b.className='kp-btn'; b.dataset.ykp=1; b.style.cssText='background:'+(al?'#16a34a':'#f59e0b')+';width:100%;margin-bottom:10px;font-size:15px;color:#fff'; b.textContent=(al?'✅ ':'⏳ ')+c+' yoklaması'+(al?' alındı · aç':' · şimdi al'); b.onclick=function(){ kpKapat(); ykAc({sinif:c}); }; p.insertBefore(b,p.firstChild); }catch(e){} };
+
+/* 12.1: 🎬 Her derse “Sözün Özü” video düğmesi → Yıllık Plan’daki video stüdyosu */
+var _kpV9EkleV121=kpV9Ekle;
+kpV9Ekle=function(){ _kpV9EkleV121.apply(this,arguments); try{ var p=$('kpIc'); if(!p) return; var cls=KP.secili||KP.sinif; var D=cls&&kpDersler(cls); if(!D||!D.list) return;
+  p.querySelectorAll('.kp-ders').forEach(function(b,i){ var d=D.list[i], bt=b.querySelector('.kp-btns'); if(!d||!bt||bt.querySelector('[data-vsv]')||d.gi==null||!d.k) return; var x=document.createElement('button'); x.className='kp-btn'; x.dataset.vsv=1; x.style.background='#be185d'; x.textContent='🎬 Video';
+    x.onclick=function(){ var u=vbPlanUrl(); if(!u){ toast('Önce Yıllık Plan’ı bu tahtada bir kez aç'); return; } window.open(u+'#video='+d.gi+'|'+d.k+'|'+(d.idx||0),'dkYillikPlan'); }; bt.appendChild(x); }); }catch(e){} };
 /* Yapay zekâ: kasa bağlıyken anahtar varmış gibi davran (mevcut anahtarlar yedek kalır) */
 var _aktifKeysV12=aktifKeys;
 aktifKeys=function(){ var a=_aktifKeysV12(); if(!a.length&&window.ZKASA_URL) return [KASA_YER]; return a; };
@@ -3718,7 +3818,7 @@ function v12IlkDersOnerileri(){ var out=[]; try{ for(var wd=0;wd<5;wd++){ for(va
       out.push({etiket:DAYS[wd]+' ilk ders',saat:saat,gunler:[wd+1],baslik:'İlk ders '+S.periods[i][0]+' · '+x.c,govde:DAYS[wd]+' ilk dersin '+x.c+'. Tahtada Ders Saati’ni açmayı unutma.',url:'#canli'}); break; } } } }catch(e){} return out; }
 window.ZSTD_AYAR={uyg:'derssaati',surum:ZSTD_SURUM,ad:'Ders Saati · '+(S.name||'Barış Öğretmen'),kisaAd:'Ders Saati',ikonEmoji:'🕐',ikonPng:ICON192,kullanici:S.name||'Barış Öğretmen',
   yenilikKarti:!MINI_MODE,
-  yenilikler:['📋 Yoklama Defteri: ✅ geldi · ✕ gelmedi · ⏰ geç; yıl boyu saklanır, öğrenci öğrenci kaç gün gelmediği görünür','📊 Devam raporu (hafta · ay · dönem · yıl), Excel ve yazdırma; ⚠️ son 30 günde 3+ gün gelmeyenler işaretli','📨 Veliye hazır, nazik mesaj: kopyala · WhatsApp · paylaş (ekosistemde mesaj ekranına yapıştırılır)','🎡 Gelmeyenler çarka ve öğrenci seçimine girmez; 🔔 hatırlatmalar ve 🏦 anahtar kasası Ayarlar’da'],
+  yenilikler:['📋 Yoklama Defteri: ✅ geldi · ✕ gelmedi · ⏰ geç; yıl boyu saklanır, öğrenci öğrenci kaç gün gelmediği görünür','📊 Devam raporu (hafta · ay · dönem · yıl), Excel ve yazdırma; ⚠️ son 30 günde 3+ gün gelmeyenler işaretli','📨 Veliye hazır, nazik mesaj: kopyala · WhatsApp · paylaş (ekosistemde mesaj ekranına yapıştırılır)','🎡 Gelmeyenler çarka ve öğrenci seçimine girmez; 🔔 hatırlatmalar ve 🏦 anahtar kasası Ayarlar’da','🎬 Konu panelinde her derse “Video” düğmesi: Yıllık Plan’da Sözün Özü veli videosu','📋 Yoklama artık DERS DERS kaydedilir (hangi ders, hangi gün); 🔄 Yoklamayı yeniden al düğmesi; Araçlar’daki yoklama da deftere yazar'],
   hatirlatmaOneri:[
     {etiket:'Yoklama kontrolü',saat:'15:30',gunler:[1,2,3,4,5],baslik:'Yoklama kontrolü',govde:'Bugünkü yoklamalara göz at; gelmeyen olduysa veliye kısa bir mesaj atabilirsin.',url:'#yoklama'},
     {etiket:'Haftalık devam özeti',saat:'16:15',gunler:[5],baslik:'Haftalık devam özeti',govde:'Bu haftanın yoklama raporuna göz at.',url:'#yoklama-rapor'},
@@ -3731,6 +3831,30 @@ window.ZSTD_AYAR={uyg:'derssaati',surum:ZSTD_SURUM,ad:'Ders Saati · '+(S.name||
   kokBos:function(){ return !$('clk')||$('clk').textContent==='--:--'; },
   yedekOnek:['barisDersSaati','dk_','zstd_','ks_'],
   gizlilik:'Ders programın, sınıf listelerin, yoklama defterin, veli telefonları ve notların yalnız bu cihazın tarayıcı hafızasında tutulur; hiçbir sunucuya gönderilmez. Veliye mesajı sen kopyalayıp kendin gönderirsin.'};
+
+/* ============================================================
+   Ders Saati 12.2 — 📋 Yoklama ders ders + 🔄 yeniden al
+   ============================================================ */
+function v13DersAdi(x,d){ try{ var ks=vbDersKs(x.s,d); return ks.length?kpDersAdlari(ks,false):(x.s||''); }catch(e){ return x.s||''; } }
+YK.kaynak.dersListe=function(dk,c){ var d=ykTarih(dk), L=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c) L.push({i:i,saat:S.periods[i][0],s:(kpGi(c)===8)?'Eğitim Koçluğu':v13DersAdi(x,d)}); } }catch(e){} return L; };
+YK.kaynak.aktifDers=function(c,dk){ var n=now(); if(dk&&dk!==dateKey(n)) return null; var L=YK.kaynak.dersListe(dateKey(n),c); if(!L.length) return null;
+  try{ if(lastR&&lastR.t==='lesson'&&lastR.cell&&lastR.cell.c===c&&lastR.seg) return lastR.seg.i; }catch(e){}
+  var sn=n.getHours()*3600+n.getMinutes()*60, gec=L.filter(function(x){ return toS(S.periods[x.i][0])<=sn; }); return gec.length?gec[gec.length-1].i:L[0].i; };
+function v13Sira(a){ return JSON.stringify((a||[]).slice().sort()); }
+function v13AttSenk(){ try{ var c=$('tCls').value, k=dateKey(now()), ab=((S.att[k]||{})[c])||[], r=ykKayit(k,c), H=ykHedef(k,c);
+    if(!H.length){ if(!r&&!ab.length) return; if(r&&r.al&&v13Sira(r.y)===v13Sira(ab)) return; r=ykKayit(k,c,true); r.y=ab.slice(); r.g=(r.g||[]).filter(function(x){ return ab.indexOf(x)<0; }); r.al=1; r.t=Date.now(); ykBilgi(k,c,r); save(); return; }
+    var ayni=H.every(function(h){ var x=ykDersKayit(k,c,h); return x?(x.al&&v13Sira(x.y)===v13Sira(ab)):!ab.length; }); if(ayni) return;
+    H.forEach(function(h){ var x=ykDersKayit(k,c,h,true); x.y=ab.slice(); x.g=x.g.filter(function(z){ return ab.indexOf(z)<0; }); x.al=1; x.t=Date.now(); ykDersBilgiYaz(k,c,h,x); }); ykGunTopla(k,c); save(); }catch(e){} }
+var v13Son=null;
+function v13AttHazirla(){ try{ var c=$('tCls').value, k=dateKey(now()), H=ykHedef(k,c), an=c+'|'+k+'|'+H.join(','); if(v13Son===an) return; v13Son=an; if(H.length!==1) return; var x=ykDersKayit(k,c,H[0]); if(!x) { var r=ykKayit(k,c); if(r&&r.dersler){ if(S.att[k]) delete S.att[k][c]; } return; } S.att[k]=S.att[k]||{}; if(x.y.length) S.att[k][c]=x.y.slice(); else delete S.att[k][c]; }catch(e){} }
+renderAtt=function(){ v13AttHazirla(); _renderAttV12(); v13AttSenk(); try{ var c=$('tCls').value, k=dateKey(now()), a=ykAktifDers(k,c);
+    var ust=$('atDate'); if(ust&&a!=null){ var L=YK.kaynak.dersListe(k,c), d=L.filter(function(x){ return x.i===a; })[0]; if(d) ust.textContent+=' · '+ykDersEtiket(d); }
+    var p=document.querySelector('[data-p="att"] .acts'); if(p&&!p.querySelector('[data-ykdef]')){ var b=document.createElement('button'); b.className='btn'; b.dataset.ykdef=1; b.style.background='#7c3aed'; b.style.color='#fff'; b.textContent='📋 Yoklama defteri · rapor · veliye mesaj'; b.onclick=function(){ var cc=$('tCls').value; closeModals(); ykAc({sinif:cc}); }; p.appendChild(b); }
+    if(p&&!p.querySelector('[data-yktk]')){ var t=document.createElement('button'); t.className='btn'; t.dataset.yktk=1; t.textContent='🔄 Yoklamayı yeniden al'; t.onclick=function(){ var cc=$('tCls').value, kk=dateKey(now()); if(!confirm(cc+' · bugünkü yoklama silinip baştan alınsın mı?')) return; var H=ykHedef(kk,cc); if(H.length) H.forEach(function(h){ ykSil(kk,cc,h); }); else ykSil(kk,cc,'gun'); if(S.att[kk]) delete S.att[kk][cc]; save(); renderAtt(); toast('🔄 Yoklama sıfırlandı — gelmeyenlere dokun'); }; p.insertBefore(t,p.firstChild); }
+    var al=$('atSum'); if(al&&L_v12Yil(c)) al.textContent+=' · Bu yıl en çok gelmeyen: '+L_v12Yil(c); }catch(e){} };
+document.addEventListener('click',function(e){ if(e.target.closest&&e.target.closest('#btnTools,#tabs .tab,.quick,[data-goto]')) v13Son=null; },true);
+document.addEventListener('change',function(e){ if(e.target&&e.target.id==='tCls') v13Son=null; },true);
+(function(){ var _y=YK.kaynak.yaz; YK.kaynak.yaz=function(){ v13Son=null; return _y.apply(this,arguments); }; })();
 
 renderAll();
 setInterval(tick,250);
