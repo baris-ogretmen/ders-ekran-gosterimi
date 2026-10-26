@@ -1098,7 +1098,7 @@ const DEFAULT={
   periods:[['09:10','09:50'],['10:00','10:40'],['10:50','11:30'],['11:40','12:20'],['12:50','13:30'],['13:40','14:20'],['14:30','15:10'],['15:20','16:00']],
   colors:{'1A':'#ffef1a','2A':'#f7981d','3A':'#f24a3f','4A':'#5b0f63','5A':'#19e6f0','6A':'#9be33c','7A':'#ff1ee8','8A':'#1e8ef5','Ana Sınıfı':'#f59ac7'},
   grid:build([
-    ['','4A','','6A','2A','2A','1A','1A'],
+    ['','4A','','6A','2A','','1A','1A'],
     ['','','5A','','3A','Ana Sınıfı','5A','5A'],
     ['','4A','4A','3A','3A','','7A','7A'],
     ['','','','','','2A','6A','6A'],
@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='12.5';
+var ZSTD_SURUM='12.6';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4205,11 +4205,11 @@ renderLive=function(r){ var info=_renderLiveV15(r); if(!ozBugun(r)) return info;
 })();
 try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🎓 Cumartesi özel ders: 09:10’dan itibaren 4 saat (13:10’a kadar) ekranda “Özel ders” ve kalan süre; Ayarlar’dan değiştirilebilir']); }catch(e){}
 
-/* ===== v12.5 — 🔗 Ders programı köprüsü: tahta ↔ telefon ↔ Ders Programım ↔ Yıllık Plan (anında) ===== */
+/* ===== v12.6 — 🔗 Ders programı köprüsü: tahta ↔ telefon ↔ Ders Programım ↔ Yıllık Plan (anında) ===== */
 window.DP_KOPRU_KAPALI=MINI_MODE;   /* mini pencere ana pencereden (aynı hafıza) güncellenir */
 window.DP_KOPRU_UYGULA=function(p){ S.periods=p.periods; S.grid=[0,1,2,3,4].map(function(d){ return S.periods.map(function(_,i){ return (p.grid[d]&&p.grid[d][i])||null; }); }); S.ov=p.ov||{};
   save(); try{ renderAll(); }catch(e){} try{ if(view==='week') renderWeek(); }catch(e){} try{ tick(true); }catch(e){} };
-try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔗 Ders programı bulutla bağlı: tahtada, telefonda ya da ana ekran simgesinde değiştirdiğin program her yerde anında güncellenir (Ders Programım ve Yıllık Plan dahil)','🗓️ Program 26.10.2026: Pazartesi 2A 5–6. ders, 5A Salı 3. ders']); }catch(e){}
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔗 Ders programı bulutla bağlı: tahtada, telefonda ya da ana ekran simgesinde değiştirdiğin program her yerde anında güncellenir (Ders Programım ve Yıllık Plan dahil)','🗓️ Program 26.10.2026: Pazartesi 3. ve 6. ders boş (2A 5. ders), 5A Salı 3. ders']); }catch(e){}
 
 renderAll();
 setInterval(tick,250);
@@ -4470,17 +4470,17 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
    • Tek kaynak: Ders Saati’ndeki haftalık tablo (barisDersSaati.v1 → grid / periods / ov)
    • Bulut: maas_config/ders_programi_baris (ayrı belge; Okula Gönder / pano / ödev / işaret belgelerine dokunmaz)
    • Hangi cihazda değiştirilirse (tahta, iPhone, ana ekran simgesi) diğerlerinde anında güncellenir
-   • 26.10.2026 programı (son fotoğraf): Pazartesi 2A 5–6. ders · 5A Salı 3. derse kaydı
+   • 26.10.2026 programı (son fotoğraf): Pazartesi 3. ve 6. ders boş, 2A 5. ders · 5A Salı 3. derse kaydı
    Yalnız EKLEME: önceki tüm davranışlar aynen korunur; bulut yoksa her şey eskisi gibi çalışır.
    ============================================================ */
 (function(){
 'use strict';
 if(window.DP_KOPRU||window.DP_KOPRU_KAPALI) return;
 if(/[#&]oyun=/.test(location.hash||'')) return;               /* veli/öğrenci oyun bağlantısı: programa gerek yok */
-var KEY='barisDersSaati.v1', META='dk_prog_meta', GOC='dk_prog_goc_20261026', BELGE='ders_programi_baris';
-var GOC_T=Date.UTC(2026,9,26,8,0,0);                             /* 26.10.2026 11:00 (Türkiye) */
+var KEY='barisDersSaati.v1', META='dk_prog_meta', GOC='dk_prog_goc_20261026b', BELGE='ders_programi_baris';
+var GOC_T=Date.UTC(2026,9,26,8,30,0);                            /* 26.10.2026 11:30 (Türkiye) — 6. saat düzeltmesi */
 var SUBJ='Robotik Kodlama';
-var YENI=[['','4A','','6A','2A','2A','1A','1A'],['','','5A','','3A','Ana Sınıfı','5A','5A']];   /* Pazartesi, Salı */
+var YENI=[['','4A','','6A','2A','','1A','1A'],['','','5A','','3A','Ana Sınıfı','5A','5A']];   /* Pazartesi, Salı */
 var CFG={apiKey:"AIzaSyAqeO-yQyQPnLsOqKmSNvVH23WPvneIjaU",authDomain:"shaped-totem-481514-c5.firebaseapp.com",projectId:"shaped-totem-481514-c5",storageBucket:"shaped-totem-481514-c5.firebasestorage.app",messagingSenderId:"519295049418",appId:"1:519295049418:web:7d04e18c4ea36bc088de33"};
 var K={hazir:false,fb:null,mesgul:false,uzakT:0,uzakImza:'',dinliyor:false,zm:null};
 
@@ -4526,7 +4526,7 @@ function goc(){ var bayrak=null; try{ bayrak=localStorage.getItem(GOC); }catch(e
       if(kanon(r)!==kanon(g[d])){ g[d]=r; degisti=true; } });
     var yeni={grid:g,periods:p.periods,ov:p.ov};
     var m=metaOku(); if(degisti) uygula(yeni);
-    metaYaz({t:Math.max(GOC_T,(m&&m.t)||0),imza:imza(yerel()||yeni)}); }
+    metaYaz({t:degisti?Math.max(GOC_T,((m&&m.t)||0)+1):Math.max(GOC_T,(m&&m.t)||0),imza:imza(yerel()||yeni)}); }
   try{ localStorage.setItem(GOC,'1'); }catch(e){} }
 
 /* ---- bulut ---- */
@@ -4540,7 +4540,9 @@ function uzakPaket(u){ try{ if(!u||!u.prog) return null; return paket(JSON.parse
 /* bu cihazdaki değişikliği yakala (yalnız ilk eşitlemeden sonra; açılıştaki kendiliğinden temizlik değişiklik sayılmaz) */
 function yerelYakala(){ if(!K.hazir) return; var p=yerel(); if(!p) return; var s=imza(p), m=metaOku();
   if(!m){ metaYaz({t:0,imza:s}); return; }
-  if(m.imza!==s){ metaYaz({t:Date.now(),imza:s}); gonderZamanla(); } }
+  if(m.imza!==s){ metaYaz({t:yeniZaman(m),imza:s}); gonderZamanla(); } }
+/* yeni değişiklik her zaman bilinen son kayıttan sonra sayılır (cihaz saatleri farklı olsa da) */
+function yeniZaman(m){ return Math.max(Date.now(),(K.uzakT||0)+1,((m&&m.t)||0)+1); }
 function gonderZamanla(){ clearTimeout(K.zm); K.zm=setTimeout(gonder,600); }
 async function gonder(){ if(!K.hazir||K.mesgul) return; var p=yerel(), m=metaOku(); if(!p||!m) return;
   if(K.uzakImza===m.imza) return; if(navigator.onLine===false) return;
@@ -4563,7 +4565,7 @@ function karar(u){ var up=uzakPaket(u), ut=(u&&u.t)||0;
     if(vardi&&once!==gorunur(up)) bildir('🗓️ Ders programı güncellendi'+(u.cihaz?' ('+u.cihaz+' üzerinden)':'')+' — tahta, telefon ve tüm sayfalarda aynı');
   } else if(up&&imza(up)===s){ if(ut>m.t) metaYaz({t:ut,imza:s}); }
   else if(p){ /* bulut boş ya da eski: bu cihazdaki program gönderilir */
-    if(!K.hazir&&s!==m.imza) metaYaz({t:Math.max(Date.now(),ut+1),imza:s});
+    if(!K.hazir&&s!==m.imza) metaYaz({t:Math.max(yeniZaman(m),ut+1),imza:s});
     else if(!metaOku()) metaYaz({t:Math.max(GOC_T,ut),imza:s});
     K.hazir=true; gonderZamanla(); }
   K.hazir=true; }
