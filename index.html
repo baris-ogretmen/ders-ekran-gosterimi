@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='12.6';
+var ZSTD_SURUM='12.8';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4208,8 +4208,343 @@ try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🎓
 /* ===== v12.6 — 🔗 Ders programı köprüsü: tahta ↔ telefon ↔ Ders Programım ↔ Yıllık Plan (anında) ===== */
 window.DP_KOPRU_KAPALI=MINI_MODE;   /* mini pencere ana pencereden (aynı hafıza) güncellenir */
 window.DP_KOPRU_UYGULA=function(p){ S.periods=p.periods; S.grid=[0,1,2,3,4].map(function(d){ return S.periods.map(function(_,i){ return (p.grid[d]&&p.grid[d][i])||null; }); }); S.ov=p.ov||{};
+  try{ if(typeof dsEksikDersDuzelt==='function') dsEksikDersDuzelt(true); }catch(e){}
   save(); try{ renderAll(); }catch(e){} try{ if(view==='week') renderWeek(); }catch(e){} try{ tick(true); }catch(e){} };
 try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔗 Ders programı bulutla bağlı: tahtada, telefonda ya da ana ekran simgesinde değiştirdiğin program her yerde anında güncellenir (Ders Programım ve Yıllık Plan dahil)','🗓️ Program 26.10.2026: Pazartesi 3. ve 6. ders boş (2A 5. ders), 5A Salı 3. ders']); }catch(e){}
+
+/* ===== v12.7 — 🎯 DERSİN ÖZÜ: “Bu sınıfa ne anlatacağım?” panelinde her konunun gerçek anlamı (öğretmen için, kısa ve öz) =====
+   • 269 konunun hepsi için hazır öz (Robotik-Kodlama, Satranç, Yapay Zekâ, Akıl-Zekâ, Eğitim Koçluğu)
+   • ✏️ Düzenle ile kendi cümleni yazabilirsin (bu cihazda saklanır) · 📺 Tahtada büyük göster
+   Yalnız EKLEME: panelin diğer bölümleri aynen kalır. */
+/* 🎯 DERSİN ÖZÜ — her konunun gerçek anlamı, kısa ve öz (öğretmenin sınıfa söyleyeceği). Ders → konu adı → metin */
+var DS_OZ={
+robokod:{
+'Robotlar Nerede?':'Robot, kendisine verilen komutlarla bir işi yapan makinedir. Örnek: Evdeki robot süpürge, ona söylenen yolla evi temizler.',
+'Önce–Sonra Sıralama':'Bir işi yaparken neyin önce, neyin sonra geldiğini bilmek sıralamadır. Örnek: Önce çorabı, sonra ayakkabıyı giyeriz.',
+'Yönler: İleri–Geri–Sağ–Sol':'Bir robota nereye gideceğini yönlerle söyleriz: ileri, geri, sağa, sola. Örnek: “İki adım ileri, sonra sağa dön.”',
+'Oklarla Komut Verelim':'Komut, robota ne yapacağını söyleyen kısa emirdir; ok kartları birer komuttur. Örnek: ↑ ↑ → demek “ileri, ileri, sağa” demektir.',
+'Renk ve Şekil Örüntüleri':'Örüntü, aynı sırayla tekrar eden diziliştir. Örnek: kırmızı–mavi–kırmızı–mavi… sırada hangi renk gelir?',
+'Tekrar Eden Hareketler':'Aynı hareketi tekrar tekrar yazmak yerine “şu kadar kez tekrarla” deriz; buna döngü denir. Örnek: “3 kez zıpla.”',
+'Eğer… O Zaman':'Bir şey olursa ne yapacağımıza karar vermektir. Örnek: Eğer yağmur yağıyorsa, o zaman şemsiyeyi açarız.',
+'Hata Bul, Düzelt!':'Komutlarda yanlış olan adımı bulup düzeltmeye hata ayıklama denir. Hata yapmak öğrenmenin parçasıdır.',
+'Sanal Robotla Tanışma':'Ekrandaki robot da gerçek robot gibi bizim verdiğimiz komutlarla hareket eder. Doğru sırayla komut verirsek hedefe ulaşır.',
+'Robotumu Tasarlıyorum':'Bir robot düşünürken önce hangi işi yapacağına karar veririz, sonra onu çizip parçalarını planlarız.',
+'Birlikte Kodlayalım':'Kodlamada da takım çalışması vardır: biri komutu söyler, diğeri uygular, birlikte kontrol ederiz.',
+'Küçük Mucitler Sergisi':'Yaptığımız robot ve kod çalışmalarını arkadaşlarımıza anlatıp gösteriyoruz; “Ne yaptım, nasıl yaptım?”',
+'Kodlama Nedir?':'Kodlama, bilgisayara ya da robota ne yapacağını adım adım, onun anlayacağı komutlarla söylemektir. Örnek: “İleri git, sağa dön, dur.”',
+'Algoritma: Adım Adım':'Algoritma, bir işi yapmak için sırayla izlenen adımlardır. Örnek: Diş fırçalamanın adımları bir algoritmadır.',
+'Yön ve Konum':'Bir şeyin nerede olduğunu ve nereye gideceğini sağ, sol, ileri, geri, üst, alt gibi kelimelerle söyleriz.',
+'Ekransız Kodlama Kartları':'Bilgisayar olmadan da kodlama yapılır: komut kartlarını sıraya dizer, arkadaşımızı “robot” gibi yürütürüz.',
+'Örüntü ve Tekrar':'Tekrar eden diziyi (örüntüyü) fark edersek kodu kısaltabiliriz. Örnek: “ileri, ileri, ileri” yerine “3 kez ileri”.',
+'Döngülerle Kısaltma':'Döngü, aynı komutu belirli sayıda tekrar ettiren yapıdır; kodu kısa ve düzenli yapar. Örnek: “4 kez: ileri git, sağa dön” bir kare çizer.',
+'Hata Ayıklama':'Hata ayıklama, program istediğimiz gibi çalışmayınca yanlış adımı bulup düzeltmektir. Programcılar da sık sık hata yapar ve düzeltir.',
+'ScratchJr ile Tanışma':'ScratchJr, okumayı yeni öğrenen çocukların resimli blokları birleştirerek karakterlere hareket ve ses verdiği bir kodlama uygulamasıdır.',
+'Olaylar: Dokun ve Başla':'Olay, programı başlatan durumdur. Örnek: “Karaktere dokununca zıpla” — dokunmak olaydır, zıplamak komuttur.',
+'Hikâye Kodlayalım':'Kodlamayla hikâye de anlatılır: karakterler sırayla konuşur, hareket eder; hikâyenin başı, ortası, sonu olur.',
+'Sanal Robot Görevleri':'Robota görev verirken hedefi belirler, adımları sıralar, deneriz; olmazsa düzeltip tekrar deneriz.',
+'Mini Proje ve Sergi':'Öğrendiğimiz komutlarla küçük bir proje yapar, nasıl çalıştığını arkadaşlarımıza anlatırız.',
+'Bilgisayarla Düşünme':'Bilgisayarca düşünme; bir problemi parçalara ayırmak, örüntü bulmak, önemli olanı seçmek ve adım adım çözüm yazmaktır.',
+'Algoritma ve Akış Şeması':'Algoritma, bir problemi çözmek için sıralı adımlardır; akış şeması bu adımları şekil ve oklarla gösterir (başla/bitir, işlem, karar).',
+"Scratch'e Giriş":'Scratch, blokları birleştirerek oyun, animasyon ve hikâye yaptığımız, MIT’nin geliştirdiği blok tabanlı bir programlama ortamıdır.',
+'Olaylar ve Sıralı Komutlar':'Program bir olayla başlar (ör. yeşil bayrağa tıklanınca) ve komutları yukarıdan aşağıya sırayla çalıştırır. Sıra değişirse sonuç da değişir.',
+'Döngüler':'Döngü, komutları tekrar ettiren yapıdır: belirli sayıda (10 kez tekrarla) ya da sürekli (sürekli tekrarla). Kodu kısaltır, hatayı azaltır.',
+'Koşullar: Eğer–İse':'Koşul, programın karar vermesini sağlar: “Eğer kenara değdiyse, geri dön.” Koşul doğruysa içindeki komutlar çalışır.',
+'Değişkenler ve Puan':'Değişken, programda değeri değişebilen bir bilgiyi tutan kutudur. Örnek: Oyundaki “puan” her doğru cevapta 1 artar.',
+'Oyun Tasarımı':'Bir oyunun hedefi, kuralları, karakterleri ve puanı vardır. Önce tasarlar, sonra kodlar, sonra deneyip iyileştiririz.',
+'Hata Ayıklama Ustalığı':'Hata ayıklarken programı adım adım izler, beklenen ile olanı karşılaştırır, hatayı bulup tek tek düzeltiriz.',
+'Robotik: Sensör–Motor–Kontrol':'Robot üç parçayla çalışır: sensör algılar (ışık, mesafe), kontrol kartı karar verir, motor hareket ettirir. Algıla → karar ver → hareket et.',
+'Yıl Sonu Proje Sergisi':'Yıl boyunca öğrendiklerimizle yaptığımız projeyi tanıtıyoruz: problem neydi, nasıl çözdük, neyi geliştirebiliriz?',
+'Dijital Dünyada Üretmek':'Teknolojiyi sadece kullanmak değil, onunla üretmek de mümkündür: oyun, animasyon, uygulama ve proje tasarlayabiliriz.',
+'Problem Çözme ve Ayrıştırma':'Ayrıştırma, büyük bir problemi küçük ve çözülebilir parçalara bölmektir. Örnek: “Oyun yap” → karakter, hareket, puan, bitiş.',
+'Scratch ile İleri Animasyon':'Animasyon, kılık (kostüm) değiştirme, hareket ve zamanlama ile oluşan hareketli görüntüdür; kareler hızlı değişince hareket algılanır.',
+'İç İçe Döngü ve Koşullar':'Bir döngünün ya da koşulun içine başka bir döngü veya koşul koyabiliriz. Örnek: Her satırda (dış döngü) 5 yıldız çiz (iç döngü).',
+'Değişkenler ve Listeler':'Değişken tek bir değeri, liste ise birden çok değeri sırayla tutar. Örnek: “puan” bir değişken; “sınıftaki isimler” bir listedir.',
+'Fonksiyonlar (Kendi Bloğum)':'Fonksiyon, bir işi yapan komutlara ad verip tekrar tekrar çağırmaktır. Örnek: “kare çiz” bloğu yazıp her yerde kullanırız.',
+'Oyun Projesi':'Oyun projesinde plan → kodlama → test → iyileştirme döngüsü izlenir; oyuncudan geri bildirim almak oyunu geliştirir.',
+'micro:bit ve MakeCode':'micro:bit, üzerinde ışıklar, düğmeler ve sensörler olan küçük bir bilgisayar kartıdır; MakeCode ile bloklarla programlanır.',
+'Sensörlerle Karar':'Sensörden gelen ölçüme göre program karar verir. Örnek: “Eğer ışık azsa, LED’i yak” — gece lambası böyle çalışır.',
+'Robotik Görevler':'Robot görevinde hedef belirlenir, robotun hareketi programlanır, denenir ve sonuca göre düzeltilir.',
+"Python'a Giriş":'Python, komutları yazıyla yazdığımız, okunması kolay bir programlama dilidir. Örnek: print("Merhaba") ekrana Merhaba yazar.',
+'Proje Sergisi':'Projemizi sunarken problemi, çözümümüzü, karşılaştığımız hataları ve nasıl düzelttiğimizi anlatırız.',
+'Teknoloji ve Gelecek':'Kodlama ve yapay zekâ birçok mesleği dönüştürüyor; problem çözme, iş birliği ve öğrenmeyi sürdürme her alanda gereken becerilerdir.',
+'Algoritma Tasarımı ve Verimlilik':'Aynı problemi çözen birden çok algoritma olabilir; daha az adım ve zaman kullanan algoritma daha verimlidir.',
+'Python Temelleri':'Python’da değişkenlere değer atanır, input ile veri alınır, print ile yazdırılır; girinti (boşluk) kodun bloklarını belirler.',
+'Koşullar ve Mantıksal Operatörler':'if / elif / else ile program karar verir; and (ve), or (veya), not (değil) birden çok koşulu birleştirir.',
+'Döngüler (for ve while)':'for belirli sayıda ya da bir listedeki her öğe için tekrar eder; while ise koşul doğru olduğu sürece tekrar eder.',
+'Listeler ve Veri İşleme':'Liste birden çok veriyi sıralı tutar; döngüyle listedeki verileri tek tek işleyip toplam, ortalama, en büyük gibi sonuçlar buluruz.',
+'Fonksiyonlar ve Modüler Kod':'Fonksiyon (def) bir işi yapan, adı olan kod parçasıdır; parametre alır, sonuç döndürür. Kodu parçalara ayırmak okunabilir ve düzenli yapar.',
+"Web'e Giriş (HTML/CSS)":'Web sayfasının içeriği ve yapısı HTML ile, görünüşü (renk, yazı, yerleşim) CSS ile yazılır.',
+'Fiziksel Hesaplama ve Sensörler':'Fiziksel hesaplama, kodun gerçek dünyayla etkileşmesidir: sensör veriyi okur (giriş), kod işler, motor/LED tepki verir (çıkış).',
+'Robotik ve Otonom Sistemler':'Otonom sistem, sensörlerle çevresini algılayıp insan müdahalesi olmadan karar veren sistemdir. Örnek: engelden kaçan robot.',
+'Takım Projesi (Tasarım Döngüsü)':'Tasarım döngüsü: problemi anla → fikir üret → prototip yap → test et → geliştir. Takımda görev paylaşımı başarıyı artırır.',
+'Proje Sunumu ve Portfolyo':'Portfolyo, yaptığımız çalışmaların süreçleriyle birlikte toplandığı dosyadır; sunumda problemi, çözümü ve öğrendiklerimizi anlatırız.'
+},
+satranc:{
+'Satranç Masalı':'Satranç, iki kişinin 64 kareli bir tahtada, her biri 16 taşla oynadığı bir düşünme oyunudur. Amaç rakibin şahını kaçamayacak hâle getirmektir.',
+'Tahta: Açık ve Koyu Kareler':'Satranç tahtasında 64 kare vardır; açık ve koyu kareler sırayla dizilir. Tahta, sağ alt köşede açık kare olacak şekilde konur.',
+'Piyon Asker':'Piyon hep ileri yürür, geri gelmez. İlk hamlesinde 1 ya da 2 kare gidebilir; taşı çapraz önünden alır.',
+'Kale Kule':'Kale düz gider: ileri, geri, sağa, sola, istediği kadar kare. Önünde taş varsa üzerinden atlayamaz.',
+'Fil Çapraz Gider':'Fil çapraz gider ve hep kendi renginde kalır: açık kare fili açıkta, koyu kare fili koyuda.',
+'At Zıplar':'At “L” harfi gibi gider: iki kare düz, bir kare yana. Taşların üzerinden atlayabilen tek taştır.',
+'Vezir ve Şah':'Vezir en güçlü taştır: kale ve fil gibi düz ve çapraz, istediği kadar gider. Şah her yöne yalnız 1 kare gider ve en önemli taştır.',
+'Taş Yeme Oyunları':'Bir taş, kendi hareket yolundaki rakip taşın yerine giderek onu alır. Piyon ise yalnız çapraz önündeki taşı alır.',
+'Şahı Koru':'Şah saldırı altındaysa buna “şah çekmek” denir; şahı kaçırarak, araya taş koyarak ya da saldıran taşı alarak koruruz.',
+'Mini Satranç Oyunları':'Az taşla oynanan küçük oyunlar, taşların hareketini ve plan yapmayı eğlenceli şekilde öğretir.',
+'Kazanmak ve Kaybetmek':'Satrançta kazanmak da kaybetmek de oyunun parçasıdır; oyun sonunda tokalaşır, “İyi oyundu” deriz.',
+'Minik Satranç Şenliği':'Öğrendiğimiz taş hareketleriyle arkadaşlarımızla kurallara uyarak, sırayla ve saygıyla oynuyoruz.',
+'Satranç Tahtası':'Tahtada 64 kare vardır. Dikey sıralar harflerle (a–h), yatay sıralar sayılarla (1–8) adlandırılır; her karenin bir adı vardır, ör. e4.',
+'Piyon':'Piyon ileri yürür, geri gitmez; ilk hamlede 1 ya da 2 kare gidebilir, çapraz alır. Son sıraya ulaşırsa başka bir taşa dönüşür (terfi).',
+'Kale ve Fil':'Kale düz (yatay–dikey), fil çapraz istediği kadar gider. İkisi de taşların üzerinden atlayamaz.',
+'At':'At “L” şeklinde gider: iki kare düz, bir kare yana. Taşların üzerinden atlayabilen tek taştır; her hamlede kare rengini değiştirir.',
+'Taşların Değeri':'Taşların yaklaşık puanları: piyon 1, at 3, fil 3, kale 5, vezir 9. Şah değerle ölçülmez; çünkü şah kaybedilirse oyun biter.',
+'Şah Çekme ve Kurtulma':'Şah çekmek, rakip şahı saldırı altına almaktır. Kurtulmanın 3 yolu: şahı kaçırmak, araya taş koymak, saldıran taşı almak.',
+'Mat Nedir?':'Mat, şaha şah çekilmiş ve kurtulmanın hiçbir yolu kalmamış durumdur. Mat olan oyunu kaybeder.',
+'Rok ve Terfi':'Rok, şah ile kalenin aynı hamlede yer değiştirmesidir; şahı güvenceye alır. Terfi, son sıraya ulaşan piyonun vezir, kale, fil ya da ata dönüşmesidir.',
+'Pat ve Beraberlik':'Pat, sırası gelen oyuncunun şahı tehdit altında değilken yapacak yasal hamlesinin kalmamasıdır; oyun berabere biter.',
+'Tam Oyun':'Bir satranç oyunu açılış, oyun ortası ve oyun sonu bölümlerinden oluşur; tüm kuralları kullanarak baştan sona oynarız.',
+'Sınıf Turnuvası':'Turnuvada kurallara uyar, sırayla ve sessizce oynar, sonuca saygı gösteririz; her oyundan bir şey öğreniriz.',
+'Satrancın Tarihi':'Satrancın kökeni yaklaşık 1500 yıl önce Hindistan’daki “çaturanga” oyununa dayanır; İran ve İslam dünyası üzerinden Avrupa’ya yayılmıştır.',
+'Notasyon':'Notasyon, hamleleri yazma yöntemidir: taşın harfi + gittiği kare. Ş şah, V vezir, K kale, F fil, A at; piyonda harf yazılmaz (ör. Af3 = at f3’e, e4 = piyon e4’e).',
+'Taş Değerleri ve Takas':'Takas, karşılıklı taş alışverişidir. Değeri düşük taşı verip yüksek taşı almak kazançlıdır (ör. at verip kale almak).',
+'Mat Kalıpları I':'Mat kalıpları sık görülen bitiriş şekilleridir; ör. arka sıra matı: şahın önü kendi piyonlarıyla kapalıyken kale ya da vezir son sıradan mat eder.',
+'Mat Kalıpları II':'Kalıpları tanımak hesabı hızlandırır; ör. vezir ve şahla mat, iki kaleyle “merdiven” matı.',
+'Açılış İlkeleri':'Açılışta üç temel ilke: merkezi tut, taşlarını (at ve fili) hızlıca geliştir, şahını rokla güvenceye al.',
+'Taktik: Çatal':'Çatal, bir taşın aynı anda iki ya da daha fazla rakip taşa saldırmasıdır; rakip ikisini birden kurtaramaz. En bilinen örnek at çatalıdır.',
+'Taktik: Şiş ve Bağlama':'Bağlamada önde duran taş, arkasındaki daha değerli taş (ya da şah) açılacağı için kımıldayamaz. Şişte önce değerli taş saldırı altındadır; kaçarsa arkadaki alınır.',
+'Savunma':'İyi savunma, rakibin tehdidini önceden görmektir: “Rakip ne yapmak istiyor?” sorusunu her hamlede sormak.',
+'Oyun Sonu Temelleri':'Oyun sonunda az taş kalır; şah aktif bir taş olur ve piyonu son sıraya ulaştırıp vezir yapmak (terfi) çoğu zaman oyunu kazandırır.',
+'Kendi Oyununu Analiz Et':'Oynadığımız oyunu notasyondan tekrar oynar, hataları ve daha iyi hamleleri ararız; en hızlı gelişme kendi oyunumuzdan öğrenmekle olur.',
+'Sınıf Ligi ve Final':'Ligde puanla sıralanırız: genelde galibiyet 1, beraberlik ½, yenilgi 0 puan. Önemli olan her oyundan ders çıkarmaktır.',
+'Satranç ve Düşünme':'Satranç; dikkat, plan yapma, olasılıkları karşılaştırma ve karar vermeyi çalıştırır. Her hamle bir karar, her karar bir sonuçtur.',
+'Açılış Planları':'Her açılışın bir amacı vardır: merkezi kontrol, taş gelişimi, şah güvenliği. Hamleyi ezberlemek yerine nedenini anlamak önemlidir.',
+'Taktik Motifler I':'Taktik, kısa sürede kazanç sağlayan hamle dizisidir; çatal, bağlama, şiş temel motiflerdir.',
+'Taktik Motifler II':'Açarak saldırı (bir taş çekilince arkadaki taşın saldırması), saptırma ve çifte saldırı da önemli taktik motiflerdir.',
+'Kombinasyon Hesabı':'Kombinasyon, zorlayıcı hamlelerle (şah, alış, tehdit) yapılan ve hesaplanarak sonuca götüren hamle dizisidir.',
+'Oyun Ortası Planı':'Oyun ortasında plan yapmak için önce pozisyonu değerlendiririz: zayıf kareler, açık hatlar, şah güvenliği, taşların aktifliği.',
+'Taş Aktivitesi':'Aktif taş, çok kare kontrol eden ve oyuna katılan taştır; pasif taşları iyileştirmek çoğu zaman en iyi plandır.',
+'Oyun Sonu Teknikleri':'Oyun sonunda şah aktif oynar; geçer piyon (önünde rakip piyon olmayan piyon) ilerletilir, karşı şahla “muhalefet” kavramı önem kazanır.',
+'Hızlı Satranç ve Süre':'Satranç saatiyle her oyuncunun belli bir düşünme süresi vardır; süre biterse oyun kaybedilebilir. Süreyi dengeli kullanmak da bir beceridir.',
+'Ünlü Oyunlar':'Büyük ustaların oyunlarını incelemek; plan, taktik ve fikirleri en iyi örneklerden öğrenmemizi sağlar.',
+'Kendi Oyun Analizim':'Oyunu kaydedip sonra inceleriz: “Nerede hata yaptım, daha iyi hamle neydi?” Hatalarımız en iyi öğretmenimizdir.',
+'Okul Turnuvası':'Turnuvada kurallar, süre ve sportmenlik birlikte önemlidir; her sonuç gelişim için bir bilgi verir.',
+'Stratejik Düşünme':'Strateji uzun vadeli plan, taktik ise kısa vadeli hamle dizisidir. İyi oyuncu önce planını belirler, sonra hamlelerini ona göre seçer.',
+'Açılış Repertuvarı':'Repertuvar, düzenli oynadığımız ve fikirlerini anladığımız açılışların listesidir; az ama iyi anlaşılmış açılış yeterlidir.',
+'İleri Taktik':'İleri taktiklerde birden çok motif birleşir (saptırma, çekme, ara hamle); zorlayıcı hamlelerle başlayan hesap doğru sonuca götürür.',
+'Pozisyonel Oyun':'Pozisyonel oyun; piyon yapısı, zayıf kareler, açık hatlar ve taşların iyi yerleşimi gibi uzun vadeli üstünlükleri biriktirmektir.',
+'Hesaplama ve Aday Hamle':'Aday hamle yöntemi: önce mantıklı 2–3 hamleyi listele, sonra her birini sırayla hesapla ve karşılaştır, en iyisini seç. (Aday hamle → hesap → karar)',
+'Saldırı ve Savunma':'Saldırı için taşları rakip şaha yönlendirir, savunmada tehditleri önceden görür ve gereksiz zayıflık yaratmayız.',
+'Oyun Sonu Ustalığı':'Oyun sonlarında doğru teknik bilinirse kazanç kesinleşir; ör. vezir–şah ve kale–şah ile mat etme yöntemleri, piyon oyun sonları.',
+'Satranç ve Karar Verme':'Satranç, belirsizlik altında karar vermeyi çalıştırır: seçenekleri karşılaştırmak, riski tartmak ve sonucun sorumluluğunu almak.',
+'Tarihte Strateji':'Strateji kavramı satrançta da tarihte de aynıdır: amaç belirlemek, kaynakları doğru kullanmak ve rakibin planını öngörmek.',
+'Usta Oyunu Analizi':'Usta oyunlarını hamle hamle inceleyip “Bu hamle neden oynandı?” sorusunu sorarak plan ve fikirleri öğreniriz.',
+'Gelişim Planım':'Gelişim planı; güçlü ve zayıf yönleri belirleyip düzenli bulmaca çözme, oyun oynama ve analiz yapmayı içerir.',
+'Okul Şampiyonası':'Şampiyonada bilgi, süre yönetimi ve sportmenlik birlikte sınanır; kazanmak kadar her oyundan öğrenmek de önemlidir.'
+},
+yz:{
+'Akıllı Makineler':'Bazı makineler bir şeyi algılayıp ona göre tepki verebilir. Örnek: Yanına gelince açılan otomatik kapı.',
+'Görerek Tanıma':'Bazı makineler kamera ile resimlere bakıp neyin ne olduğunu tahmin edebilir. Örnek: Telefonun fotoğraftaki yüzü bulması.',
+'Sesle Tanıma':'Bazı makineler mikrofonla sesimizi dinleyip ne dediğimizi anlamaya çalışır. Örnek: “Müziği aç” deyince açılan hoparlör.',
+'Örnekle Öğrenme':'Makineler, bizim gibi çok örnek görerek öğrenir. Çok sayıda kedi resmi görünce, yeni bir kedi resmini tanıyabilir.',
+'Canlı mı Makine mi?':'Canlılar büyür, beslenir, nefes alır; makineleri insanlar yapar ve elektrik ya da pille çalışırlar.',
+'Duygu Kartları':'İnsanlar duyguları yüz ifadesinden anlar; bazı makineler de yüzdeki ifadeyi tahmin etmeye çalışır ama yanılabilir.',
+'Çizimi Tahmin Et':'Makineye çok sayıda çizim gösterilirse, yeni bir çizimin ne olduğunu tahmin etmeyi öğrenir.',
+'Konuşan Asistanlar':'Sesli asistanlar sesimizi yazıya çevirir, ne istediğimizi tahmin eder ve cevap verir; her zaman doğru bilmeyebilirler.',
+'Makine de Yanılır':'Makineler gördükleri örneklere göre tahmin yapar; az ya da yanlış örnek görürlerse yanılabilirler.',
+'Yardımcı Robotumu Tasarla':'Bir yardımcı robot düşünürken “Kime, hangi işte yardım edecek?” sorusuyla başlarız.',
+'Güvenli Teknoloji':'Teknolojiyi bir büyükle birlikte, kısa süre ve güvenle kullanırız; adımızı, adresimizi kimseyle paylaşmayız.',
+'Minik Keşifçiler Sergisi':'Akıllı makineler hakkında öğrendiklerimizi çizerek ve anlatarak arkadaşlarımızla paylaşıyoruz.',
+'Yapay Zekâ Nedir?':'Yapay zekâ, bilgisayarların örneklerden öğrenip tanıma, tahmin etme ve karar verme gibi işleri yapabilmesidir. Örnek: Telefonun fotoğraftaki yüzü tanıması.',
+'Günlük Hayatta YZ':'Yapay zekâyı her gün görürüz: sesli asistanlar, harita uygulamaları, çeviri, video önerileri.',
+'Veri Nedir?':'Veri, topladığımız bilgilerdir: sayılar, resimler, sesler, yazılar. Yapay zekâ veriden öğrenir.',
+'Örüntü Bulma':'Örüntü, tekrar eden düzenliliktir. Yapay zekâ çok sayıda örnekte ortak olan örüntüleri bulur.',
+'Sınıflama':'Sınıflama, şeyleri ortak özelliklerine göre gruplara ayırmaktır. Yapay zekâ da yeni bir resmi “kedi” ya da “köpek” grubuna koyabilir.',
+'Makine Nasıl Öğrenir?':'Makine öğrenmesinde bilgisayara çok sayıda etiketli örnek gösterilir; bilgisayar bu örneklerden kuralı kendisi çıkarır ve yeni örnekte tahmin yapar.',
+'Teachable Machine ile Tanışma':'Teachable Machine, Google’ın, kameradan örnekler göstererek bilgisayara bir şeyi tanımayı öğretebildiğimiz ücretsiz bir web aracıdır.',
+'Çizimi Tanıyan Makine':'Quick, Draw! gibi araçlar milyonlarca çizimden öğrenmiştir; bizim çizimimizi bu örneklere benzeterek tahmin eder.',
+'YZ Yanılabilir':'Yapay zekâ kesin bilmez, tahmin eder; az, eksik ya da tek tip veriyle öğrenirse yanılır. Bu yüzden sonucunu kontrol ederiz.',
+'Güvenli ve Nazik Kullanım':'Yapay zekâ araçlarını bir büyüğün izniyle kullanırız, kişisel bilgilerimizi paylaşmayız ve nazik bir dil kullanırız.',
+'YZ ile Yaratıcılık':'Yapay zekâ bize fikir verebilir ama asıl fikir ve emek bizimdir; onu yardımcı olarak kullanırız.',
+'Proje ve Sergi':'Projemizde yapay zekânın neyi tanıdığını ya da tahmin ettiğini gösterir, nerede yanıldığını da anlatırız.',
+'Veri Toplama ve Grafik':'Veri toplamak için soru sorar, sayar, kaydederiz; tablo ve grafik veriyi daha kolay anlamamızı sağlar.',
+'Örüntü ve Tahmin':'Verideki örüntüyü bulursak sonrasını tahmin edebiliriz. Hava durumu tahmini de geçmiş verilerdeki örüntülere dayanır.',
+'Sınıflandırma ve Etiket':'Makine öğrenmesinde her örneğe ne olduğunu söyleyen bir etiket verilir (ör. “elma”, “armut”); model etiketlerden öğrenir.',
+'Görüntü Tanıma Modeli':'Görüntü modeli, her sınıf için gösterilen resimlerden öğrenir; ne kadar çok ve çeşitli resim olursa o kadar iyi tanır.',
+'Ses Tanıma Modeli':'Ses modeli, sesin örüntüsünden (ses dalgası) öğrenir; arka plan gürültüsünü de ayrı bir sınıf olarak öğretmek doğruluğu artırır.',
+'Modeli İyileştirme':'Model yanılıyorsa daha çok, daha çeşitli ve doğru etiketli veri ekleriz; sonra tekrar test ederiz.',
+'Makine Öğrenmesi ve Scratch':'Eğittiğimiz modeli Scratch projesine bağlayarak, modelin tahminine göre karakterin tepki verdiği oyunlar yapabiliriz.',
+'Üretici YZ ile Tanışma':'Üretici yapay zekâ, öğrendiği çok sayıda örneğe dayanarak yeni metin, resim ya da ses üretir; ürettiği her zaman doğru değildir.',
+'YZ ve Etik':'Etik, doğru ve adil davranmaktır. Yapay zekâ kullanırken dürüstlük, gizlilik ve başkalarının emeğine saygı önemlidir.',
+'YZ Projesi':'YZ projesinde gerçek bir problemi seçer, veri toplar, modeli eğitir, test eder ve sonucu değerlendiririz.',
+'Proje Sunumu':'Sunumda problemi, kullandığımız veriyi, modelin doğruluğunu ve nerede yanıldığını açıkça anlatırız.',
+'YZ ve Toplum':'Yapay zekâ sağlık, ulaşım, eğitim gibi alanlarda kolaylık sağlar; aynı zamanda gizlilik, iş ve adalet gibi soruları da beraberinde getirir.',
+'Veri Okuryazarlığı':'Veri okuryazarlığı; veriyi okuyup yorumlamak, grafiklerdeki yanıltmaları fark etmek ve kaynağını sorgulamaktır.',
+'Makine Öğrenmesi Türleri':'Denetimli öğrenme etiketli veriden, denetimsiz öğrenme etiketsiz veride grupları bularak, pekiştirmeli öğrenme deneme–yanılma ve ödülle öğrenir.',
+'Görüntü Modeli Projesi':'Görüntü modeli projesinde sınıfları belirler, her sınıf için dengeli sayıda resim toplar, eğitir ve modelin doğruluğunu test ederiz.',
+'Ses ve Poz Modelleri':'Ses modelleri ses örüntülerinden, poz modelleri vücudun eklem noktalarının (omuz, dirsek, diz) konumundan öğrenir.',
+'Sohbet Botları':'Sohbet botu, yazdığımız soruya metinle cevap veren programdır; bazıları hazır kurallarla, bazıları büyük dil modelleriyle çalışır ve yanlış bilgi verebilir.',
+'Üretici YZ ve Prompt':'Prompt, yapay zekâya verdiğimiz talimattır; açık amaç, bağlam ve istenen biçim yazıldığında daha iyi sonuç alınır.',
+'YZ ile Oyun (ML4Kids)':'Machine Learning for Kids ile bir model eğitip Scratch’e bağlarız; oyun, modelin tahminine göre çalışır.',
+'Önyargı ve Adalet':'Veri bir grubu eksik ya da tek yönlü temsil ederse model de o gruba karşı önyargılı sonuç verebilir; dengeli veri adaleti artırır.',
+'Gizlilik ve Güvenlik':'Kişisel veriler (ad, adres, fotoğraf, konum) değerlidir; yapay zekâ araçlarına paylaşmadan önce “Bu bilgi nereye gidiyor?” diye düşünürüz.',
+'Proje Sergisi':'Sergide yaptığımız yapay zekâ projesini tanıtır; modelin neyi iyi yaptığını, nerede yanıldığını ve nasıl geliştirilebileceğini anlatırız.',
+'YZ Projesi (Tasarım Döngüsü)':'Tasarım döngüsü: problemi tanımla → veri topla → modeli eğit → test et → iyileştir → sun.',
+'YZ Okuryazarlığı':'YZ okuryazarlığı; yapay zekânın ne yapıp ne yapamadığını bilmek, çıktısını sorgulamak ve sorumlu kullanmaktır.',
+'Veri Bilimi Temelleri':'Veri bilimi; veri toplama, temizleme, analiz etme ve görselleştirme yoluyla veriden anlamlı sonuç çıkarmaktır.',
+'Makine Öğrenmesi Süreci':'Süreç: veri topla → hazırla → eğitim ve test verisine ayır → modeli eğit → test et → değerlendir → iyileştir.',
+'Sinir Ağlarının Mantığı':'Yapay sinir ağı, girdileri ağırlıklarla çarpıp toplayan katmanlı birimlerden oluşur; eğitimde hata azalacak şekilde ağırlıklar ayarlanır.',
+'Görüntü ve Ses Modelleri':'Görüntü modelleri pikseller, ses modelleri ses dalgasının frekans örüntüleri üzerinden öğrenir; ikisi de çok sayıda örnek ister.',
+'Python ile Veri':'Python ile veriyi listelere/tablolara okuyup ortalama, en büyük–en küçük gibi hesaplar yapar ve grafik çizebiliriz.',
+'Doğal Dil İşleme':'Doğal dil işleme, bilgisayarların insan dilini anlaması ve üretmesidir; çeviri, metin özetleme ve sohbet botları örnektir.',
+'Prompt Mühendisliği':'İyi prompt; rol, görev, bağlam, sınırlar ve çıktı biçimini açıkça belirtir. Çıktıyı her zaman kontrol eder, gerekirse talimatı düzeltiriz.',
+'Etik, Önyargı ve Telif':'YZ kullanırken önyargılı sonuçları fark etmek, kişisel veriyi korumak ve başkalarının eserlerine (telif) saygı göstermek gerekir; YZ ile yapılanı belirtmek dürüstlüktür.',
+'YZ ve Meslekler':'Yapay zekâ bazı görevleri otomatikleştirir, yeni meslekler de doğurur; eleştirel düşünme, yaratıcılık ve iletişim becerileri önemini korur.',
+'Uçtan Uca YZ Projesi':'Uçtan uca projede problem tanımından veri toplamaya, model eğitiminden test ve sunuma kadar tüm adımları biz yürütürüz.',
+'Proje Sunumu ve Portfolyo':'Sunumda problemi, veriyi, yöntemi, sonuçları ve sınırlılıkları dürüstçe anlatır; çalışmalarımızı portfolyoda toplarız.'
+},
+akil:{
+'Oyunla Düşünelim':'Akıl oyunları, oynarken dikkat etmeyi, düşünmeyi ve sırayla beklemeyi öğretir.',
+'Eşleştirme':'Eşleştirme, aynı ya da birbiriyle ilgili olanları bulup yan yana koymaktır. Örnek: Çorap ile ayakkabı, kaşık ile çatal.',
+'Farkı Bul':'İki resme dikkatle bakıp farklı olanı bulmak, dikkatimizi ve gözlem gücümüzü çalıştırır.',
+'Renk ve Şekil Örüntüleri':'Örüntü, aynı sırayla tekrar eden dizidir. Örnek: daire–kare–daire–kare… sırada hangisi var?',
+'Hafıza Oyunları':'Hafıza oyunlarında gördüğümüzü aklımızda tutup sonra hatırlarız; dikkatle bakmak hatırlamayı kolaylaştırır.',
+'Yapboz ve Parça–Bütün':'Küçük parçalar doğru yere gelince bütün resim ortaya çıkar; önce kenarları ya da renkleri ayırmak işi kolaylaştırır.',
+'Labirent':'Labirentte başlangıçtan çıkışa giden yolu buluruz; çıkmaz yola girince geri döner, başka yolu deneriz.',
+'Sayı ve Miktar Oyunları':'Sayılar “kaç tane?” sorusunun cevabıdır; nesneleri sayar, az–çok karşılaştırırız.',
+'Büyükten Küçüğe Sıralama':'Sıralama, nesneleri bir özelliğe göre (boy, büyüklük) en büyükten en küçüğe ya da tersine dizmektir.',
+'Mini Strateji Oyunları':'Strateji, oyunu kazanmak için önceden plan yapmaktır: “Ben bunu yaparsam arkadaşım ne yapar?”',
+'Takım Bulmacaları':'Takımda bulmaca çözerken birbirimizi dinler, fikir paylaşır ve birlikte karar veririz.',
+'Minik Dahiler Şenliği':'Öğrendiğimiz akıl oyunlarını arkadaşlarımızla kurallara uyarak ve sırayla oynuyoruz.',
+'Akıl Oyunları':'Akıl oyunları; dikkat, hafıza, mantık ve plan yapmayı eğlenerek çalıştıran oyunlardır.',
+'Görsel Dikkat':'Görsel dikkat, bir resimde ayrıntıları fark etmek ve aradığımızı bulmaktır; acele etmeden, sırayla bakmak işe yarar.',
+'Örüntü ve Sıralama':'Örüntü tekrar eden düzendir; kuralı bulursak sıradakini tahmin edebiliriz. Örnek: 2, 4, 6, … sırada 8 var.',
+'Tangram':'Tangram, bir kareden kesilmiş 7 parçadan (5 üçgen, 1 kare, 1 paralelkenar) oluşan Çin kökenli bir yapbozdur; parçalarla şekiller oluşturulur.',
+'Labirent ve Yol':'Labirentte yol ararken önce çıkışa bakmak ya da hep bir duvarı takip etmek gibi yöntemler kullanabiliriz.',
+'Sayı Bulmacaları':'Sayı bulmacalarında verilen kurala uyan sayıyı buluruz; işlemi kontrol ederek ilerleriz.',
+'Mantık Soruları':'Mantık sorularında ipuçlarını tek tek kullanır, olamayacakları eleyerek doğru cevaba ulaşırız.',
+'Üç Taş ve Nim':'Üç taşta amaç üç taşını bir sıraya dizmektir. Nim’de sırayla taş alınır; doğru stratejiyle oyun önceden hesaplanabilir.',
+'Simetri ve Ayna':'Simetri, bir şeklin bir çizgiye göre iki yanının aynı olmasıdır; aynaya bakınca görüntümüz simetriktir.',
+'Takım Bulmaca Yarışı':'Takım yarışında görev paylaşır, birbirimize destek olur ve kurallara uyarız.',
+'Akıl Oyunları Turnuvası':'Turnuvada öğrendiğimiz oyunları kurallara uyarak oynar, kazanana da kaybedene de saygı gösteririz.',
+'Zekâ Oyunları':'Zekâ oyunları; problem çözme, mantık, dikkat ve stratejiyi geliştiren kurallı oyunlardır.',
+'Dikkat ve Hız':'Dikkat, bir işe odaklanabilmektir; doğruluk hızdan önce gelir, pratik yaptıkça hız da artar.',
+'Hafıza Teknikleri':'Hafıza teknikleri hatırlamayı kolaylaştırır: gruplama, hikâyeleştirme, zihinde canlandırma ve tekrar.',
+'Sayısal Örüntüler':'Sayısal örüntüde sayılar bir kurala göre ilerler (ör. +3, ×2); kuralı bulup sonraki sayıları tahmin ederiz.',
+'Sudoku':'Sudokuda her satır, her sütun ve her kutuda rakamlar birer kez kullanılır; boş kareler bu kurala göre eleme yapılarak doldurulur.',
+'KenKen ve İşlem Bulmacaları':'KenKen’de her satır ve sütunda rakamlar birer kez kullanılır; ayrıca her bölgedeki rakamlar verilen işlemle hedef sayıyı vermelidir.',
+'Tangram ve Pentomino':'Tangram 7 parçalı bir yapbozdur; pentomino ise 5 eş kareden oluşan 12 farklı şekildir. İkisi de uzamsal düşünmeyi geliştirir.',
+'Mantık Izgaraları':'Mantık ızgarasında ipuçlarını tabloya işler, “olamaz”ları çarpı ile eleyerek tek doğru eşleşmeyi buluruz.',
+'Strateji Oyunları':'Strateji oyunlarında hamle yapmadan önce rakibin olası cevabını düşünür, plan yaparız.',
+'Uzamsal Zekâ':'Uzamsal zekâ, şekilleri zihinde döndürme, katlama ve farklı açılardan görebilme becerisidir.',
+'Bulmaca Maratonu':'Farklı türde bulmacalar çözerken her birinin kuralını önce anlar, sonra sabırla adım adım ilerleriz.',
+'Zekâ Oyunları Turnuvası':'Turnuvada strateji, süre ve sportmenlik birlikte önemlidir; her oyundan bir şey öğreniriz.',
+'Düşünme Becerileri':'Düşünme becerileri; analiz etme, karşılaştırma, sonuç çıkarma ve değerlendirme gibi zihinsel işlemlerdir.',
+'Akıl Yürütme':'Akıl yürütme, verilen bilgilerden mantıklı bir sonuca ulaşmaktır. Tümden gelim genel kuraldan özele, tümevarım örneklerden genele gider.',
+'Sudoku (Orta–Zor)':'Zor sudokularda tek aday ve gizli tek gibi eleme teknikleri kullanılır; tahmin yerine mantıkla ilerlemek esastır.',
+'Uzamsal Problemler':'Uzamsal problemlerde cisimleri zihinde döndürür, açınımlarını ve farklı yönlerden görünüşlerini düşünürüz.',
+'Strateji ve Oyun Teorisi':'Oyun teorisi, birden çok kişinin karar verdiği durumlarda en iyi stratejiyi inceler; kendi hamlemizi rakibin olası cevabına göre seçeriz.',
+'Hafıza ve Dikkat':'Dikkat, hafızanın kapısıdır: odaklanılmayan bilgi kalıcı olarak kaydedilmez. Kısa molalar ve tekrar hatırlamayı güçlendirir.',
+'Yaratıcı Düşünme':'Yaratıcı düşünme, bir probleme farklı ve yeni çözümler üretmektir; önce çok fikir üretir, sonra en uygununu seçeriz.',
+'Eleştirel Düşünme':'Eleştirel düşünme, bir bilgiyi kanıtına, kaynağına ve mantığına bakarak sorgulamak, sonra karar vermektir.',
+'Bulmaca Tasarımı':'Bulmaca tasarlarken net kurallar koyar, tek çözümü olmasına dikkat eder ve başkasına çözdürerek test ederiz.',
+'Zekâ Oyunları Şampiyonası':'Şampiyonada strateji, süre yönetimi ve sportmenlik birlikte sınanır.',
+'Üst Düzey Düşünme':'Üst düzey düşünme; analiz, değerlendirme ve yeni çözüm üretme becerilerini birlikte kullanmaktır.',
+'Mantıksal Akıl Yürütme':'Mantıksal akıl yürütmede öncüllerden geçerli sonuç çıkarılır; “ve, veya, eğer–ise” bağlaçlarının anlamı sonucu belirler.',
+'İleri Sudoku ve Kakuro':'Kakuro’da satır ve sütun toplamları verilir, aynı toplam içinde rakam tekrar etmez; sudoku gibi eleme ve olasılık takibiyle çözülür.',
+'Oyun Teorisi ve Strateji':'Oyun teorisi, karşılıklı kararların sonuçlarını inceler; “Mahkûm İkilemi” iş birliği ile bireysel çıkar arasındaki gerilimi gösterir.',
+'Algoritmik Bulmacalar':'Algoritmik bulmacalarda adım adım uygulanacak bir yöntem ararız; ör. Hanoi Kuleleri n diskle en az 2ⁿ−1 hamlede çözülür.',
+'Olasılık ve Tahmin':'Olasılık, bir olayın gerçekleşme şansıdır: istenen durum sayısı ÷ tüm durumların sayısı. Örnek: zarda 6 gelme olasılığı 1/6.',
+'İleri Hafıza Teknikleri':'Hafıza sarayı (loci) yöntemi bilgileri tanıdık bir mekândaki yerlere yerleştirerek, kodlama yöntemi soyut bilgiyi imgeye çevirerek hatırlatır.',
+'Mantık Yanılgıları':'Mantık yanılgısı, ikna edici görünen ama hatalı akıl yürütmedir; ör. kişiye saldırma, yanlış ikilem, “herkes yapıyor” yanılgısı.',
+'Yaratıcı Problem Çözme':'Yaratıcı problem çözme: problemi tanımla, çok fikir üret, değerlendir, en iyisini uygula ve sonucu kontrol et.',
+'Zekâ Oyunu Tasarımı':'İyi bir zekâ oyununun net kuralları, anlamlı seçimleri ve dengeli zorluğu olur; test edilerek geliştirilir.',
+'Şampiyona ve Değerlendirme':'Şampiyona sonunda yalnız sonucu değil, hangi becerimizin geliştiğini ve neyi daha iyi yapabileceğimizi de değerlendiririz.'
+},
+kocluk:{
+'Tanışma & Koçluk Nedir?':'Eğitim koçluğu; öğrencinin kendi hedefini koymasına, plan yapmasına ve ilerlemesini izlemesine rehberlik etmektir. Kararları öğrenci verir, koç yol gösterir.',
+'Kendini Tanıma: Güçlü/Gelişim':'Güçlü yönlerimizi bilmek özgüven verir; gelişime açık yönlerimizi bilmek nereye emek vereceğimizi gösterir.',
+'Değerlerim ve Motivasyonum':'İçsel motivasyon bir işi anlamlı ve ilgi çekici bulduğumuz için yapmaktır; dışsal motivasyon ödül ya da ceza için yapmaktır. İçsel motivasyon daha kalıcıdır.',
+'SMART Hedef Belirleme':'SMART hedef: Belirgin (Specific), Ölçülebilir (Measurable), Ulaşılabilir (Achievable), İlgili (Relevant), Zamanlı (Time-bound). Örnek: “Bu ay her gün 20 matematik sorusu çözeceğim.”',
+'Yıllık ve Dönemlik Plan':'Büyük hedef dönemlere, dönemler haftalara bölünür; plan yol haritasıdır, gerektiğinde güncellenir.',
+'Haftalık Program Yapma':'Haftalık program; okul, ders çalışma, tekrar, dinlenme ve uyku zamanlarını gerçekçi biçimde yerleştirmektir.',
+'Önceliklendirme':'Önceliklendirmede işleri önem ve aciliyetine göre sıralarız (Eisenhower matrisi): önemli ve acil olan önce yapılır.',
+'Etkili Çalışma I: Aktif Tekrar':'Aktif tekrar (hatırlama pratiği), bilgiyi tekrar okumak yerine kitabı kapatıp kendini sınamaktır; araştırmalar kalıcı öğrenmeyi daha çok artırdığını gösteriyor.',
+'Etkili Çalışma II: Aralıklı Tekrar':'Aralıklı tekrar, aynı konuyu tek seferde uzun çalışmak yerine artan aralıklarla (ör. 1 gün, 3 gün, 1 hafta sonra) tekrar etmektir; unutmayı azaltır.',
+'Not Alma (Cornell)':'Cornell yönteminde sayfa üçe bölünür: sağda notlar, solda anahtar kelime ve sorular, altta kısa özet.',
+'Özetleme ve Zihin Haritası':'Özet, metnin ana fikrini kendi cümlelerimizle kısaca yazmaktır; zihin haritası ana konuyu merkeze koyup alt başlıkları dallarla gösterir.',
+'Dikkat ve Odak (Pomodoro)':'Pomodoro tekniği: 25 dakika tek işe odaklı çalışma, 5 dakika mola; 4 turdan sonra daha uzun mola.',
+'Dikkat Dağıtıcılar & Dijital Düzen':'Telefon bildirimleri dikkati böler; çalışırken telefonu başka odaya koymak ve bildirimleri kapatmak odaklanmayı kolaylaştırır.',
+'1. Dönem Değerlendirme':'Değerlendirmede hedeflerimize ne kadar yaklaştığımızı, neyin işe yaradığını ve neyi değiştireceğimizi gözden geçiririz.',
+'Hafıza Teknikleri':'Hafıza teknikleri bilgiyi anlamlı hâle getirir: ilişkilendirme, kodlama (akrostiş), zihinde canlandırma ve hafıza sarayı.',
+'Okuduğunu Anlama':'Okuduğunu anlamak için önce soruyu okumak, anahtar kelimeleri işaretlemek ve paragrafın ana fikrini bulmak işe yarar.',
+'Soru Çözme Teknikleri':'Soru çözerken önce soru kökünü dikkatle okur, istenileni belirler, seçenekleri eleyerek ilerleriz; takıldığımız soruyu işaretleyip sonra döneriz.',
+'Sınavda Süre Yönetimi':'Süre yönetiminde önce bildiğimiz soruları çözer, zor soruları işaretleyip sonra döneriz; ders başına süre planı yaparız.',
+'Deneme Analizi ve Hata Defteri':'Deneme sonrası her yanlışın nedenini yazarız: bilgi eksiği mi, dikkat hatası mı, süre mi? Hata defteri aynı hatanın tekrarını önler.',
+'Konu Eksiği Tespiti ve Telafi':'Yanlışlar konu konu gruplanınca eksikler görünür; önce sık çıkan ve en çok yanlış yapılan konulara öncelik verilir.',
+'LGS Sözel Stratejileri':'Sözel sorularda paragrafı dikkatli okumak, soru kökündeki “değildir, çıkarılamaz” gibi ifadeleri işaretlemek ve seçenekleri metne göre elemek önemlidir.',
+'LGS Sayısal Stratejileri':'Sayısal sorularda verilenleri ve isteneni yazmak, şekil çizmek ve sonucu kontrol etmek hatayı azaltır; işlem hatası en sık puan kaybıdır.',
+'Sınav Kaygısıyla Baş Etme':'Biraz kaygı normaldir ve odaklanmaya yardım eder. Yavaş ve derin nefes, düzenli hazırlık ve olumsuz düşünceyi gerçekçi düşünceyle değiştirmek kaygıyı azaltır.',
+'Olumlu İç Konuşma':'İç konuşma, kendimize söylediklerimizdir. “Yapamam” yerine “Henüz yapamıyorum, çalışırsam gelişirim” demek motivasyonu destekler.',
+'Büyüme Zihniyeti':'Büyüme zihniyeti, yeteneklerin çaba, doğru strateji ve geri bildirimle gelişebileceğine inanmaktır (Carol Dweck). Hata, öğrenmenin parçasıdır.',
+'Ertelemeyle Baş Etme':'Erteleme çoğu zaman işin büyük ya da zor görünmesinden kaynaklanır; işi küçük adımlara bölmek ve “sadece 5 dakika başla” yöntemi işe yarar.',
+'Motivasyonu Sürdürme':'Motivasyon iniş çıkışlıdır; düzenli alışkanlıklar, küçük hedefler ve ilerlemeyi görmek devam etmeyi kolaylaştırır.',
+'Hedef Görselleştirme':'Hedefi zihinde canlandırmak yön verir; ama yalnız hayal etmek yetmez, engelleri ve onları aşma planını da düşünmek gerekir.',
+'Uyku ve Dinlenme':'Uyku, öğrenilen bilginin hafızaya yerleşmesine yardım eder. 13–18 yaş için önerilen uyku süresi gecede 8–10 saattir (Amerikan Uyku Tıbbı Akademisi).',
+'Beslenme ve Performans':'Düzenli kahvaltı, yeterli su ve dengeli beslenme dikkat ve enerjiyi destekler; şekerli içecekler ani enerji düşüşlerine yol açabilir.',
+'Hareket ve Mola Düzeni':'Düzenli fiziksel hareket dikkat ve ruh hâlini destekler; çalışma aralarında kısa hareket molaları vermek odaklanmayı tazeler.',
+'Aile ve Akran Desteği':'Hedefimizi ailemiz ve arkadaşlarımızla paylaşmak destek ve sorumluluk sağlar; birlikte çalışmak öğrenmeyi güçlendirebilir.',
+'Yardım İsteme ve Kaynak':'Yardım istemek bir güçlük değil, öğrenme becerisidir; öğretmen, rehberlik servisi ve güvenilir kaynaklar başlıca destekçilerimizdir.',
+'Genel Tekrar Kampı':'Genel tekrarda tüm konular planlı biçimde gözden geçirilir; aktif tekrar ve deneme çözmek bu dönemin temel araçlarıdır.',
+'Son Düzlük: Sınav Haftası':'Sınav haftasında yeni konu yerine tekrar, düzenli uyku ve sakin bir rutin önemlidir; sınav günü malzemeler bir gün önceden hazırlanır.',
+'Değerlendirme ve Gelecek Vizyonu':'Yılı değerlendirirken başarılarımızı, öğrendiklerimizi ve bir sonraki hedefimizi belirleriz; öğrenme ömür boyu sürer.'
+}};
+/* konuyu sözlükte bul: ders + konu adının sadeleşmiş hâli */
+function dsOzNorm(s){ return String(s||'').toLocaleLowerCase('tr').replace(/^tanışalım:\s*/,'').replace(/\s·\s.*$/,'').replace(/[^a-zçğıöşü0-9]+/g,' ').trim(); }
+function dsOzBul(k,konu){ var S=DS_OZ[k]; if(!S) return ''; var n=dsOzNorm(konu), en='', enU=0;
+  Object.keys(S).forEach(function(t){ var tn=dsOzNorm(t); if(!tn||en&&enU===1e9) return; if(n===tn){ en=S[t]; enU=1e9; } else if(n.indexOf(tn)>=0&&tn.length>enU){ en=S[t]; enU=tn.length; } });
+  return en; }
+
+function dsOzDepo(){ try{ return JSON.parse(localStorage.getItem('dk_tahta_oz')||'{}')||{}; }catch(e){ return {}; } }
+function dsOzAnahtar(d){ return d.k+'|'+dsOzNorm(d.konu); }
+function dsOzMetin(d){ var e=dsOzDepo()[dsOzAnahtar(d)]; if(e&&e.t) return {t:e.t,el:true}; var t=dsOzBul(d.k,d.konu); return t?{t:t,el:false}:null; }
+function dsOzDers(i){ var cls=KP.secili||KP.sinif; if(!cls) return null; var D=kpDersler(cls); return (D&&D.list[i])||null; }
+window.dsOzBuyuk=function(i){ var d=dsOzDers(i); if(!d) return; var o=dsOzMetin(d); if(!o) return; var w=document.createElement('div'); w.className='kp-buyuk';
+  w.innerHTML='<div class="kp-buyuk-ic" style="max-width:1150px"><div class="kp-buyuk-ust">🎯 Dersin Özü · '+kpEsc(kpKonuSade(d.konu))+'</div><div class="kp-buyuk-metin" style="font-size:clamp(28px,4.2vw,60px);line-height:1.3">'+kpEsc(o.t)+'</div><div class="kp-buyuk-alt">Kapatmak için dokun</div></div>'; w.onclick=function(){ w.remove(); }; document.body.appendChild(w); };
+window.dsOzDuzenle=function(i){ var d=dsOzDers(i); if(!d) return; var o=dsOzMetin(d); var y=prompt('🎯 Dersin Özü — '+kpKonuSade(d.konu)+'\nKısa ve öz yaz (boş bırakırsan hazır öze döner):',o?o.t:''); if(y===null) return;
+  var dep=dsOzDepo(), k=dsOzAnahtar(d); y=String(y).trim(); if(y) dep[k]={t:y.slice(0,400),ts:Date.now()}; else delete dep[k];
+  try{ localStorage.setItem('dk_tahta_oz',JSON.stringify(dep)); }catch(e){} KP.sonKart=''; kpCiz(); toast(y?'🎯 Dersin özü kaydedildi':'↺ Hazır öze dönüldü'); };
+window.dsOzSifirla=function(i){ var d=dsOzDers(i); if(!d) return; var dep=dsOzDepo(); delete dep[dsOzAnahtar(d)]; try{ localStorage.setItem('dk_tahta_oz',JSON.stringify(dep)); }catch(e){} KP.sonKart=''; kpCiz(); };
+(function(){ if(document.getElementById('dsOzCss')) return; var st=document.createElement('style'); st.id='dsOzCss';
+  st.textContent='.kp-oz{background:linear-gradient(135deg,#ecfeff,#cffafe);color:#0f172a;border-radius:14px;padding:12px 14px;margin:8px 0 10px;border:2px solid #22d3ee;box-shadow:0 4px 14px rgba(34,211,238,.25)}'+
+   '.kp-oz-bas{font-weight:900;color:#0e7490;font-size:15px;margin-bottom:6px}.kp-oz-bas small{font-weight:700;color:#155e75;opacity:.8}'+
+   '.kp-oz-metin{font-size:17px;font-weight:800;line-height:1.45;color:#0f172a}.kp-oz .kp-btns{margin-top:8px}';
+  document.head.appendChild(st); })();
+function dsOzEkle(){ var cls=KP.secili||KP.sinif, p=document.getElementById('kpIc'); if(!cls||!p) return; var D=kpDersler(cls); if(!D) return;
+  var kutular=p.querySelectorAll('.kp-ders');
+  for(var i=0;i<kutular.length&&i<D.list.length;i++){ var el=kutular[i]; if(el.querySelector('.kp-oz')) continue; var d=D.list[i], o=dsOzMetin(d);
+    var b=document.createElement('div'); b.className='kp-oz';
+    b.innerHTML='<div class="kp-oz-bas">🎯 Dersin Özü <small>(sınıfa böyle anlat'+(o&&o.el?' · senin cümlen':'')+')</small></div>'+
+      (o?'<div class="kp-oz-metin">'+kpEsc(o.t)+'</div>':'<div class="kp-oz-metin" style="opacity:.75">Bu konu için hazır öz yok. ✏️ Düzenle ile kendi cümleni yazabilirsin.</div>')+
+      '<div class="kp-btns">'+(o?'<button class="kp-btn" style="background:#0e7490" onclick="dsOzBuyuk('+i+')">📺 Tahtada büyük göster</button>':'')+'<button class="kp-btn" onclick="dsOzDuzenle('+i+')">✏️ Düzenle</button>'+(o&&o.el?'<button class="kp-btn" onclick="dsOzSifirla('+i+')">↺ Hazır öze dön</button>':'')+'</div>';
+    var konu=el.querySelector('.kp-konu'); if(konu&&konu.nextSibling) el.insertBefore(b,konu.nextSibling); else el.appendChild(b); } }
+var _kpCizV127=kpCiz;
+kpCiz=function(){ _kpCizV127.apply(this,arguments); try{ dsOzEkle(); }catch(e){ try{console.warn('v12.7 öz',e);}catch(_){} } };
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🎯 “Bu sınıfa ne anlatacağım?” panelinde Dersin Özü: her konunun gerçek anlamı kısa ve öz (269 konu); ✏️ düzenlenebilir, 📺 tahtada büyük gösterilebilir']); }catch(e){}
+/* ===== v12.7 — saat sayısı değişen sınıfta EKSİK DERS kalmasın =====
+   Program değişince (ör. 2A 4 saatten 3 saate inince) bir ders (ör. Satranç) tamamen düşebiliyordu.
+   Yalnız şu durumda yeniden dağıtır: sınıfın bütün ders adları otomatik adlarsa (elle yazılmış ad varsa DOKUNMAZ)
+   ve şu anki dağılımda haftalık saatlere göre olması gereken bir ders EKSİKSE. Anasınıfı ve 8. sınıfa dokunmaz. */
+function dsOtoMu(s){ s=String(s||'').trim(); if(dsGenel(s)) return true; return Object.keys(VB_DAG_ET).some(function(k){ return VB_DAG_ET[k]===s; }); }
+function dsKapsam(L){ var o={}; L.forEach(function(s){ try{ vbDersKs(s,new Date()).forEach(function(k){ o[k]=1; }); }catch(e){} }); return Object.keys(o); }
+function dsEksikDersDuzelt(sessiz){ var o=dsDagitimHesap(S.grid,false), sin={}, n=0, ad=[];
+  S.grid.forEach(function(r,d){ (r||[]).forEach(function(c,i){ if(c&&c.c) (sin[c.c]=sin[c.c]||[]).push({d:d,i:i,c:c}); }); });
+  Object.keys(sin).forEach(function(cls){ var gi=kpGi(cls); if(!(gi>=1&&gi<=7)) return; var L=sin[cls];
+    if(!L.every(function(x){ return dsOtoMu(x.c.s); })) return;
+    var simdi=dsKapsam(L.map(function(x){ return x.c.s; })), olmali=dsKapsam(L.map(function(x){ return o[x.d+'|'+x.i]||x.c.s; }));
+    if(simdi.length>=olmali.length) return;
+    L.forEach(function(x){ var y=o[x.d+'|'+x.i]; if(y&&x.c.s!==y){ x.c.s=y; n++; } }); ad.push(cls); });
+  if(n){ save(); try{ renderAll(); }catch(e){} if(!sessiz) try{ toast('🗓️ '+ad.join(', ')+': saat sayısı değiştiği için dersler yeniden dağıtıldı — hiçbir ders eksik kalmadı'); }catch(e){} }
+  return n; }
+if(!MINI_MODE) setTimeout(function(){ try{ dsEksikDersDuzelt(false); }catch(e){} },3500);
 
 renderAll();
 setInterval(tick,250);
