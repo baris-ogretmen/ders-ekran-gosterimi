@@ -1099,7 +1099,7 @@ const DEFAULT={
   colors:{'1A':'#ffef1a','2A':'#f7981d','3A':'#f24a3f','4A':'#5b0f63','5A':'#19e6f0','6A':'#9be33c','7A':'#ff1ee8','8A':'#1e8ef5','Ana Sınıfı':'#f59ac7'},
   grid:build([
     ['','4A','','6A','2A','','1A','1A'],
-    ['','','5A','','3A','Ana Sınıfı','5A','5A'],
+    ['','','5A','2A','3A','Ana Sınıfı','5A','5A'],
     ['','4A','4A','3A','3A','','7A','7A'],
     ['','','','','','2A','6A','6A'],
     ['','Ana Sınıfı','8A','8A','','2A','','1A']
@@ -1348,7 +1348,7 @@ function openEdit(d,i){
   const date=weekDates()[d];editing={d,i,date};const c=cellOn(date,i);const ov=isOv(date,i);
   $('eTitle').textContent=`${DAYS[d]} • ${i+1}. ders`;
   $('eSub').textContent=`${S.periods[i][0]} – ${S.periods[i][1]}`;
-  $('eCls').value=c?c.c:'';$('eSubj').value=c?c.s:S.subject;
+  $('eCls').value=c?c.c:'';$('eSubj').value=c?c.s:S.subject;$('eSubj').dataset.ilk=$('eSubj').value;
   $('eCol').value=c?colorOf(c.c):'#8a5cff';
   $('eOnly').checked=ov;$('eOnlyL').textContent=`Sadece ${date.getDate()} ${MONTHS[date.getMonth()]} ${DAYS[d]} için geçerli olsun (haftalık program değişmez)`;
   $('eUnOv').classList.toggle('hide',!ov);
@@ -1364,7 +1364,7 @@ $('eCls').addEventListener('input',()=>{const v=$('eCls').value.trim();if(S.colo
 function setOv(val){const k=dateKey(editing.date);S.ov[k]=S.ov[k]||{};S.ov[k][editing.i]=val;}
 $('eSave').addEventListener('click',()=>{
   const name=$('eCls').value.trim();if(!name){toast('Bir sınıf seç ya da yaz');return;}
-  S.colors[name]=$('eCol').value;const val={c:name,s:$('eSubj').value.trim()||S.subject};
+  S.colors[name]=$('eCol').value;const _es=$('eSubj').value.trim(),_ilk=String($('eSubj').dataset.ilk||'').trim();const val={c:name,s:_es||S.subject};if(_es&&_es!==_ilk&&_es!==S.subject)val.elle=1;else if(!$('eOnly').checked){const _o=S.grid[editing.d]&&S.grid[editing.d][editing.i];if(_o&&_o.elle&&_o.c===name&&_es===_ilk)val.elle=1;}
   if($('eOnly').checked)setOv(val);else{S.grid[editing.d][editing.i]=val;const o=S.ov[dateKey(editing.date)];if(o)delete o[editing.i];}
   save();closeModals();renderAll();toast($('eOnly').checked?`Sadece o güne özel: ${name}`:`${DAYS[editing.d]} ${editing.i+1}. ders: ${name} kaydedildi`);
 });
@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='12.8';
+var ZSTD_SURUM='12.9';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4210,7 +4210,7 @@ window.DP_KOPRU_KAPALI=MINI_MODE;   /* mini pencere ana pencereden (aynı hafız
 window.DP_KOPRU_UYGULA=function(p){ S.periods=p.periods; S.grid=[0,1,2,3,4].map(function(d){ return S.periods.map(function(_,i){ return (p.grid[d]&&p.grid[d][i])||null; }); }); S.ov=p.ov||{};
   try{ if(typeof dsEksikDersDuzelt==='function') dsEksikDersDuzelt(true); }catch(e){}
   save(); try{ renderAll(); }catch(e){} try{ if(view==='week') renderWeek(); }catch(e){} try{ tick(true); }catch(e){} };
-try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔗 Ders programı bulutla bağlı: tahtada, telefonda ya da ana ekran simgesinde değiştirdiğin program her yerde anında güncellenir (Ders Programım ve Yıllık Plan dahil)','🗓️ Program 26.10.2026: Pazartesi 3. ve 6. ders boş (2A 5. ders), 5A Salı 3. ders']); }catch(e){}
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔗 Ders programı bulutla bağlı: tahtada, telefonda ya da ana ekran simgesinde değiştirdiğin program her yerde anında güncellenir (Ders Programım ve Yıllık Plan dahil)','🗓️ Program 26.10.2026: Pazartesi 3. ve 6. ders boş, Salı 4. ders 2A, 5A Salı 3. ders']); }catch(e){}
 
 /* ===== v12.7 — 🎯 DERSİN ÖZÜ: “Bu sınıfa ne anlatacağım?” panelinde her konunun gerçek anlamı (öğretmen için, kısa ve öz) =====
    • 269 konunun hepsi için hazır öz (Robotik-Kodlama, Satranç, Yapay Zekâ, Akıl-Zekâ, Eğitim Koçluğu)
@@ -4538,13 +4538,33 @@ function dsKapsam(L){ var o={}; L.forEach(function(s){ try{ vbDersKs(s,new Date(
 function dsEksikDersDuzelt(sessiz){ var o=dsDagitimHesap(S.grid,false), sin={}, n=0, ad=[];
   S.grid.forEach(function(r,d){ (r||[]).forEach(function(c,i){ if(c&&c.c) (sin[c.c]=sin[c.c]||[]).push({d:d,i:i,c:c}); }); });
   Object.keys(sin).forEach(function(cls){ var gi=kpGi(cls); if(!(gi>=1&&gi<=7)) return; var L=sin[cls];
-    if(!L.every(function(x){ return dsOtoMu(x.c.s); })) return;
+    if(!L.every(function(x){ return dsOtoMu(x.c.s)&&!x.c.elle; })) return;
     var simdi=dsKapsam(L.map(function(x){ return x.c.s; })), olmali=dsKapsam(L.map(function(x){ return o[x.d+'|'+x.i]||x.c.s; }));
     if(simdi.length>=olmali.length) return;
     L.forEach(function(x){ var y=o[x.d+'|'+x.i]; if(y&&x.c.s!==y){ x.c.s=y; n++; } }); ad.push(cls); });
   if(n){ save(); try{ renderAll(); }catch(e){} if(!sessiz) try{ toast('🗓️ '+ad.join(', ')+': saat sayısı değiştiği için dersler yeniden dağıtıldı — hiçbir ders eksik kalmadı'); }catch(e){} }
   return n; }
-if(!MINI_MODE) setTimeout(function(){ try{ dsEksikDersDuzelt(false); }catch(e){} },3500);
+if(!MINI_MODE) setTimeout(function(){ try{ dsEksikDersDuzelt(false); }catch(e){} },3500);  /* yedek kontrol; asıl dağıtım v12.9'da kayıt anında */
+/* ===== v12.9 — PROGRAM DEĞİŞİNCE DERSLER KENDİLİĞİNDEN YERLEŞİR =====
+   Tahtada ya da telefonda bir hücreye sınıf yazınca/silince (ya da buluttan değişiklik gelince) o sınıfın
+   haftalık saat sayısı/yerleri değişir → o sınıfın ders adları (Robotik-Kodlama, Yapay Zekâ, Satranç, Akıl-Zekâ…)
+   haftalık saatlere göre hemen yeniden dağıtılır. Yalnız saatleri değişen sınıflara dokunur.
+   Elle yazılmış özel ders adı olan sınıfa DOKUNMAZ. 8A koçluk, Anasınıfı Salı Satranç / Cuma dönüşümlü kuralı korunur. */
+function dsKonumHaritasi(){ var m={}; S.grid.forEach(function(r,d){ (r||[]).forEach(function(c,i){ if(c&&c.c) (m[c.c]=m[c.c]||[]).push(d+'|'+i); }); });
+  Object.keys(m).forEach(function(k){ m[k]=m[k].join(','); }); return m; }
+function dsOtoDagit(){ var eski=S.dagitimKonum, simdi=dsKonumHaritasi(), n=0, ad=[];
+  if(!eski||typeof eski!=='object'){ S.dagitimKonum=simdi; return 0; }
+  var degisen=Object.keys(simdi).filter(function(c){ return eski[c]!==simdi[c]; });
+  if(degisen.length){ var o=dsDagitimHesap(S.grid,false);
+    degisen.forEach(function(cls){ var L=[]; S.grid.forEach(function(r,d){ (r||[]).forEach(function(c,i){ if(c&&c.c===cls) L.push({d:d,i:i,c:c}); }); });
+      if(!L.every(function(x){ return dsOtoMu(x.c.s)&&!x.c.elle; })) return;
+      var k=0; L.forEach(function(x){ var y=o[x.d+'|'+x.i]; if(y&&x.c.s!==y){ x.c.s=y; k++; } }); if(k){ n+=k; ad.push(cls); } }); }
+  S.dagitimKonum=simdi; dsOtoDagit.son=ad; return n; }
+if(!S.dagitimKonum||typeof S.dagitimKonum!=='object'){ S.dagitimKonum=dsKonumHaritasi(); }
+var _saveV129=save;
+save=function(){ var n=0; try{ n=dsOtoDagit(); }catch(e){} var r=_saveV129.apply(this,arguments);
+  if(n&&!MINI_MODE){ var ad=(dsOtoDagit.son||[]).join(', '); setTimeout(function(){ try{ renderAll(); }catch(e){} try{ if(view==='week') renderWeek(); }catch(e){} try{ toast('🗓️ '+ad+': saatler değişti, dersler haftalık saatlere göre yerleşti'); }catch(e){} },60); }
+  return r; };
 
 renderAll();
 setInterval(tick,250);
@@ -4805,17 +4825,17 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
    • Tek kaynak: Ders Saati’ndeki haftalık tablo (barisDersSaati.v1 → grid / periods / ov)
    • Bulut: maas_config/ders_programi_baris (ayrı belge; Okula Gönder / pano / ödev / işaret belgelerine dokunmaz)
    • Hangi cihazda değiştirilirse (tahta, iPhone, ana ekran simgesi) diğerlerinde anında güncellenir
-   • 26.10.2026 programı (son fotoğraf): Pazartesi 3. ve 6. ders boş, 2A 5. ders · 5A Salı 3. derse kaydı
+   • 26.10.2026 programı (son fotoğraf): Pazartesi 3. ve 6. ders boş · Salı: 3. ders 5A, 4. ders 2A (27.10.2026 düzeltmesi)
    Yalnız EKLEME: önceki tüm davranışlar aynen korunur; bulut yoksa her şey eskisi gibi çalışır.
    ============================================================ */
 (function(){
 'use strict';
 if(window.DP_KOPRU||window.DP_KOPRU_KAPALI) return;
 if(/[#&]oyun=/.test(location.hash||'')) return;               /* veli/öğrenci oyun bağlantısı: programa gerek yok */
-var KEY='barisDersSaati.v1', META='dk_prog_meta', GOC='dk_prog_goc_20261026b', BELGE='ders_programi_baris';
-var GOC_T=Date.UTC(2026,9,26,8,30,0);                            /* 26.10.2026 11:30 (Türkiye) — 6. saat düzeltmesi */
+var KEY='barisDersSaati.v1', META='dk_prog_meta', GOC='dk_prog_goc_20261027', BELGE='ders_programi_baris';
+var GOC_T=Date.UTC(2026,9,27,8,0,0);                             /* 27.10.2026 11:00 (Türkiye) — Salı 4. saat 2A */
 var SUBJ='Robotik Kodlama';
-var YENI=[['','4A','','6A','2A','','1A','1A'],['','','5A','','3A','Ana Sınıfı','5A','5A']];   /* Pazartesi, Salı */
+var YENI=[['','4A','','6A','2A','','1A','1A'],['','','5A','2A','3A','Ana Sınıfı','5A','5A']];   /* Pazartesi, Salı */
 var CFG={apiKey:"AIzaSyAqeO-yQyQPnLsOqKmSNvVH23WPvneIjaU",authDomain:"shaped-totem-481514-c5.firebaseapp.com",projectId:"shaped-totem-481514-c5",storageBucket:"shaped-totem-481514-c5.firebasestorage.app",messagingSenderId:"519295049418",appId:"1:519295049418:web:7d04e18c4ea36bc088de33"};
 var K={hazir:false,fb:null,mesgul:false,uzakT:0,uzakImza:'',dinliyor:false,zm:null};
 
