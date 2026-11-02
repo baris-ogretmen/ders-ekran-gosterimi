@@ -1021,9 +1021,9 @@ html{-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
     </div>
     <div class="sep"></div>
     <div class="fld"><span>⏱️ Okul zili ile eşitle</span>
-      <div class="row"><button class="btn" id="sShM" style="font-size:3vh;padding:.6vh 1.6vw">−</button><input type="number" id="sShift" min="-30" max="60" step="1" style="width:110px;text-align:center;font-size:3vh"><button class="btn" id="sShP" style="font-size:3vh;padding:.6vh 1.6vw">+</button><b>saniye</b><button class="btn pri" id="sSyncBell">🔔 Zil şimdi çaldı — otomatik ayarla</button></div>
+      <div class="row"><button class="btn" id="sShM" style="font-size:3vh;padding:.6vh 1.6vw">−</button><input type="number" id="sShift" min="-300" max="300" step="1" style="width:110px;text-align:center;font-size:3vh"><button class="btn" id="sShP" style="font-size:3vh;padding:.6vh 1.6vw">+</button><b>saniye</b><button class="btn" id="sSh60M" style="font-size:2.4vh;padding:.6vh 1.2vw">−1 dk</button><button class="btn" id="sSh60P" style="font-size:2.4vh;padding:.6vh 1.2vw">+1 dk</button><button class="btn pri" id="sSyncBell">🔔 Zil şimdi çaldı — otomatik ayarla</button></div>
       <p id="sShiftV" style="font-weight:700;margin:1vh 0 0;color:#16204a"></p>
-      <p class="s" style="margin-top:1vh">Okulun zili sistemden birkaç saniye sonra çalıyorsa sayaç ve duyurular da o kadar kayar. En kolayı: okulun zili çaldığı anda bu butona (ya da ana ekrandaki 🔔 Zil çaldı) bas.</p></div>
+      <p class="s" style="margin-top:1vh">Okulun zili tahtadaki saatten ÖNCE çalıyorsa eksi (ör. 1 dakika önce → −60), SONRA çalıyorsa artı yaz; sayaç ve duyurular o kadar kayar (en fazla ±5 dakika). En kolayı: okulun zili çaldığı anda bu butona (ya da ana ekrandaki 🔔 Zil çaldı) bas.</p></div>
     <div class="sep"></div>
     <div class="fld"><span>🎵 Zil şarkıları (her sınıf seviyesine)</span>
       <div class="row"><b>Ne zaman</b><select id="sMusicWhen"><option value="end">Ders bitince (teneffüs müziği)</option><option value="start">Ders başlarken (karşılama)</option><option value="both">İkisinde de</option><option value="off">Hiç çalma</option></select></div>
@@ -2233,8 +2233,8 @@ $('syBell').addEventListener('click',()=>schoolBell());
 function syncBell(){
   const d=now();const s=d.getHours()*3600+d.getMinutes()*60+d.getSeconds()+d.getMilliseconds()/1000;let best=null;
   S.periods.forEach(([a,b])=>[toS(a),toS(b)].forEach(x=>{const df=s-x;if(best===null||Math.abs(df)<Math.abs(best))best=df;}));
-  if(best===null||Math.abs(best)>90){toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.');return;}
-  S.shift=Math.max(-30,Math.min(60,Math.round(best)));save();fired={};
+  if(best===null||Math.abs(best)>240){toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.');return;}
+  S.shift=Math.max(-300,Math.min(300,Math.round(best)));save();fired={};
   toast(`✔ Okul zili ${S.shift>=0?S.shift+' sn sonra':(-S.shift)+' sn önce'} çalıyor. Duyurular buna göre ayarlandı.`);
   if($('sShift')){$('sShift').value=S.shift;shiftInfo();}tick(true);
 }
@@ -2615,10 +2615,10 @@ function hms(s){s=((Math.round(s)%86400)+86400)%86400;return `${String(Math.floo
 function shiftInfo(){const sh=+S.shift||0;const d=now();const real=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();let nb=null;
   S.periods.forEach(([a,b])=>[toS(a),toS(b)].forEach(x=>{if(x+sh>real&&(nb===null||x<nb))nb=x;}));
   const el=$('sShiftV');if(el)el.innerHTML=`<b>${sh>0?'+':''}${sh} sn</b>`+(nb!==null?` • Sıradaki zil saati ${hm(nb)} → duyuru tam <b>${hms(nb+sh)}</b>'de`:'');}
-function setShift(v){S.shift=Math.max(-30,Math.min(60,Math.round(+v||0)));save();$('sShift').value=S.shift;shiftInfo();}
+function setShift(v){S.shift=Math.max(-300,Math.min(300,Math.round(+v||0)));save();$('sShift').value=S.shift;shiftInfo();}
 $('sShift').addEventListener('input',()=>setShift($('sShift').value));
 $('sShM').addEventListener('click',()=>setShift((+S.shift||0)-1));
-$('sShP').addEventListener('click',()=>setShift((+S.shift||0)+1));
+$('sShP').addEventListener('click',()=>setShift((+S.shift||0)+1));$('sSh60M').addEventListener('click',()=>setShift((+S.shift||0)-60));$('sSh60P').addEventListener('click',()=>setShift((+S.shift||0)+60));
 setInterval(()=>{if($('mSet').classList.contains('show'))shiftInfo();},1000);
 
 /* ===== v8: tick kancası ===== */
@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='12.9';
+var ZSTD_SURUM='13.0';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -3918,9 +3918,9 @@ function zbObs(){ return (S.zilGec||[]).map(function(x){ return +x.g; }).filter(
 function zbMaxBekle(){ var o=zbObs(), base=+S.shift||0, mx=+S.zilMax||12, mik=S.zilMik!==false&&ZM.izin&&!ZM.red;
   if(mik) return o.length>=3?Math.min(mx,Math.max(4,zbPct(o,0.9)-base+3)):mx;
   return o.length>=3?Math.min(mx,Math.max(0,zbPct(o,0.8)-base)):0; }
-function zbOgren(gec,neden,B){ gec=Math.round(gec*10)/10; if(!(gec>-30&&gec<60)) return false;
+function zbOgren(gec,neden,B){ gec=Math.round(gec*10)/10; if(!(gec>-300&&gec<300)) return false;
   S.zilGec=(S.zilGec||[]).concat([{g:gec,t:Date.now(),n:neden,B:B}]).slice(-20); var deg=false;
-  if(S.zilOgren!==false&&S.zilGec.length>=3){ var yeni=Math.round((zbPct(zbObs(),0.2)-1)*2)/2; yeni=Math.max(-30,Math.min(60,yeni)); var d=yeni-(+S.shift||0);
+  if(S.zilOgren!==false&&S.zilGec.length>=3){ var yeni=Math.round((zbPct(zbObs(),0.2)-1)*2)/2; yeni=Math.max(-300,Math.min(300,yeni)); var d=yeni-(+S.shift||0);
     if(Math.abs(d)>=0.5){ S.shift=yeni; ZB.relHold-=d; ZB.hold-=d; deg=true; } }
   save(); zbBilgiCiz(); return deg; }
 function zbYay(m){ try{ if(bc) bc.postMessage(m); }catch(e){} }
@@ -3983,8 +3983,8 @@ syncBell=function(){ var y=zbYerel();
   if(ZB.aktif){ zbBirak('dokun'); setTimeout(function(){ tick(true); },0); toast('🔔 Zil çaldı — geçildi · gecikme öğrenildi'); return; }
   var e=zbYakinB(y); if(e){ zbErken(e.B,'dokun'); toast('🔔 Zil erken çaldı — hemen geçildi'); return; }
   var T=zbT(y), t=T-ZB.hold, best=null; zbSinirlar().forEach(function(B){ var d=t-B; if(best===null||Math.abs(d)<Math.abs(best.d)) best={B:B,d:d}; });
-  if(!best||Math.abs(best.d)>90){ toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.'); return; }
-  var obs=T+(+S.shift||0)-best.B; if(!zbOgren(obs,'dokun',best.B)){ S.shift=Math.max(-30,Math.min(60,Math.round(obs))); save(); }
+  if(!best||Math.abs(best.d)>240){ toast('Yakında bir zil saati yok. Okulun zili çaldığı anda bas.'); return; }
+  var obs=T+(+S.shift||0)-best.B; if(!zbOgren(obs,'dokun',best.B)){ S.shift=Math.max(-300,Math.min(300,Math.round(obs))); save(); }
   var T2=zbT(y); ZB.relHold=T2-best.B; ZB.hold=ZB.relHold; ZB.rel=Date.now(); ZB.sonB=y.gun+'|'+best.B; fired={};
   toast('✔ Okul zili '+(obs>=0?obs.toFixed(1).replace('.',',')+' sn sonra':(-obs).toFixed(1).replace('.',',')+' sn önce')+' çaldı. Sayaç ve duyurular buna göre ayarlandı.');
   if($('sShift')){ $('sShift').value=S.shift; shiftInfo(); } tick(true); };
@@ -4565,6 +4565,8 @@ var _saveV129=save;
 save=function(){ var n=0; try{ n=dsOtoDagit(); }catch(e){} var r=_saveV129.apply(this,arguments);
   if(n&&!MINI_MODE){ var ad=(dsOtoDagit.son||[]).join(', '); setTimeout(function(){ try{ renderAll(); }catch(e){} try{ if(view==='week') renderWeek(); }catch(e){} try{ toast('🗓️ '+ad+': saatler değişti, dersler haftalık saatlere göre yerleşti'); }catch(e){} },60); }
   return r; };
+
+/* v13.0 zil */ try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔔 Okul zili ile eşitleme artık ±5 dakikaya kadar: zil 1 dakika erken çalıyorsa “🔔 Zil çaldı”ya bir kez basman ya da Ayarlar’da −1 dk demen yeterli']); }catch(e){}
 
 renderAll();
 setInterval(tick,250);
