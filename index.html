@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='13.0';
+var ZSTD_SURUM='13.1';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4567,6 +4567,32 @@ save=function(){ var n=0; try{ n=dsOtoDagit(); }catch(e){} var r=_saveV129.apply
   return r; };
 
 /* v13.0 zil */ try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔔 Okul zili ile eşitleme artık ±5 dakikaya kadar: zil 1 dakika erken çalıyorsa “🔔 Zil çaldı”ya bir kez basman ya da Ayarlar’da −1 dk demen yeterli']); }catch(e){}
+/* ===== v13.1 — “✅ İşledim” → HER ZAMAN Ders Programım açılır (o sınıf, o gün; orada önizle · düzenle · gönder) =====
+   Ders daha önce gönderilmiş olsa da, tercih “haftalık” olsa da açılır; Ders Programım’da daha önce gidenler işaretsiz gelir (tekrar gitmez).
+   Ders Programım’ın adresi biliniyorsa sormadan açar; bilinmiyorsa pencerede “📅 Ders Programım’da aç” düğmesi bir kez sorar. */
+var _vbPlanAcV131=vbPlanAc;
+vbPlanAc=function(){ var r=_vbPlanAcV131.apply(this,arguments); if(r) window.__dpAcildi=1; return r; };
+var _vbIsleV131=vbIsle;
+vbIsle=function(cls,d){ window.__dpAcildi=0; var r=_vbIsleV131.apply(this,arguments);
+  try{ if(d&&!MINI_MODE&&S.dpOto!==false&&!window.__dpAcildi&&dpUrl()){ DP_CTX={cls:cls,gi:d.gi,tarih:vbGunKey()}; if(vbPlanAc()) vbKapat(); } }catch(e){} return r; };
+var _vbAcV131=vbAc;
+vbAc=function(cls,gi,tarih,not){ if(not!=='url'&&!MINI_MODE&&S.dpOto!==false&&dpUrl()){ DP_CTX={cls:cls,gi:gi,tarih:tarih}; vbKapat(); if(vbPlanAc()) return; }
+  _vbAcV131.apply(this,arguments);
+  try{ var o=$('vbOv'); if(!o||o.querySelector('[data-dpac]')) return; var k=o.querySelector('.vb-btns');
+    var b=document.createElement('button'); b.className='vb-b gun'; b.setAttribute('data-dpac','1'); b.innerHTML='📅 Ders Programım’da aç<small>önizle · düzenle · istediğin dersi gönder</small>';
+    b.addEventListener('click',function(ev){ ev.stopPropagation(); DP_CTX={cls:cls,gi:gi,tarih:tarih}; if(vbPlanAc()) vbKapat(); });
+    if(k) k.insertBefore(b,k.firstChild); else o.querySelector('.vb-gov').appendChild(b); }catch(e){} };
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📅 “✅ İşledim” deyince Ders Programım her zaman o sınıfla açılır (daha önce gönderilmiş olsa da); orada önizler, düzenler, istediğin dersi gönderirsin']); }catch(e){}
+/* ===== v13.1 — Konu bilgisi ESKİ kalmasın: Yıllık Plan bu tahtada uzun süredir açılmadıysa arka planda görünmeden bir kez açılıp
+   “bugünün konusu”nu tazeler (Ders Programım ile aynı sıradaki konu). Uyarı/pencere açamaz, ses çıkaramaz; 10 sn sonra kapanır. */
+function dsPlanTazele(zorla){ try{ if(MINI_MODE||document.getElementById('dsPlanIf')) return; var v=kpVeri(); if(!v||!/^https?:\/\//.test(v.url||'')) return;
+  if(!zorla&&Date.now()-(v.ts||0)<30*60000) return;
+  var f=document.createElement('iframe'); f.id='dsPlanIf'; f.setAttribute('sandbox','allow-scripts allow-same-origin'); f.setAttribute('aria-hidden','true'); f.tabIndex=-1;
+  f.style.cssText='position:fixed;left:-10000px;top:0;width:900px;height:700px;opacity:0;pointer-events:none;border:0';
+  f.src=String(v.url).split('#')[0]+'#tahta-tazele'; document.body.appendChild(f);
+  setTimeout(function(){ try{ f.remove(); }catch(e){} KP.sonKart=''; try{ kpGuncelle(lastR); }catch(e){} try{ var p=$('konuPanel'); if(p&&!p.classList.contains('hide')) kpCiz(); }catch(e){} },10000); }catch(e){} }
+setTimeout(function(){ dsPlanTazele(false); },8000);
+setInterval(function(){ if(document.visibilityState==='visible') dsPlanTazele(false); },60*60000);
 
 renderAll();
 setInterval(tick,250);
