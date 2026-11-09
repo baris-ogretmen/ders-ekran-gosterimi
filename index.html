@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='13.3';
+var ZSTD_SURUM='13.5';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4708,6 +4708,55 @@ if(!MINI_MODE) setInterval(function(){ try{ var r=lastR; if(!r||!r.d) return; va
   if(DSI.son&&DSI.son.key!==cur){ var s=DSI.son; DSI.son=null; dsIsSor(s); }
   if(cur&&(!DSI.son||DSI.son.key!==cur)) DSI.son={key:cur,cls:r.cell.c,s:r.cell.s,d:new Date(r.d)}; }catch(e){} },4000);
 try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔔 Ders bitince “bu konuyu işledin mi?” kartı: ✅ tek dokunuşla işaretle — unutulan işaret yüzünden konu hatırlatmada tekrar çıkmaz']); }catch(e){}
+/* ===== v13.4 — 🔊 SES KİLİDİ: sayfa kendiliğinden yenilenince (yeni sürüm gelince) tarayıcı sesi kilitler =====
+   Chrome/Edge, ekrana hiç dokunulmamış sayfada sesli duyuruya ve zile izin vermez. Yeni sürüm gelip sayfa kendini
+   yenileyince sesler bu yüzden susuyordu. Artık böyle bir durumda üstte “🔊 Ekrana bir kez dokun” şeridi çıkar;
+   ilk dokunuşta zil ve sesli duyuru kilidi açılır (sessiz bir deneme yapılır), şerit kaybolur. Başka hiçbir şey değişmez. */
+(function(){ try{
+  function aktifMi(){ try{ return !!(navigator.userActivation&&navigator.userActivation.hasBeenActive); }catch(e){ return false; } }
+  function sesKilidiAc(){ try{ var a=ac(); if(a&&a.state==='suspended') a.resume(); var o=a.createOscillator(), g=a.createGain(); g.gain.value=0.0001; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime+0.05); }catch(e){}
+    try{ if('speechSynthesis' in window){ var u=new SpeechSynthesisUtterance(' '); u.volume=0; u.lang='tr-TR'; speechSynthesis.speak(u); } }catch(e){} }
+  function serit(){ if(document.getElementById('dsSesKilit')) return; var d=document.createElement('button'); d.id='dsSesKilit'; d.type='button';
+    d.style.cssText='position:fixed;top:1.2vh;left:50%;transform:translateX(-50%);z-index:9500;border:3px solid #fde047;background:#7c2d12;color:#fff;border-radius:999px;padding:1.1vh 2.4vw;font:900 clamp(15px,2.3vh,26px) Nunito,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.4);cursor:pointer;animation:dsSesNabiz 1.6s ease-in-out infinite';
+    d.textContent='🔊 Zil ve sesli duyurular için ekrana bir kez dokun';
+    if(!document.getElementById('dsSesCss')){ var st=document.createElement('style'); st.id='dsSesCss'; st.textContent='@keyframes dsSesNabiz{0%,100%{box-shadow:0 0 0 0 rgba(253,224,71,.6)}50%{box-shadow:0 0 0 14px rgba(253,224,71,0)}}'; document.head.appendChild(st); }
+    document.body.appendChild(d); }
+  function ilkDokunus(){ sesKilidiAc(); var d=document.getElementById('dsSesKilit'); if(d){ d.remove(); try{ toast('🔊 Sesler açık'); }catch(e){} }
+    ['pointerdown','keydown','touchstart'].forEach(function(t){ document.removeEventListener(t,ilkDokunus,true); }); }
+  ['pointerdown','keydown','touchstart'].forEach(function(t){ document.addEventListener(t,ilkDokunus,true); });
+  function kilitli(){ var k=!aktifMi(); try{ var a=ac(); if(a&&a.state!=='running') k=true; }catch(e){} return k; }
+  setTimeout(function(){ if(kilitli()&&(S.voice||S.sound||S.vEnd||S.vStart)) serit(); },2500);
+}catch(e){} })();
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['🔊 Yeni sürüm gelip sayfa kendini yenileyince sesler kilitlenmesin: “ekrana bir kez dokun” şeridi, ilk dokunuşta zil ve sesli duyurular açılır']); }catch(e){}
+/* ===== v13.5 — 📱 TELEFONDA HAFTALIK PROGRAM: ekrana sığan gün gün liste =====
+   Telefonda (dar ekranda) “📅 Program”a basınca 8 sütunlu tablo yerine: üstte gün düğmeleri (bugün seçili),
+   altında o günün dersleri alt alta (saat · sınıf · ders). Kutuya dokununca aynı düzenleme penceresi açılır.
+   Tahtada/bilgisayarda eski tablo aynen kalır. Program verisine dokunmaz. */
+var DST={gun:null};
+(function(){ if(document.getElementById('dsTelCss')) return; var st=document.createElement('style'); st.id='dsTelCss';
+  st.textContent='#gridTel{display:none}@media (max-width:760px){#grid{display:none!important}#gridTel{display:block;margin:1vh 0}}'+
+   '#gridTel .gt-g{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}#gridTel .gt-g button{flex:1;min-width:56px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:8px 4px;font:900 15px Nunito,system-ui,sans-serif;line-height:1.1}'+
+   '#gridTel .gt-g button small{display:block;font-weight:700;font-size:11px;opacity:.75}#gridTel .gt-g button.akt{background:#facc15;color:#1e293b;border-color:#facc15}#gridTel .gt-g button.bugun:not(.akt){border-color:#facc15}'+
+   '#gridTel .gt-r{display:flex;align-items:stretch;gap:8px;margin:6px 0}#gridTel .gt-s{flex:none;width:86px;display:flex;flex-direction:column;justify-content:center;color:#cbd5e1;font-weight:800;font-size:13px}#gridTel .gt-s b{color:#fff;font-size:17px}'+
+   '#gridTel .gt-r .cell{flex:1;width:auto!important;min-height:58px!important;height:auto!important;display:flex!important;flex-direction:row!important;align-items:center;gap:10px;justify-content:flex-start!important;padding:8px 12px!important;border-radius:14px;text-align:left}'+
+   '#gridTel .gt-r .cell b{font-size:22px!important}#gridTel .gt-r .cell span{font-size:14px!important;white-space:normal}#gridTel .gt-r .cell.now{outline:3px solid #facc15}#gridTel .gt-o{text-align:center;color:#cbd5e1;font-weight:800;font-size:13px;padding:6px;border:2px dashed rgba(255,255,255,.2);border-radius:12px;margin:6px 0}';
+  document.head.appendChild(st); })();
+function dsTelCiz(){ try{ var g=$('grid'); if(!g) return; var t=$('gridTel'); if(!t){ t=document.createElement('div'); t.id='gridTel'; g.parentNode.insertBefore(t,g.nextSibling);
+    t.addEventListener('click',function(e){ var gb=e.target.closest('[data-gtg]'); if(gb){ DST.gun=+gb.getAttribute('data-gtg'); dsTelCiz(); return; } var b=e.target.closest('.cell'); if(b) openEdit(+b.dataset.d,+b.dataset.i); }); }
+  var r=compute(), segs=segments(), WD=weekDates(), bk=dateKey(r.d), bi=-1; WD.forEach(function(d,i){ if(dateKey(d)===bk) bi=i; });
+  if(DST.gun===null) DST.gun=bi>=0?bi:0; var d=DST.gun, date=WD[d];
+  var h='<div class="gt-g">'+DAYS.map(function(dn,i){ return '<button type="button" data-gtg="'+i+'" class="'+(i===d?'akt':'')+(i===bi?' bugun':'')+'">'+dn.slice(0,3)+'<small>'+WD[i].getDate()+' '+MONTHS[WD[i].getMonth()].slice(0,3)+(i===bi?' · bugün':'')+'</small></button>'; }).join('')+'</div>';
+  segs.forEach(function(s){ if(s.t==='lunch'){ h+='<div class="gt-o">🍽️ Öğle arası '+hm(s.a)+'–'+hm(s.b)+'</div>'; return; } if(s.t!=='lesson') return;
+    var c=cellOn(date,s.i), isNow=d===bi&&r.seg===s, ov=isOv(date,s.i), cls='cell'+(isNow?' now':'')+(ov?' ovr':''), badge=ov?'<span class="ov" title="Bu güne özel">🔁</span>':'';
+    h+='<div class="gt-r"><div class="gt-s"><b>'+(s.i+1)+'. ders</b>'+S.periods[s.i][0]+'–'+S.periods[s.i][1]+'</div>';
+    if(c){ var col=colorOf(c.c); h+='<button class="'+cls+'" data-d="'+d+'" data-i="'+s.i+'" style="background:'+col+';color:'+inkOf(col)+'">'+badge+'<b>'+esc(c.c)+'</b><span>'+esc(c.s)+'</span></button>'; }
+    else h+='<button class="'+cls+' empty" data-d="'+d+'" data-i="'+s.i+'">'+badge+'<b>+</b><span>Boş</span></button>';
+    h+='</div>'; });
+  t.innerHTML=h; }catch(e){} }
+var _renderWeekV135=renderWeek;
+renderWeek=function(){ var x=_renderWeekV135.apply(this,arguments); dsTelCiz(); return x; };
+$('btnWeek').addEventListener('click',function(){ DST.gun=null; setTimeout(function(){ try{ dsTelCiz(); if(window.innerWidth<=760){ var t=$('gridTel'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); } }catch(e){} },80); });
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📱 Telefonda “Program”: ekrana sığan gün gün liste (bugün seçili); kutuya dokununca aynı düzenleme']); }catch(e){}
 
 renderAll();
 setInterval(tick,250);
