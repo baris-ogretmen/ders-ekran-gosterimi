@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='13.5';
+var ZSTD_SURUM='13.6';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4757,6 +4757,45 @@ var _renderWeekV135=renderWeek;
 renderWeek=function(){ var x=_renderWeekV135.apply(this,arguments); dsTelCiz(); return x; };
 $('btnWeek').addEventListener('click',function(){ DST.gun=null; setTimeout(function(){ try{ dsTelCiz(); if(window.innerWidth<=760){ var t=$('gridTel'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); } }catch(e){} },80); });
 try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📱 Telefonda “Program”: ekrana sığan gün gün liste (bugün seçili); kutuya dokununca aynı düzenleme']); }catch(e){}
+/* ===== v13.6 — ⏳ DERS BAŞINDA 3 DAKİKA BEKLE: geç gelenler için =====
+   Zil derse girişte yine hemen çalar. Ama karşılama (isimler), sesli yoklama ve “bugünkü konumuz” anlatımı
+   dersin 3. dakikasında başlar. Bu sürede ekranda küçük bir sayaç çipi: “▶ Şimdi başlat” ya da “✕ Bu derste yok”.
+   Süre Ayarlar → “👋 Derse girişte…” bölümünden değiştirilebilir (0 = eski gibi hemen). */
+var KG={t:null,iv:null,anahtar:null};
+function kgDk(){ var v=+S.ksGec; return (isNaN(v)||S.ksGec===undefined)?3:Math.max(0,Math.min(10,v)); }
+function kgKapat(){ clearTimeout(KG.t); clearInterval(KG.iv); KG.t=null; KG.anahtar=null; var b=$('kgCip'); if(b) b.remove(); }
+function kgCip(cls,bitis,calistir){ var b=$('kgCip'); if(!b){ b=document.createElement('div'); b.id='kgCip'; document.body.appendChild(b);
+    b.style.cssText='position:fixed;top:11vh;left:50%;transform:translateX(-50%);z-index:8900;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;background:#0f172a;color:#fff;border:3px solid #38bdf8;border-radius:999px;padding:8px 10px 8px 18px;font:900 clamp(14px,2vh,22px) Nunito,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:94vw'; }
+  function ciz(){ var k=Math.max(0,Math.round((bitis-Date.now())/1000)); b.innerHTML='<span>⏳ '+kpEsc(cls)+' · geç gelenler için bekleniyor — karşılama, yoklama ve konu <b style="color:#fde047">'+Math.floor(k/60)+':'+String(k%60).padStart(2,'0')+'</b> sonra</span>'+
+      '<button type="button" data-kg="simdi" style="border:0;border-radius:999px;padding:7px 14px;background:#22c55e;color:#052e16;font-weight:900;font-family:inherit;font-size:.9em;cursor:pointer">▶ Şimdi başlat</button><button type="button" data-kg="yok" style="border:0;border-radius:999px;padding:7px 12px;background:#334155;color:#fff;font-weight:900;font-family:inherit;font-size:.9em;cursor:pointer">✕ Bu derste yok</button>'; }
+  ciz(); clearInterval(KG.iv); KG.iv=setInterval(ciz,1000);
+  b.onclick=function(e){ var t=e.target.closest('[data-kg]'); if(!t) return; var a=t.getAttribute('data-kg'); kgKapat(); if(a==='simdi') calistir(); else toast('Bu derste karşılama ve sesli yoklama yapılmayacak'); }; }
+var _ksAcV136=ksAc;
+ksAc=function(cls,o){ o=o||{}; var dk=kgDk();
+  if(!o.oto||o._kg||!dk||MINI_MODE) return _ksAcV136.apply(this,arguments);
+  var r=lastR, el=(r&&r.t==='lesson'&&r.cell&&r.cell.c===cls)?(r.sec-r.a):9999, bekle=dk*60-el;
+  if(bekle<=5) return _ksAcV136.apply(this,arguments);
+  var anahtar=dateKey(r.d)+'|'+cls+'|'+(r.seg?r.seg.i:0); if(KG.anahtar===anahtar) return; kgKapat(); KG.anahtar=anahtar;
+  var o2=Object.assign({},o,{_kg:true}), self=this;
+  var calistir=function(){ kgKapat(); var r2=lastR; if(r2&&r2.t==='lesson'&&r2.cell&&r2.cell.c===cls) _ksAcV136.call(self,cls,o2); };
+  KG.t=setTimeout(calistir,bekle*1000); kgCip(cls,Date.now()+bekle*1000,calistir); };
+/* Karşılama kapalıysa da: ders başı sesli duyuru ve “bugünkü konumuz” 3. dakikada (zil yine hemen) */
+var _announceV136=announce;
+announce=function(r,info,prev){ var is=!!(info&&info.isLesson), dk=kgDk();
+  if(!(is&&r.cell)||r.wd>4||!dk||MINI_MODE||(typeof ksBurada==='function'&&ksBurada()&&!ksBlok(r.cell.c,r.seg?r.seg.i:0,r.d))) return _announceV136.apply(this,arguments);
+  var v=S.voice; S.voice=false; try{ _announceV136.apply(this,arguments); }finally{ S.voice=v; }
+  if(!S.voice||!S.vStart||!soundHere()) return;
+  var c=r.cell.c, sv=kpSeviye(c), tb=KP_MSG.basla[sv].replace('{S}',spk(c)).replace('{D}',r.cell.s); var D=kpDersler(c); if(D&&D.list[0]) tb+=' Bugünkü konumuz: '+kpKonuSade(D.list[0].konu)+'.';
+  var anahtar=dateKey(r.d)+'|'+c+'|'+(r.seg?r.seg.i:0); kgKapat(); KG.anahtar=anahtar;
+  var calistir=function(){ kgKapat(); var r2=lastR; if(r2&&r2.t==='lesson'&&r2.cell&&r2.cell.c===c) say(kpSes(tb)); };
+  KG.t=setTimeout(calistir,dk*60000); kgCip(c,Date.now()+dk*60000,calistir); };
+/* Ayarlar: bekleme süresi */
+(function(){ try{ var ref=$('sKsCark'); if(!ref) return; var l=document.createElement('label'); l.className='toggle'; l.style.cssText='display:flex;align-items:center;gap:.8vw;flex-wrap:wrap';
+  l.innerHTML='⏳ Karşılama, sesli yoklama ve konu anlatımı dersin <select id="sKsGec" style="font:inherit;padding:.3vh .6vw;border-radius:.8vh"><option value="0">hemen (beklemeden)</option><option value="1">1.</option><option value="2">2.</option><option value="3">3.</option><option value="4">4.</option><option value="5">5.</option></select> dakikasında başlasın (zil yine hemen çalar)';
+  ref.closest('label').parentNode.insertBefore(l,ref.closest('label').nextSibling);
+  $('btnSet').addEventListener('click',function(){ $('sKsGec').value=String(kgDk()); });
+  $('sSave').addEventListener('click',function(){ S.ksGec=+$('sKsGec').value; save(); }); }catch(e){} })();
+try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['⏳ Geç gelenler için: zil hemen çalar, karşılama + sesli yoklama + bugünkü konu dersin 3. dakikasında (Ayarlar’dan değiştirilebilir; ekranda “Şimdi başlat” çipi)']); }catch(e){}
 
 renderAll();
 setInterval(tick,250);
