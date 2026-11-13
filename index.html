@@ -3732,7 +3732,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='13.6';
+var ZSTD_SURUM='13.7';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4796,6 +4796,31 @@ announce=function(r,info,prev){ var is=!!(info&&info.isLesson), dk=kgDk();
   $('btnSet').addEventListener('click',function(){ $('sKsGec').value=String(kgDk()); });
   $('sSave').addEventListener('click',function(){ S.ksGec=+$('sKsGec').value; save(); }); }catch(e){} })();
 try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['⏳ Geç gelenler için: zil hemen çalar, karşılama + sesli yoklama + bugünkü konu dersin 3. dakikasında (Ayarlar’dan değiştirilebilir; ekranda “Şimdi başlat” çipi)']); }catch(e){}
+
+/* ===== v13.7 — 📱 TELEFON = TAHTA: Yıllık Plan bu cihazda hiç açılmadıysa (ör. telefonda ana ekran uygulaması) “sıradaki konu”
+   yerleşik yedek plandan geliyor, tahtadakinden FARKLI görünüyordu. Artık planın adresi buluttan bulunur, plan görünmeden bir kez
+   açılır ve kart tahtadakiyle aynı konuyu (bu haftanın dersi + senin ilerlemen) gösterir. Hiçbir şey göndermez, ses çıkarmaz;
+   adres bulunamazsa her şey eskisi gibi çalışır. */
+(function(){ try{
+  var PA={son:0,calisiyor:false};
+  async function paBelge(){ var b=await dsaBaglan(); return {F:b.F,ref:b.F.doc(b.db,'maas_config','ders_plani_adres_baris')}; }
+  function paGizliAc(url,ms,sonra){ if(document.getElementById('dsPlanIf')) return false; var f=document.createElement('iframe'); f.id='dsPlanIf'; f.setAttribute('sandbox','allow-scripts allow-same-origin'); f.setAttribute('aria-hidden','true'); f.tabIndex=-1;
+    f.style.cssText='position:fixed;left:-10000px;top:0;width:900px;height:700px;opacity:0;pointer-events:none;border:0'; f.src=String(url).split('#')[0]+'#tahta-tazele'; document.body.appendChild(f);
+    setTimeout(function(){ try{ f.remove(); }catch(e){} KP.sonKart=''; try{ kpGuncelle(lastR); }catch(e){} try{ var p=$('konuPanel'); if(p&&!p.classList.contains('hide')) kpCiz(); }catch(e){} if(sonra){ try{ sonra(); }catch(e){} } },ms); return true; }
+  async function paYokla(){ if(MINI_MODE||PA.calisiyor||navigator.onLine===false) return; var v=kpVeri(); PA.calisiyor=true;
+    try{ if(v&&/^https:\/\//.test(v.url||'')){ /* bu cihaz planı biliyor → adresi diğer cihazlar için buluta yaz (değiştiyse) */
+        var u0=String(v.url).split('#')[0]; if(localStorage.getItem('dk_plan_adres_yazildi')!==u0){ var b=await paBelge(); await b.F.setDoc(b.ref,{url:u0,t:Date.now()},{merge:true}); localStorage.setItem('dk_plan_adres_yazildi',u0); } return; }
+      if(Date.now()-PA.son<3*60000) return; PA.son=Date.now();
+      var b2=await paBelge(), sn=await b2.F.getDoc(b2.ref), u=sn.exists()?String(sn.data().url||''):''; if(!/^https:\/\//.test(u)) return;
+      try{ if(new URL(u).origin!==location.origin) return; }catch(e){ return; }
+      /* 1. geçiş: plan açılır, buluttan ilerlemeni alır (25 sn) · 2. geçiş: konu özeti güncel ilerlemeyle yeniden yazılır */
+      paGizliAc(u,25000,function(){ if(kpVeri()) setTimeout(function(){ paGizliAc(u,12000,function(){ try{ toast('📚 Konular Yıllık Plan’dan geldi — tahta ile aynı'); }catch(e){} }); },1500); });
+    }catch(e){} finally{ PA.calisiyor=false; } }
+  setTimeout(paYokla,5000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'&&!kpVeri()) setTimeout(paYokla,2500); });
+  try{ window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📱 Telefon = tahta: Yıllık Plan bu cihazda hiç açılmamış olsa da “sıradaki konu” artık plandan gelir (bu haftanın dersi + senin ilerlemen)']); }catch(e){}
+}catch(e){} })();
+
 
 renderAll();
 setInterval(tick,250);
