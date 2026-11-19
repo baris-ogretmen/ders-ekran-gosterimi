@@ -645,6 +645,20 @@ html{-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
 #ykHat{margin-left:.6vw;vertical-align:middle;font-size:clamp(13px,1.8vh,22px);padding:.6vh 1vw}
 #v12Kartlar .zs-kart{color:#16204a}
 </style>
+<style id="v138mobil">
+/* v13.8 — 📱 telefonda sayfa yana taşmasın (tahta görünümü AYNEN kalır; yalnız dar ekran) */
+@media (max-width:820px){
+  .top{flex-wrap:wrap;row-gap:1vh}
+  .top .tools{flex-basis:100%;justify-content:center;max-width:100%}
+  .brand{flex:1 1 auto}
+  .nwIn{max-width:92vw}
+  .app{grid-template-columns:minmax(0,1fr);max-width:100vw}
+  .app>*{min-width:0}
+  .brand>*{min-width:0}
+  .bottom>*{min-width:0;max-width:100%}
+  .tl{max-width:100%}
+}
+</style>
 </head>
 <body>
 <div id="zsAcilis" aria-hidden="true" style="position:fixed;inset:0;z-index:2147483000;background:radial-gradient(circle at 50% 40%,#2b2f7a,#0f1a3c);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font:800 22px system-ui,sans-serif;transition:opacity .3s"><img id="zsAcilisImg" alt="" width="104" height="104" style="border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,.35)"><div style="margin-top:14px">Ders Saati</div></div><script>(function(){var t=document.querySelector('link[rel="apple-touch-icon"]'),i=document.getElementById("zsAcilisImg");if(t&&i)i.src=t.href;if(!document.querySelector('link[rel="icon"]')&&t){var l=document.createElement("link");l.rel="icon";l.type="image/png";l.href=t.href;document.head.appendChild(l);}})();setTimeout(function(){var a=document.getElementById("zsAcilis");if(a){a.style.opacity="0";setTimeout(function(){a.remove();},320);}},650);</script>
@@ -1092,17 +1106,20 @@ const MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağust
 const SUBJ='Robotik Kodlama';
 const GROUP_COLORS=['#ffe38a','#bdf0ff','#c9f7a8','#ffc9e6','#d9ccff','#ffd2b0','#b8ffe0','#ffb8b8','#e0f0ff','#fff0c2','#d4ffd0','#f5d0ff'];
 
-function build(rows){return rows.map(r=>r.map(c=>c?{c:c,s:SUBJ}:null));}
+function anaSube(x){if(!x||!x.c)return x;const m=String(x.c).trim().match(/^ana\s*s[ıi]n[ıi]f[ıi]\s*[-–]?\s*([a-zçğıöşü])$/i);if(m){x.c='Ana Sınıfı';x.sb=m[1].toLocaleUpperCase('tr');}return x;}
+function anaGrid(g){return Array.isArray(g)?g.map(r=>Array.isArray(r)?r.map(anaSube):r):g;}
+function adSb(c){return c?c.c+(c.sb?' '+c.sb:''):'';}
+function build(rows){return rows.map(r=>r.map(c=>c?anaSube({c:c,s:SUBJ}):null));}
 const DEFAULT={
   name:'Barış Öğretmen', subject:SUBJ, sound:true, warn:true, confetti:true,
   periods:[['09:10','09:50'],['10:00','10:40'],['10:50','11:30'],['11:40','12:20'],['12:50','13:30'],['13:40','14:20'],['14:30','15:10'],['15:20','16:00']],
   colors:{'1A':'#ffef1a','2A':'#f7981d','3A':'#f24a3f','4A':'#5b0f63','5A':'#19e6f0','6A':'#9be33c','7A':'#ff1ee8','8A':'#1e8ef5','Ana Sınıfı':'#f59ac7'},
   grid:build([
-    ['','4A','','6A','2A','','1A','1A'],
-    ['','','5A','2A','3A','Ana Sınıfı','5A','5A'],
+    ['','4A','','6A','2A','2A','1A','1A'],
+    ['','','5A','2A','3A','Ana Sınıfı B','5A','5A'],
     ['','4A','4A','3A','3A','','7A','7A'],
-    ['','','','','','2A','6A','6A'],
-    ['','Ana Sınıfı','8A','8A','','2A','','1A']
+    ['','','','','','','6A','6A'],
+    ['','Ana Sınıfı A','8A','8A','','','','1A']
   ]),
   ov:{}, notes:{}, rosters:{}, att:{}, light:null, msg:null, score:null, wheelCustom:'', qr:'', miniSize:1,
   me:'Barış', dutyOv:{}, dutyBell:true, rem:[], todo:[],
@@ -1138,7 +1155,7 @@ function normalize(o){
   const cut2=dateKey(addDays(new Date(),-90));Object.keys(n.att).forEach(k=>{if(k<cut2)delete n.att[k];});
   return n;
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){try{S.grid=anaGrid(S.grid);if(S.ov)Object.keys(S.ov).forEach(k=>{const o=S.ov[k];if(o)Object.keys(o).forEach(i=>anaSube(o[i]));});}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
 /* Yardımcılar */
 const $=id=>document.getElementById(id);
@@ -1236,7 +1253,7 @@ function renderLive(r){
   const P=S.periods,n=r.next;
   const nextLine=n?`Sıradaki dersin: ${n.c.c} • ${whenText(n)}`:'';
   if(r.t==='lesson'&&r.cell){
-    const c=r.cell;color=colorOf(c.c);pill='📚 Ders zamanı';big=c.c;subj=c.s;noteCls=c.c;
+    const c=r.cell;color=colorOf(c.c);pill='📚 Ders zamanı';big=adSb(c);subj=c.s;noteCls=c.c;
     meta=`${r.seg.i+1}. ders • ${P[r.seg.i][0]} – ${P[r.seg.i][1]}`;
     a=r.a;b=r.b;rem=b-r.sec;total=b-a;
     kid=rem<=60?`Son <b>${Math.ceil(rem)} saniye</b> 🔔 Toparlanma zamanı!`:`Dersin bitmesine <b>${inWords(rem)}</b> var`;
@@ -1249,11 +1266,11 @@ function renderLive(r){
   }else if(r.t==='break'||r.t==='lunch'){
     const up=cellOn(r.d,r.seg.next);a=r.a;b=r.b;rem=b-r.sec;total=b-a;
     pill=r.t==='lunch'?'🍽️ Öğle arası':'🔔 Teneffüs';color=up?colorOf(up.c):'#22c7a9';
-    if(up){big=up.c;subj=`Sıradaki ders • ${up.s}`;kid=`Derse <b>${inWords(rem)}</b> var`;noteCls=up.c;miniSub=`Sıradaki: ${up.c} • ${P[r.seg.next][0]}`;}
+    if(up){big=adSb(up);subj=`Sıradaki ders • ${up.s}`;kid=`Derse <b>${inWords(rem)}</b> var`;noteCls=up.c;miniSub=`Sıradaki: ${adSb(up)} • ${P[r.seg.next][0]}`;}
     else{big=r.t==='lunch'?'Afiyet olsun':'Teneffüs';subj=`${r.seg.next+1}. ders boş`+(n?` • Sıradaki dersin: ${n.c.c} ${whenText(n)}`:' • Bugünlük dersin kalmadı');kid=`${r.seg.next+1}. derse <b>${inWords(rem)}</b> var`;miniSub=nextSlotText(r,r.seg.next);}
     meta=`${hm(a)} – ${hm(b)}`;
   }else if(r.t==='before'&&n&&n.k===0){
-    pill='🌅 Günaydın';color=colorOf(n.c.c);big=n.c.c;subj=`Günün ilk dersi • ${n.c.s}`;noteCls=n.c.c;
+    pill='🌅 Günaydın';color=colorOf(n.c.c);big=adSb(n.c);subj=`Günün ilk dersi • ${n.c.s}`;noteCls=n.c.c;
     meta=`${n.i+1}. ders • ${P[n.i][0]} – ${P[n.i][1]}`;b=n.st;rem=n.inSec;total=Math.max(1800,rem);a=b-total;
     kid=`İlk derse <b>${inWords(rem)}</b> var`;miniSub=`İlk ders ${P[n.i][0]}`;
   }else{
@@ -1330,7 +1347,7 @@ function renderWeek(){
       if(s.t!=='lesson')return;
       const c=cellOn(date,s.i);const isNow=isToday&&r.seg===s;const ov=isOv(date,s.i);
       const cls=`cell${isNow?' now':''}${ov?' ovr':''}`;const badge=ov?'<span class="ov" title="Bu güne özel">🔁</span>':'';
-      if(c){const col=colorOf(c.c);h+=`<td><button class="${cls}" data-d="${d}" data-i="${s.i}" style="background:${col};color:${inkOf(col)}">${badge}<b style="${c.c.length>4?'font-size:2vh':''}">${esc(c.c)}</b><span>${esc(c.s)}</span></button></td>`;}
+      if(c){const col=colorOf(c.c);h+=`<td><button class="${cls}" data-d="${d}" data-i="${s.i}" style="background:${col};color:${inkOf(col)}">${badge}<b style="${adSb(c).length>4?'font-size:2vh':''}">${esc(adSb(c))}</b><span>${esc(c.s)}</span></button></td>`;}
       else h+=`<td><button class="${cls} empty" data-d="${d}" data-i="${s.i}" aria-label="${dn} ${s.i+1}. ders boş">${badge}<b>+</b><span>Boş</span></button></td>`;
     });
     h+='</tr>';
@@ -1348,7 +1365,7 @@ function openEdit(d,i){
   const date=weekDates()[d];editing={d,i,date};const c=cellOn(date,i);const ov=isOv(date,i);
   $('eTitle').textContent=`${DAYS[d]} • ${i+1}. ders`;
   $('eSub').textContent=`${S.periods[i][0]} – ${S.periods[i][1]}`;
-  $('eCls').value=c?c.c:'';$('eSubj').value=c?c.s:S.subject;$('eSubj').dataset.ilk=$('eSubj').value;
+  $('eCls').value=c?adSb(c):'';$('eSubj').value=c?c.s:S.subject;$('eSubj').dataset.ilk=$('eSubj').value;
   $('eCol').value=c?colorOf(c.c):'#8a5cff';
   $('eOnly').checked=ov;$('eOnlyL').textContent=`Sadece ${date.getDate()} ${MONTHS[date.getMonth()]} ${DAYS[d]} için geçerli olsun (haftalık program değişmez)`;
   $('eUnOv').classList.toggle('hide',!ov);
@@ -1364,7 +1381,7 @@ $('eCls').addEventListener('input',()=>{const v=$('eCls').value.trim();if(S.colo
 function setOv(val){const k=dateKey(editing.date);S.ov[k]=S.ov[k]||{};S.ov[k][editing.i]=val;}
 $('eSave').addEventListener('click',()=>{
   const name=$('eCls').value.trim();if(!name){toast('Bir sınıf seç ya da yaz');return;}
-  S.colors[name]=$('eCol').value;const _es=$('eSubj').value.trim(),_ilk=String($('eSubj').dataset.ilk||'').trim();const val={c:name,s:_es||S.subject};if(_es&&_es!==_ilk&&_es!==S.subject)val.elle=1;else if(!$('eOnly').checked){const _o=S.grid[editing.d]&&S.grid[editing.d][editing.i];if(_o&&_o.elle&&_o.c===name&&_es===_ilk)val.elle=1;}
+  S.colors[anaSube({c:name}).c]=$('eCol').value;const _es=$('eSubj').value.trim(),_ilk=String($('eSubj').dataset.ilk||'').trim();const val=anaSube({c:name,s:_es||S.subject});if(_es&&_es!==_ilk&&_es!==S.subject)val.elle=1;else if(!$('eOnly').checked){const _o=S.grid[editing.d]&&S.grid[editing.d][editing.i];if(_o&&_o.elle&&_o.c===val.c&&_es===_ilk)val.elle=1;}
   if($('eOnly').checked)setOv(val);else{S.grid[editing.d][editing.i]=val;const o=S.ov[dateKey(editing.date)];if(o)delete o[editing.i];}
   save();closeModals();renderAll();toast($('eOnly').checked?`Sadece o güne özel: ${name}`:`${DAYS[editing.d]} ${editing.i+1}. ders: ${name} kaydedildi`);
 });
@@ -2112,7 +2129,7 @@ function dutyPreview(R){
 $('aiApply').addEventListener('click',()=>{
   if(!aiRes)return;
   if(aiMode==='prog'){const names=[...new Set(aiRes.grid.flat().filter(Boolean).map(c=>c.c))];S.colors=colorsFor(names);
-    S.periods=aiRes.periods;S.grid=aiRes.grid;S.ov={};save();closeModals();renderAll();setView('week');confetti(PAL);toast('Programın sisteme işlendi 🎉 Yanlış kutu varsa dokunup düzelt.');}
+    S.periods=aiRes.periods;S.grid=anaGrid(aiRes.grid);S.ov={};save();closeModals();renderAll();setView('week');confetti(PAL);toast('Programın sisteme işlendi 🎉 Yanlış kutu varsa dokunup düzelt.');}
   else{S.duty={places:aiRes.places,table:aiRes.table};save();closeModals();renderAll();confetti(PAL);toast('Nöbet çizelgesi işlendi 🛡️');}
 });
 function renderAiState(){const n=aktifKeys().length;$('aiKeyState').innerHTML=n?`✅ Yapay zekâ hazır (${n} anahtar).`:'⚠️ Yapay zekâ anahtarı yok. <b>Ayarlar</b>\'dan ücretsiz Gemini anahtarı ekle (1 dakikalık iş).';}
@@ -3021,7 +3038,7 @@ function vbDagitimHesap(grid,genelMi){ var sl={}, out={};
   Object.keys(sl).forEach(function(cls){ var L=sl[cls]; if(genelMi&&!L.every(function(x){ return genelMi(grid[x.d][x.i].s); })) return;
     if(vbSinifGi(cls)===8){ L.forEach(function(x){ out[x.d+'|'+x.i]=VB_DAG_ET.K; }); return; }
     /* Anaokulu: Salı hep Satranç; Cuma haftaya göre Satranç ↔ Robotik-Kodlama */
-    if(vbSinifGi(cls)===0){ L.forEach(function(x){ out[x.d+'|'+x.i]=(x.d===1)?VB_DAG_ET.S:VB_DAG_ET.SR; }); return; }
+    if(vbSinifGi(cls)===0){ L.forEach(function(x){ var _c=grid[x.d]&&grid[x.d][x.i], _sb=_c&&_c.sb; out[x.d+'|'+x.i]=(_sb==='B'||(!_sb&&x.d===1))?VB_DAG_ET.S:VB_DAG_ET.SR; }); return; }   /* v13.8: B şubesi = yalnız Satranç · A şubesi = Satranç ↔ Robotik-Kodlama (gün değişse de şube belirler) */
     var sira=vbDagSira(L.length), tek=['R','Y','RY'], qT=sira.filter(function(k){ return tek.indexOf(k)>=0; }), qO=sira.filter(function(k){ return tek.indexOf(k)<0; });
     var blok=L.filter(function(x){ return L.some(function(y){ return y.d===x.d&&Math.abs(y.i-x.i)===1; }); }), tekil=L.filter(function(x){ return blok.indexOf(x)<0; });
     blok.forEach(function(x){ out[x.d+'|'+x.i]=VB_DAG_ET[qT.length?qT.shift():qO.shift()]; });
@@ -3659,7 +3676,7 @@ function dsDagit(sadeceGenel){ var o=dsDagitimHesap(S.grid,sadeceGenel), n=0; Ob
 if(!MINI_MODE&&S.dagitimV!==10){ var _dn=dsDagit(true); S.dagitimV=10; save(); if(_dn) setTimeout(function(){ toast('🗓️ Dersler haftalık saatlere göre dağıtıldı ('+_dn+' ders saati) · 📅 Program’dan bakıp değiştirebilirsin'); },2500); }
 /* v11: Anaokulu yeni düzen (Salı Satranç · Cuma haftaya göre Satranç ↔ Robotik-Kodlama); elle yazılmış ad varsa dokunma */
 if(!MINI_MODE&&S.dagitimAna!==11){ var _otoAd=[DS_ET.RY,DS_ET.SA,DS_ET.R,DS_ET.S,DS_ET.Y,DS_ET.A,DS_ET.D], _an=0;
-  S.grid.forEach(function(row,dd){ row.forEach(function(c,ii){ if(!c||kpGi(c.c)!==0) return; if(!(dsGenel(c.s)||_otoAd.indexOf(c.s)>=0)) return; var y=(dd===1)?DS_ET.S:DS_ET.SR; if(c.s!==y){ c.s=y; _an++; } }); });
+  S.grid.forEach(function(row,dd){ row.forEach(function(c,ii){ if(!c||kpGi(c.c)!==0) return; if(!(dsGenel(c.s)||_otoAd.indexOf(c.s)>=0)) return; var y=(c.sb==='B'||(!c.sb&&dd===1))?DS_ET.S:DS_ET.SR; if(c.s!==y){ c.s=y; _an++; } }); });
   S.dagitimAna=11; save(); }
 /* Görünen ders adı: ikon + ad; Dönüşümlü ise bu haftanın dersi */
 function dsIkon(s,d){ var ks=vbDersKs(s,d); return ks.map(function(k){ return (VB_AD[k]||VB_AD.genel)[1]; }).join(''); }
@@ -5140,6 +5157,34 @@ function goc(){ var bayrak=null; try{ bayrak=localStorage.getItem(GOC); }catch(e
     metaYaz({t:degisti?Math.max(GOC_T,((m&&m.t)||0)+1):Math.max(GOC_T,(m&&m.t)||0),imza:imza(yerel()||yeni)}); }
   try{ localStorage.setItem(GOC,'1'); }catch(e){} }
 
+/* ---- 19.11.2026: YENİ PROGRAM — 5 günün tamamı (bir kez; ders adları korunur, Ana Sınıfı A/B şube etiketi) ----
+   Değişenler: Pzt 6. ders +2A · Salı 6. ders Ana Sınıfı B · Prş 6. ders 2A kalktı · Cuma 2. ders Ana Sınıfı A · Cuma 6. ders 2A kalktı
+   Eski tek seferlik geçişler (26.10 / 27.10) bu cihazda bir daha çalışmasın diye kapatılır. */
+var GOC2='dk_prog_goc_20261119', GOC2_T=Date.UTC(2026,10,19,11,30,0);   /* 19.11.2026 14:30 (Türkiye) */
+var YENI2=[
+  ['','4A','','6A','2A','2A','1A','1A'],
+  ['','','5A','2A','3A','Ana Sınıfı B','5A','5A'],
+  ['','4A','4A','3A','3A','','7A','7A'],
+  ['','','','','','','6A','6A'],
+  ['','Ana Sınıfı A','8A','8A','','','','1A']];
+var VARS_SAAT=[['09:10','09:50'],['10:00','10:40'],['10:50','11:30'],['11:40','12:20'],['12:50','13:30'],['13:40','14:20'],['14:30','15:10'],['15:20','16:00']];
+function sbAyir(ad){ var m=String(ad||'').trim().match(/^ana\s*s[ıi]n[ıi]f[ıi]\s*[-–]?\s*([a-zçğıöşü])$/i);
+  return m?{c:'Ana Sınıfı',sb:m[1].toLocaleUpperCase('tr')}:{c:String(ad||'').trim(),sb:''}; }
+function goc2(){ var bayrak=null; try{ bayrak=localStorage.getItem(GOC2); }catch(e){ return; } if(bayrak) return;
+  ['dk_prog_goc_20261027','dk_prog_goc_20261026b','dk_prog_goc_20261026'].forEach(function(k){ try{ if(!localStorage.getItem(k)) localStorage.setItem(k,'1'); }catch(e){} });
+  var p=yerel(), periods=(p&&p.periods&&p.periods.length===8)?p.periods:VARS_SAAT, g0=p?kopya(p.grid):[], g=[], degisti=!p;
+  function bul(c,d){ for(var a=0;a<6;a++){ var dd=a===0?d:a-1; if(a>0&&dd===d) continue; var r=g0[dd]||[]; for(var i=0;i<r.length;i++){ var x=r[i]; if(x&&x.c===c) return kopya(x); } } return null; }
+  for(var d=0;d<5;d++){ var r=[], eski=g0[d]||[];
+    for(var i=0;i<periods.length;i++){ var ad=YENI2[d][i]||'', x=eski[i];
+      if(!ad){ r.push(null); continue; }
+      var a=sbAyir(ad), y=(x&&x.c===a.c)?kopya(x):(bul(a.c,d)||{c:a.c,s:SUBJ});
+      if(a.sb) y.sb=a.sb; else delete y.sb; r.push(y); }
+    if(kanon(r)!==kanon(g0[d])) degisti=true; g.push(r); }
+  var yeni={grid:g,periods:periods,ov:(p&&p.ov)||{}};
+  var m=metaOku(); if(degisti) uygula(yeni);
+  metaYaz({t:degisti?Math.max(GOC2_T,((m&&m.t)||0)+1):Math.max(GOC2_T,(m&&m.t)||0),imza:imza(yerel()||yeni)});
+  try{ localStorage.setItem(GOC2,'1'); }catch(e){} }
+
 /* ---- bulut ---- */
 async function baglan(){ if(K.fb) return K.fb; var V='https://www.gstatic.com/firebasejs/11.0.1/';
   var A=await import(V+'firebase-app.js'), F=await import(V+'firebase-firestore.js'), Au=await import(V+'firebase-auth.js');
@@ -5187,7 +5232,7 @@ async function dinle(){ if(K.dinliyor) return; try{ var fb=await baglan(); K.din
   }catch(e){ K.dinliyor=false; } }
 async function yokla(){ if(navigator.onLine===false) return; try{ var fb=await baglan(), sn=await fb.F.getDoc(fb.ref); karar(sn.exists()?sn.data():null); }catch(e){} if(!K.dinliyor) dinle(); }
 
-function basla(){ goc();
+function basla(){ goc(); goc2();
   setInterval(function(){ try{ yerelYakala(); }catch(e){} },2000);
   window.addEventListener('storage',function(e){ if(e.key===KEY) setTimeout(yerelYakala,50); });
   window.addEventListener('online',yokla);
