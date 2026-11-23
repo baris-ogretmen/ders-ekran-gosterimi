@@ -3781,7 +3781,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='16';
+var ZSTD_SURUM='17';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -5311,10 +5311,44 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </script>
 <script>
 /* Ders Saati 14 — sürüm + yenilikler */
-try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='16';
-  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”']); } }catch(e){}
+try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='17';
+  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz']); } }catch(e){}
 
 </script>
 
+<script>
+/* ===== 🔒 İŞLENDİ KİLİDİ (23 Kasım 2026) — “işlendi” denen ders bir daha kaybolmaz =====
+   Üç uygulamada (Ders Saati · Ders Programım · Ders Planı) aynı kod. dk_ilr’deki her işaret dk_ilr_kalici’ye de yazılır.
+   Bir işaret kaybolursa (senkron sorunu, bozuk kayıt, eski cihazın üzerine yazması…) kendiliğinden GERİ GELİR.
+   Yalnız şu durumda kaldırılmış sayılır: az sayıda (≤4) işaret, son 6 sn içinde ekrana dokunulmuşken (bu ya da başka sekmede)
+   ya da başka cihazdan bilerek kaldırılıp bulut senkronuyla gelmişse (dk_ilr_uzak_sil). Diğer her kayıp geri yüklenir. */
+(function(){ if(window.__islKilidi) return; window.__islKilidi=1;
+  var K='dk_ilr', A='dk_ilr_kalici', D='dk_son_dokunus';
+  function oku(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:(JSON.parse(v)||d); }catch(e){ return d; } }
+  function yaz(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function duz(o){ var r={}; Object.keys(o||{}).forEach(function(g){ var a=o[g]||{}; Object.keys(a).forEach(function(t){ var b=a[t]||{}; Object.keys(b).forEach(function(i){ if(b[i]) r[g+'|'+t+'|'+i]=1; }); }); }); return r; }
+  function dokundu(){ try{ localStorage.setItem(D,String(Date.now())); }catch(e){} }
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){ document.addEventListener(ev,dokundu,true); });
+  function denetle(){ try{ var dur=+localStorage.getItem('dk_ilr_kilit_dur')||0; if(Date.now()<dur){ localStorage.removeItem(A); return; }
+      var ilr=oku(K,{}), su=duz(ilr), kal=oku(A,{}), now=Date.now(), deg=false;
+      if(typeof kal!=='object'||Array.isArray(kal)) kal={};
+      Object.keys(su).forEach(function(k){ if(!kal[k]){ kal[k]=now; deg=true; } });
+      var kayip=Object.keys(kal).filter(function(k){ return !su[k]; });
+      if(kayip.length){ var dok=now-(+localStorage.getItem(D)||0)<6000, uz=oku('dk_ilr_uzak_sil',{})||{}, uzDeg=false, geri=[];
+        kayip.forEach(function(k){ if(uz[k]){ delete kal[k]; delete uz[k]; deg=true; uzDeg=true; }      /* başka cihazdan bilerek kaldırıldı (bulut senkronu getirdi) */
+          else if(dok&&kayip.length<=4){ delete kal[k]; deg=true; }                                     /* burada ekrana dokunarak kaldırıldı */
+          else geri.push(k); });
+        if(uzDeg) yaz('dk_ilr_uzak_sil',uz);
+        if(geri.length){ geri.forEach(function(k){ var p=k.split('|'); ilr[p[0]]=ilr[p[0]]||{}; ilr[p[0]][p[1]]=ilr[p[0]][p[1]]||{}; ilr[p[0]][p[1]][p[2]]=1; });
+          yaz(K,ilr); var g=oku('dk_ilr_geriyukleme',[]); g.unshift({t:now,n:geri.length,s:geri.slice(0,12)}); yaz('dk_ilr_geriyukleme',g.slice(0,20));
+          try{ var m='🔒 '+geri.length+' işlenen ders kaybolmuştu — geri yüklendi'; if(typeof toast==='function') toast(m); }catch(e){}
+          try{ if(typeof renderPlan==='function'&&window.ST&&ST.view==='plan') renderPlan(); if(typeof renderNeredeKaldim==='function') renderNeredeKaldim(); }catch(e){}
+          try{ window.dispatchEvent(new StorageEvent('storage',{key:K})); }catch(e){} } }
+      if(deg) yaz(A,kal);
+    }catch(e){} }
+  denetle(); setInterval(denetle,1500); window.addEventListener('storage',function(e){ if(!e.key||e.key===K) setTimeout(denetle,50); });
+  window.ISL_KILIDI={denetle:denetle,kalici:function(){ return oku(A,{}); },gecmis:function(){ return oku('dk_ilr_geriyukleme',[]); }};
+})();
+</script>
 </body>
 </html>
