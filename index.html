@@ -3568,6 +3568,7 @@ function kpIsledimCoklu(cls,items){ var bek=items.filter(function(x){ return !x[
   bek.forEach(function(x,j){ if(j<bek.length-1){ var d=vbDersBul(cls,x[0],x[1],x[2]); _kpIsledimV9(cls,x[0],x[1],x[2],false); vbKaydet({tarih:vbGunKey(),gi:x[0],k:x[1],idx:x[2],konu:d?d.konu:'',akil:d?(d.akil||d.ozet||''):'',cls:cls,kaynak:'tahta'}); } });
   var z=bek[bek.length-1]; kpIsledim(cls,z[0],z[1],z[2],false); }
 (function(){ var el=$('konuKart'); if(!el) return; el.addEventListener('click',function(e){ var p=e.target.closest('.kk-isle'); if(!p) return; e.preventDefault(); e.stopImmediatePropagation();
+  if(p.classList.contains('kk-plan')){ try{ dsPlanDugme(); }catch(_){} return; } /* v21: Ders Planı düğmesi de .kk-isle sınıfında; bu yakalayıcı onu yutuyordu — kart düğmesi hiç çalışmıyordu */
   var cls=p.dataset.c, it=[]; try{ it=JSON.parse(p.dataset.it||'[]'); }catch(_){} if(!it.length) return;
   if(p.dataset.ok){ var x=it[0], en=vbBul(x[0],x[1],x[2]); if(!en){ var d=vbDersBul(cls,x[0],x[1],x[2]); en=vbKaydet({tarih:vbGunKey(),gi:x[0],k:x[1],idx:x[2],konu:d?d.konu:'',akil:d?(d.akil||d.ozet||''):'',cls:cls,kaynak:'tahta'}); } vbAc(cls,x[0],en.tarih); }
   else kpIsledimCoklu(cls,it); },true); })();
@@ -3786,7 +3787,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='20';
+var ZSTD_SURUM='21';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -5343,8 +5344,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </script>
 <script>
 /* Ders Saati 14 — sürüm + yenilikler */
-try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='20';
-  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📘 Ders Planı düğmesi artık her zaman asıl Ders Planı’nı açar ve doğrudan o derse gider (tahtada kayıtlı eski adres yüzünden gitmiyordu)','✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür','📘 Ders Planı artık Ders Saati’nin içinde tam ekran açılır, doğrudan o derse gider; “✕ Ders Saati’ne dön” ile geri dönersin']); } }catch(e){}
+try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='21';
+  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📘 Konu kartındaki “📘 Ders Planı” düğmesi artık çalışıyor (İşledim düğmesinin dinleyicisi dokunuşu yutuyordu)','📘 Ders Planı düğmesi artık her zaman asıl Ders Planı’nı açar ve doğrudan o derse gider (tahtada kayıtlı eski adres yüzünden gitmiyordu)','✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür','📘 Ders Planı artık Ders Saati’nin içinde tam ekran açılır, doğrudan o derse gider; “✕ Ders Saati’ne dön” ile geri dönersin']); } }catch(e){}
 
 </script>
 
