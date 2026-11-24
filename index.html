@@ -481,6 +481,11 @@ body.bgIsik .blobs{display:block}
 
 .konuKart{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:10px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(15,23,42,.45);backdrop-filter:blur(8px);color:#fff;cursor:pointer;text-align:left;max-width:min(640px,90%);font-family:inherit}
 .konuKart.hide{display:none}
+.konuKart .kk-sat{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:2px}
+.info:has(#konuKart:not(.hide)) .big{zoom:.72;margin:.4vh 0 .1vh}
+.info:has(#konuKart:not(.hide)) .subj{margin-top:0}
+.info:has(#konuKart:not(.hide)) .konuKart{margin-top:6px}
+@media (max-height:900px){ .info:has(#konuKart:not(.hide)) .big{zoom:.6} }
 .konuKart .kk-ust{font-size:min(1.9vh,14px);font-weight:800;opacity:.85}
 .konuKart .kk-konu{font-size:min(3.1vh,24px);font-weight:900;line-height:1.2}
 .konuKart .kk-asama{font-size:min(2.1vh,16px);font-weight:800;color:#fde68a}
@@ -3781,7 +3786,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='17';
+var ZSTD_SURUM='18';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4901,7 +4906,12 @@ if(typeof kpGuncelle==='function'){ var _kpGuncelleV16=kpGuncelle;
   kpGuncelle=function(r){ var x=_kpGuncelleV16.apply(this,arguments); try{ var el=document.getElementById('konuKart'); if(!el||el.classList.contains('hide')||el.querySelector('.kk-plan')) return x;
     var b=document.createElement('span'); b.className='kk-isle kk-plan'; b.style.background='linear-gradient(90deg,#4338ca,#0891b2)'; b.style.marginLeft='6px'; b.textContent='📘 Ders Planı';
     b.addEventListener('click',function(ev){ ev.stopPropagation(); ev.preventDefault(); dsPlanDugme(); },true);
-    var is=el.querySelector('.kk-isle'); if(is&&is.parentNode) is.parentNode.insertBefore(b,is.nextSibling); else el.appendChild(b); }catch(e){} return x; }; }
+    var is=el.querySelector('.kk-isle:not(.kk-plan)');
+    if(is&&is.parentNode){ var sat=document.createElement('span'); sat.className='kk-sat'; is.parentNode.insertBefore(sat,is); sat.appendChild(is); sat.appendChild(b); b.style.marginLeft='0'; }
+    else el.appendChild(b); }catch(e){} return x; }; }
+/* v18: “📚 Ders zamanı” etiketine ve ders adına dokununca da Ders Planı açılır */
+try{ ['pill','subj'].forEach(function(id){ var p=document.getElementById(id); if(!p) return; p.style.cursor='pointer'; p.title='Dokun → bu dersi Ders Planı’nda aç';
+  p.addEventListener('click',function(ev){ if(!/Ders zamanı|Ders/.test(p.textContent||'')&&id==='pill') return; ev.stopPropagation(); dsPlanDugme(); }); }); }catch(_){}
 
 
 renderAll();
@@ -5311,8 +5321,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </script>
 <script>
 /* Ders Saati 14 — sürüm + yenilikler */
-try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='17';
-  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz']); } }catch(e){}
+try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='18';
+  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür']); } }catch(e){}
 
 </script>
 
