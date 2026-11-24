@@ -3786,7 +3786,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='19';
+var ZSTD_SURUM='20';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4888,9 +4888,11 @@ if(typeof kpGuncelle==='function'){ var _kpGuncelleV14=kpGuncelle;
       sp.style.cssText='display:inline-block;margin-left:.45em;padding:.08em .55em;border-radius:999px;background:rgba(250,204,21,.18);color:#fde68a;font-size:.55em;font-weight:900;vertical-align:middle;white-space:nowrap';
       sp.textContent=(no?no+'. adım: ':'')+d.asama+(d.ileri?' · yeni':''); k.appendChild(sp); } }catch(e){} return x; }; }
 /* ===== Ders Saati 16 — 📘 “Ders Planım” düğmesi (İşledim’den BAĞIMSIZ): şu anki (yoksa sıradaki) dersi Ders Planı’nda tam o konuda açar ===== */
-function dsPlanUrl(){ var v=kpVeri(), u=(v&&v.url)||''; if(!/^https?:/.test(u)&&/github\.io$/.test(location.hostname)) u=location.origin+'/ders-planim/'; return String(u||'').split('#')[0]; }
+/* v20: Ders Planı HER ZAMAN asıl adresinden açılır. Tahtada eskiden başka bir kopyadan (eski dosya/ön bellek) kaydedilmiş adres varsa o kopya derse gitmiyordu. */
+var DS_PLAN_ASIL='https://baris-ogretmen.github.io/ders-planim/';
+function dsPlanUrl(){ return DS_PLAN_ASIL; }
 /* v19: Ders Planı artık AYNI ekranda, tam ekran bir pencere içinde açılır (yeni sekme arkada kalıp “gitmiyor” gibi görünmesin) */
-function dsPlanAc(e){ var u=dsPlanUrl(); if(!u){ if(/^https?:$/.test(location.protocol)&&/github\.io$/.test(location.hostname)) u=location.origin+'/ders-planim/'; else { try{ toast('📘 Ders Planı’nı bu tahtada bir kez açman yeter, sonra düğme doğrudan derse gider'); }catch(_){} return; } }
+function dsPlanAc(e){ var u=dsPlanUrl();
   var h=u+(e&&e.gi!=null&&e.k&&e.idx!=null?'#tahta='+e.gi+'|'+e.k+'|'+e.idx:'');
   var o=document.getElementById('dsPlanPano');
   if(!o){ o=document.createElement('div'); o.id='dsPlanPano'; o.style.cssText='position:fixed;inset:0;z-index:99995;background:#0b1020;display:flex;flex-direction:column';
@@ -5341,8 +5343,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </script>
 <script>
 /* Ders Saati 14 — sürüm + yenilikler */
-try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='19';
-  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür','📘 Ders Planı artık Ders Saati’nin içinde tam ekran açılır, doğrudan o derse gider; “✕ Ders Saati’ne dön” ile geri dönersin']); } }catch(e){}
+try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='20';
+  window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📘 Ders Planı düğmesi artık her zaman asıl Ders Planı’nı açar ve doğrudan o derse gider (tahtada kayıtlı eski adres yüzünden gitmiyordu)','✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür','📘 Ders Planı artık Ders Saati’nin içinde tam ekran açılır, doğrudan o derse gider; “✕ Ders Saati’ne dön” ile geri dönersin']); } }catch(e){}
 
 </script>
 
