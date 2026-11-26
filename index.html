@@ -3787,7 +3787,7 @@ kpV9Ekle=function(){ _kpV9EkleV11(); try{ var p=$('kpIc'); var cls=KP.secili||KP
    Ders Saati v12 — 📋 Yoklama Defteri (yıl boyu) · veliye mesaj
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 📱 uygulama standardı
    ============================================================ */
-var ZSTD_SURUM='23';
+var ZSTD_SURUM='24';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı (Ders Saati hafızası) ---------- */
 function v12DersBilgi(dk,c){ var d=ykTarih(dk), n=0, ad=[]; try{ for(var i=0;i<S.periods.length;i++){ var x=cellOn(d,i); if(x&&x.c===c){ n++; var ks=(kpGi(c)===8)?['kocluk']:vbDersKs(x.s,d); var a=ks.length?kpDersAdlari(ks,false):(x.s||''); if(a&&ad.indexOf(a)<0) ad.push(a); } } }catch(e){} return {n:n,d:ad.join(' · ')}; }
@@ -4973,6 +4973,11 @@ function dsBugunYaz(){ try{ var r=lastR; if(!r||!r.segs) return; var today=r.wd<
     var y=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
     var js=JSON.stringify({tarih:y,dersler:out}); if(js!==dsBugunYaz._son){ dsBugunYaz._son=js; localStorage.setItem('dk_bugun',JSON.stringify({t:Date.now(),tarih:y,dersler:out})); } }catch(e){} }
 setTimeout(dsBugunYaz,1500); setInterval(dsBugunYaz,30000);
+/* Sürüm 24: panelden her zaman çıkılabilsin — başlık yapışkan, altta yüzen “✕ Kapat”, Esc */
+(function(){ var st=document.createElement('style'); st.textContent='#konuPanel .kp-bas{position:sticky;top:0;z-index:6}#kpYuzX{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:2147480000;border:0;border-radius:999px;padding:14px 22px;font-weight:900;font-size:18px;background:#facc15;color:#422006;box-shadow:0 8px 24px rgba(0,0,0,.45);cursor:pointer;display:none}#kpYuzX.gor{display:block}';
+  document.head.appendChild(st); var b=document.createElement('button'); b.id='kpYuzX'; b.textContent='✕ Kapat'; b.onclick=function(){ try{ kpKapat(); }catch(e){} b.classList.remove('gor'); }; document.body.appendChild(b);
+  setInterval(function(){ var p=document.getElementById('konuPanel'), pp=document.getElementById('dsPlanPano'), ac=!!(p&&!p.classList.contains('hide'))&&!document.getElementById('dsIlham')&&!(pp&&pp.style.display!=='none'); b.classList.toggle('gor',ac); },300);
+  document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return; var p=document.getElementById('konuPanel'); if(p&&!p.classList.contains('hide')&&!document.getElementById('dsIlham')&&!(window.MOTIV&&MOTIV.acikMi&&MOTIV.acikMi())){ var pp=document.getElementById('dsPlanPano'); if(pp&&pp.style.display!=='none') return; kpKapat(); } }); })();
 function dsPanelSade(){ try{ var cls=KP.secili||KP.sinif, p=document.getElementById('kpIc'); if(!cls||!p) return; var pn=document.getElementById('konuPanel'), col=colorOf(cls)||'#6366f1';
     if(pn){ pn.style.setProperty('--kc',col); pn.style.borderLeft='10px solid '+col; var hd=pn.firstElementChild; if(hd&&hd!==p) hd.style.background='linear-gradient(90deg,'+col+',#312e81)'; }
     var ad=p.querySelector('.ds-adim'); if(ad){ ad.style.borderColor=col; ad.style.background='linear-gradient(135deg,'+col+'55,#1e1b4b 70%)'; var h=ad.querySelector('h4'); if(h&&!h.querySelector('.ds-snf')){ var sp=document.createElement('span'); sp.className='ds-snf'; sp.style.cssText='display:inline-block;background:'+col+';color:'+(inkOf?inkOf(col):'#fff')+';border-radius:10px;padding:2px 10px;margin-right:6px;font-size:20px'; sp.textContent=cls; h.insertBefore(sp,h.firstChild); } }
@@ -5001,7 +5006,7 @@ function bosKutu(r){ var el=document.getElementById('bosKutu'), kid=document.get
     el.querySelector('[data-h]').onclick=function(){ try{ var n=r.next||lastR.next; if(!n){ toast('Bugün başka ders yok 🎉'); return; } var D=kpDersler(n.c.c), d=D&&D.list&&D.list[0]; if(d) dsPlanAc(d); else dsPlanAc(); }catch(e){ try{ dsPlanAc(); }catch(_){} } }; }
   if(!el) return; var i=Math.floor(Date.now()/20000)%BOS_ONERI.length, t=el.querySelector('[data-t]'); if(t&&t.dataset.i!==String(i)){ t.dataset.i=String(i); t.textContent=BOS_ONERI[i]; } }
 if(typeof renderLive==='function'){ var _renderLiveV23=renderLive; renderLive=function(r){ var x=_renderLiveV23.apply(this,arguments); try{ if(r&&r.t==='lesson'&&!r.cell){ $('pill').textContent='☕ Boş saat · dinlenme zamanı'; if(lastBig!=='Dinlenme'){ var b=$('big'); b.textContent='Dinlenme'; b.style.fontSize='min(15vh,10vw)'; lastBig='Dinlenme'; } } bosKutu(r); }catch(e){} return x; }; }
-try{ window.ZSTD_AYAR.surum='23'; window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['☕ Boş saatte “Dinlenme” ekranı: 20 saniyede bir değişen öneriler, 1 dk nefes molası, sıradaki dersi hazırla','🧭 Konu kartındaki 5 adım düğmesi artık tek satırda, kesilmeden görünür']); }catch(e){}
+try{ window.ZSTD_AYAR.surum='24'; window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['✕ Ders paneli her ekranda kapatılabilir: üstte sabit başlık, sağ altta sarı “✕ Kapat”, Esc','☕ Boş saatte “Dinlenme” ekranı: 20 saniyede bir değişen öneriler, 1 dk nefes molası, sıradaki dersi hazırla','🧭 Konu kartındaki 5 adım düğmesi artık tek satırda, kesilmeden görünür']); }catch(e){}
 renderAll();
 setInterval(tick,250);
 })();
@@ -5409,7 +5414,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </script>
 <script>
 /* Ders Saati 14 — sürüm + yenilikler */
-try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='23';
+try{ if(window.ZSTD_AYAR){ window.ZSTD_AYAR.surum='24';
   window.ZSTD_AYAR.yenilikler=(window.ZSTD_AYAR.yenilikler||[]).concat(['📘 Konu kartındaki “📘 Ders Planı” düğmesi artık çalışıyor (İşledim düğmesinin dinleyicisi dokunuşu yutuyordu)','📘 Ders Planı düğmesi artık her zaman asıl Ders Planı’nı açar ve doğrudan o derse gider (tahtada kayıtlı eski adres yüzünden gitmiyordu)','✅ Daha önceki bir gün işlediğin konu artık tahtada “Bugünün konusu” olarak bir daha çıkmaz; sıradaki konu gelir (Yıllık Plan da arka planda tazelenir)','📘 “✅ İşledim” → Ders Programım’daki pencerede “📘 Ders Planı’nda aç” ile tam o dersin ayrıntılı planına gidersin','📘 Üst çubukta ve konu kartında ayrı “Ders Planım” düğmesi (klavyede D): şu anki dersi Ders Planı’nda tam o konuda açar','🪜 Konunun adımı her yerde: “Notasyon · 2. adım: Uygula”','🔒 İşlendi kilidi: işlendi denen ders bir sorun olsa da kaybolmaz','📘 “Ders zamanı” etiketine ya da ders adına dokununca Ders Planı açılır','⬆️ Bugünün konusu kartı yukarı alındı: “İşlendi” ve “Ders Planı” düğmeleri tek satırda, her zaman görünür','📘 Ders Planı artık Ders Saati’nin içinde tam ekran açılır, doğrudan o derse gider; “✕ Ders Saati’ne dön” ile geri dönersin']); } }catch(e){}
 
 </script>
